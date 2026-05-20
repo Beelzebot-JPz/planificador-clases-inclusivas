@@ -1,0 +1,1300 @@
+/* ==========================================================================
+   PLANIFICADOR DE CLASES INCLUSIVAS - HOJA DE ESTILOS PRINCIPALES
+   Estilo: Simple, elegante, maduro. Base escala de grises con acentos verde salvia.
+   Soporte: Modo Claro, Modo Oscuro, Modo Alto Contraste y Hojas de Impresión.
+   ========================================================================== */
+
+/* 1. CONFIGURACIÓN DE TIPOGRAFÍAS Y VARIABLES
+   ========================================================================== */
+:root {
+    /* Paleta por Defecto: Tema Claro */
+    --bg-primary: hsl(215, 15%, 98%);
+    --bg-card: hsl(0, 0%, 100%);
+    --text-primary: hsl(215, 20%, 18%);
+    --text-secondary: hsl(215, 12%, 45%);
+    --accent: hsl(158, 25%, 42%); /* Verde Salvia */
+    --accent-hover: hsl(158, 25%, 34%);
+    --accent-light: hsl(158, 20%, 94%);
+    --border: hsl(215, 10%, 88%);
+    --border-light: hsl(215, 10%, 93%);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 2px 6px rgba(0, 0, 0, 0.02);
+    --shadow-accent: 0 4px 14px rgba(107, 142, 120, 0.2);
+    --radius: 12px;
+    --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    
+    /* Escala de colores estáticos */
+    --gray-light: #f5f7f8;
+    --gray-medium: #8a969f;
+    --white: #ffffff;
+    --red-alert: #d9534f;
+    --green-success: #5cb85c;
+}
+
+/* Modos de Color */
+body.theme-dark {
+    --bg-primary: hsl(215, 15%, 10%);
+    --bg-card: hsl(215, 12%, 15%);
+    --text-primary: hsl(215, 15%, 90%);
+    --text-secondary: hsl(215, 10%, 65%);
+    --accent: hsl(158, 30%, 54%); /* Verde salvia más brillante en oscuro */
+    --accent-hover: hsl(158, 30%, 64%);
+    --accent-light: hsl(158, 25%, 18%);
+    --border: hsl(215, 10%, 25%);
+    --border-light: hsl(215, 10%, 20%);
+    --shadow: 0 8px 30px rgba(0, 0, 0, 0.25), 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+body.theme-contrast {
+    --bg-primary: hsl(0, 0%, 0%);
+    --bg-card: hsl(0, 0%, 0%);
+    --text-primary: hsl(0, 0%, 100%);
+    --text-secondary: hsl(0, 0%, 100%);
+    --accent: hsl(55, 100%, 50%); /* Amarillo de alto contraste */
+    --accent-hover: hsl(55, 100%, 70%);
+    --accent-light: hsl(0, 0%, 0%);
+    --border: hsl(0, 0%, 100%);
+    --border-light: hsl(0, 0%, 100%);
+    --shadow: none;
+}
+
+/* Reset básico */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+/* Ocultar elementos para lectores de pantalla de forma accesible */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* ==========================================================================
+   2. BARRA DE NAVEGACIÓN
+   ========================================================================== */
+.navbar {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-logo {
+    background-color: var(--accent);
+    color: var(--bg-card);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+    transition: background-color var(--transition), color var(--transition);
+}
+
+body.theme-contrast .brand-logo {
+    border: 2px solid var(--border);
+}
+
+.brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.brand-sub {
+    font-size: 11px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+/* Configuración de temas interactiva */
+.theme-switcher {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.switcher-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.switcher-buttons {
+    display: flex;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 4px;
+    border-radius: 8px;
+    gap: 4px;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.btn-theme {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+.btn-theme svg {
+    transition: stroke var(--transition), fill var(--transition);
+}
+
+.btn-theme:hover {
+    color: var(--text-primary);
+}
+
+.btn-theme.active {
+    background-color: var(--bg-card);
+    color: var(--accent);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.theme-contrast .btn-theme.active {
+    background-color: var(--accent);
+    color: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   3. HERO / CABECERA DE IMPACTO
+   ========================================================================== */
+.hero {
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    padding: 64px 24px;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.hero-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 42px;
+    letter-spacing: -0.5px;
+    margin-bottom: 16px;
+    line-height: 1.15;
+}
+
+.hero-lead {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    font-weight: 400;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.model-badge-box {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    text-align: left;
+}
+
+.badge-item {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    max-width: 360px;
+    transition: var(--transition);
+}
+
+.badge-icon {
+    background-color: var(--accent-light);
+    color: var(--accent);
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+body.theme-contrast .badge-icon {
+    border: 1px solid var(--border);
+}
+
+.badge-item div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.badge-item strong {
+    font-size: 14px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+}
+
+.badge-item span {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+/* ==========================================================================
+   4. MAQUETACIÓN GENERAL Y CONTENIDO PRINCIPAL
+   ========================================================================== */
+.main-content {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.section-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 40px;
+    box-shadow: var(--shadow);
+    transition: background-color var(--transition), border-color var(--transition), box-shadow var(--transition);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.section-number {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--accent);
+    background-color: var(--accent-light);
+    padding: 4px 10px;
+    border-radius: 6px;
+    transition: var(--transition);
+}
+
+body.theme-contrast .section-number {
+    border: 1px solid var(--border);
+}
+
+.section-title {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 28px;
+    letter-spacing: -0.2px;
+}
+
+.section-desc {
+    font-size: 15px;
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    max-width: 800px;
+}
+
+/* ==========================================================================
+   5. COMPONENTE: BARRA DE PROGRESO DE LA CHECKLIST
+   ========================================================================== */
+.progress-container {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    transition: var(--transition);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.progress-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.progress-val {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--accent);
+}
+
+.progress-bar-bg {
+    background-color: var(--border-light);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    background-color: var(--accent);
+    height: 100%;
+    border-radius: 5px;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.1, 0.8, 0.25, 1);
+}
+
+body.theme-contrast .progress-bar-fill {
+    background-color: var(--accent);
+}
+
+/* ==========================================================================
+   6. COMPONENTE: PESTAÑAS (TABS)
+   ========================================================================== */
+.tabs-nav {
+    display: flex;
+    border-bottom: 2px solid var(--border-light);
+    gap: 8px;
+    margin-bottom: 28px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none; /* Firefox */
+}
+
+.tabs-nav::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+.tab-link {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 12px 24px;
+    position: relative;
+    white-space: nowrap;
+    transition: var(--transition);
+}
+
+.tab-num {
+    background-color: var(--border-light);
+    color: var(--text-secondary);
+    display: inline-flex;
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    font-weight: 700;
+    transition: var(--transition);
+}
+
+.tab-link:hover {
+    color: var(--text-primary);
+}
+
+.tab-link:hover .tab-num {
+    background-color: var(--border);
+    color: var(--text-primary);
+}
+
+.tab-link.active {
+    color: var(--accent);
+}
+
+.tab-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--accent);
+    border-radius: 3px;
+}
+
+.tab-link.active .tab-num {
+    background-color: var(--accent-light);
+    color: var(--accent);
+}
+
+body.theme-contrast .tab-link.active .tab-num {
+    background-color: var(--accent);
+    color: var(--bg-card);
+    border: 1px solid var(--border);
+}
+
+/* ==========================================================================
+   7. COMPONENTE: CHECKLIST DUA
+   ========================================================================== */
+.tab-panel {
+    display: none;
+    animation: fadeIn var(--transition);
+}
+
+.tab-panel.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-intro {
+    background-color: var(--bg-primary);
+    border-left: 4px solid var(--accent);
+    padding: 18px 24px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 28px;
+    transition: var(--transition);
+}
+
+.panel-intro h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.badge-stage {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    background-color: var(--accent-light);
+    color: var(--accent);
+    font-weight: 700;
+}
+
+body.theme-contrast .badge-stage {
+    border: 1px solid var(--border);
+}
+
+.panel-intro p {
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.checklist-items {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 28px;
+}
+
+.check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 16px 20px;
+    border-radius: var(--radius);
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.check-item:hover {
+    border-color: var(--accent);
+    background-color: var(--bg-primary);
+}
+
+/* Ocultar input nativo y diseñar uno premium */
+.check-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.check-box-custom {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+    background-color: var(--bg-card);
+    position: relative;
+    top: 2px;
+}
+
+.check-item:hover .check-box-custom {
+    border-color: var(--accent);
+}
+
+.check-item input[type="checkbox"]:checked ~ .check-box-custom {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
+.check-box-custom::after {
+    content: '';
+    width: 5px;
+    height: 10px;
+    border: solid var(--bg-card);
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s ease;
+    position: absolute;
+    top: 2px;
+}
+
+.check-item input[type="checkbox"]:checked ~ .check-box-custom::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.check-text {
+    font-size: 14px;
+    color: var(--text-primary);
+    user-select: none;
+    line-height: 1.5;
+}
+
+.check-text strong {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+}
+
+.check-item input[type="checkbox"]:checked ~ .check-text {
+    opacity: 0.75;
+}
+
+/* Panel consejos tecnológicos */
+.panel-tech-tips {
+    background-color: var(--accent-light);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.tip-title {
+    display: block;
+    font-family: 'Outfit', sans-serif;
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.panel-tech-tips p {
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.panel-tech-tips strong:not(.tip-title) {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+/* Acciones del Planificador */
+.planner-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+}
+
+/* Botones Premium */
+.btn {
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 12px 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    transition: var(--transition);
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: var(--bg-card);
+    box-shadow: var(--shadow-accent);
+}
+
+.btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+}
+
+.btn-secondary:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+body.theme-contrast .btn-primary {
+    background-color: var(--accent);
+    color: var(--bg-primary);
+    border: 2px solid var(--border);
+    box-shadow: none;
+}
+
+body.theme-contrast .btn-primary:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+}
+
+body.theme-contrast .btn-secondary {
+    border: 2px solid var(--border);
+    color: var(--text-primary);
+}
+
+/* ==========================================================================
+   8. COMPONENTE: SELECTORES Y BUSCADOR DE ADECUACIONES
+   ========================================================================== */
+.selector-box {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 24px;
+    border-radius: var(--radius);
+    margin-bottom: 28px;
+    transition: var(--transition);
+}
+
+.select-control {
+    width: 100%;
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-card);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    outline: none;
+    transition: var(--transition);
+}
+
+.select-control:focus {
+    border-color: var(--accent);
+}
+
+/* Marcadores dinámicos */
+.results-box {
+    animation: fadeIn var(--transition);
+}
+
+.results-title-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--border-light);
+    padding-bottom: 16px;
+    margin-bottom: 28px;
+}
+
+.results-title-header h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.badge-source {
+    font-size: 11px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+/* Grilla de Adecuaciones */
+.grid-accommodations {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.acc-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    transition: var(--transition);
+}
+
+.acc-card:hover {
+    border-color: var(--accent);
+}
+
+.acc-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+}
+
+.acc-card-icon {
+    font-size: 20px;
+}
+
+.acc-card h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.acc-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.acc-list li {
+    font-size: 13.5px;
+    line-height: 1.5;
+    position: relative;
+    padding-left: 16px;
+    color: var(--text-primary);
+}
+
+.acc-list li::before {
+    content: '▪';
+    color: var(--accent);
+    font-size: 14px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+}
+
+/* Placeholders y Ocultación */
+.hidden {
+    display: none !important;
+}
+
+.placeholder-box {
+    text-align: center;
+    background-color: var(--bg-primary);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 48px 24px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+/* ==========================================================================
+   9. COMPONENTE: VOCABULARIO INCLUSIVO Y TABLAS
+   ========================================================================== */
+.search-box {
+    position: relative;
+    margin-bottom: 28px;
+}
+
+.search-control {
+    width: 100%;
+    padding: 16px 20px 16px 52px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: var(--transition);
+}
+
+.search-control:focus {
+    border-color: var(--accent);
+    background-color: var(--bg-card);
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 18px;
+}
+
+/* Tablas Premium */
+.vocab-table-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 36px;
+    transition: var(--transition);
+}
+
+.vocab-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: var(--bg-card);
+    transition: background-color var(--transition);
+}
+
+.vocab-table th, .vocab-table td {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 14px;
+}
+
+.vocab-table th {
+    background-color: var(--bg-primary);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border);
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.vocab-table tr:last-child td {
+    border-bottom: none;
+}
+
+.vocab-table tr {
+    transition: background-color var(--transition);
+}
+
+.vocab-table tr:hover td {
+    background-color: var(--bg-primary);
+}
+
+.term-bad {
+    color: var(--red-alert);
+    font-weight: 600;
+}
+
+body.theme-contrast .term-bad {
+    color: var(--text-primary);
+    text-decoration: line-through;
+}
+
+.term-good {
+    color: var(--accent);
+    font-weight: 600;
+}
+
+body.theme-contrast .term-good {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+/* Glosario */
+.glossary-box {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border);
+    padding: 32px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.glossary-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.glossary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.glossary-item {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 20px;
+    border-radius: var(--radius);
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.glossary-item:hover {
+    border-color: var(--accent);
+}
+
+.glossary-item h4 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+    transition: var(--transition);
+}
+
+body.theme-contrast .glossary-item h4 {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.glossary-item p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ==========================================================================
+   10. PIE DE PÁGINA Y DOCUMENTACIÓN COLLAPSIBLE
+   ========================================================================== */
+.footer {
+    background-color: var(--bg-card);
+    border-top: 1px solid var(--border);
+    padding: 48px 24px 32px;
+    transition: background-color var(--transition), border-color var(--transition);
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* Acordeón Collapsible para Referencias */
+.ref-collapsible {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--bg-primary);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.ref-summary {
+    padding: 18px 24px;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none; /* Quita flecha nativa */
+}
+
+.ref-summary::-webkit-details-marker {
+    display: none; /* Quita flecha nativa en Chrome/Safari */
+}
+
+.summary-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.summary-chevron {
+    font-size: 12px;
+    color: var(--text-secondary);
+    transition: transform var(--transition);
+}
+
+.ref-collapsible[open] .summary-chevron {
+    transform: rotate(180deg);
+}
+
+.ref-content {
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border-light);
+    animation: slideDown var(--transition);
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ref-intro {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    margin: 18px 0;
+}
+
+.ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.ref-card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.ref-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+}
+
+.ref-icon {
+    background-color: var(--accent-light);
+    color: var(--accent);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: var(--transition);
+}
+
+body.theme-contrast .ref-icon {
+    border: 1px solid var(--border);
+}
+
+.ref-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+}
+
+.ref-card-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ref-card-meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--border-light);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.footer-bottom p {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+}
+
+.footer-disclaimer {
+    max-width: 500px;
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-disclaimer {
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   11. HOJA DE ESTILOS DE IMPRESIÓN (@media print)
+   ========================================================================== */
+@media print {
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 12pt;
+    }
+
+    /* Ocultar elementos innecesarios */
+    .navbar, 
+    .hero-lead, 
+    .model-badge-box,
+    .tabs-nav,
+    .panel-tech-tips,
+    .planner-actions,
+    #accommodations-section,
+    #vocabulary-section,
+    .ref-collapsible,
+    .footer-bottom {
+        display: none !important;
+    }
+
+    /* Ajustar contenedores principales */
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .section-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+    }
+
+    .section-header {
+        margin-bottom: 20px !important;
+        border-bottom: 2px solid #000000;
+        padding-bottom: 10px;
+    }
+
+    .section-title {
+        font-size: 24pt !important;
+    }
+
+    .progress-container {
+        border: 1px solid #000000 !important;
+        padding: 10px !important;
+        margin-bottom: 20px !important;
+    }
+
+    /* Mostrar TODOS los paneles de checklist al imprimir */
+    .tab-panel {
+        display: block !important;
+        page-break-inside: avoid;
+        margin-bottom: 30px !important;
+    }
+
+    .panel-intro {
+        border-left: 3px solid #000000 !important;
+        background-color: #f9f9f9 !important;
+        padding: 10px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .panel-intro h3 {
+        font-size: 14pt !important;
+        font-weight: 700 !important;
+    }
+
+    .badge-stage {
+        border: 1px solid #000000 !important;
+        background: transparent !important;
+        color: #000000 !important;
+        font-size: 8pt !important;
+    }
+
+    /* Dar formato formal a los elementos marcados vs no marcados */
+    .check-item {
+        border: 1px solid #dddddd !important;
+        padding: 10px !important;
+        background: #ffffff !important;
+        page-break-inside: avoid;
+    }
+
+    /* Casilla manual para rellenar */
+    .check-box-custom {
+        border: 2px solid #000000 !important;
+        background-color: #ffffff !important;
+    }
+
+    /* Para los elementos marcados en pantalla, dibujamos una cruz o check impreso */
+    input[type="checkbox"]:checked ~ .check-box-custom::after {
+        border-color: #000000 !important;
+    }
+
+    .check-text {
+        font-size: 11pt !important;
+        color: #000000 !important;
+    }
+}
