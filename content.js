@@ -47,7 +47,7 @@ function renderReferences() {
     container.innerHTML = referencesData.map(item => `
         <li>
             <strong>${item.code}</strong>
-            ${item.file ? `<a href="${encodeURI(item.file)}" target="_blank" rel="noopener">${item.title}</a>` : `<span>${item.title}</span>`}
+            <span>${item.title}</span>
         </li>
     `).join('');
 }
