@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula Clara - Planificador inclusivo para docentes y asesores</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="theme-light">
+    <nav class="navbar" aria-label="Navegación principal">
+        <div class="nav-container">
+            <a class="nav-brand" href="#inicio" aria-label="Ir al inicio">
+                <span class="brand-mark brand-mark-personal" aria-hidden="true">
+                    <span class="brand-u">A</span><span class="brand-e">C</span>
+                </span>
+                <span class="brand-text">
+                    <span class="brand-title">Aula Clara</span>
+                    <span class="brand-sub">Planificador inclusivo</span>
+                </span>
+            </a>
+
+            <div class="nav-actions">
+                <div class="nav-links" aria-label="Secciones de la herramienta">
+                    <a href="#informe">Informe</a>
+                    <a href="#planificar">DUA</a>
+                    <a href="#apoyos">Apoyos</a>
+                    <a href="#accesible">Accesibilidad</a>
+                    <a href="#criterios">Criterios</a>
+                </div>
+
+                <button class="btn-theme active" id="theme-toggle" type="button" aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                    <span class="theme-icon theme-icon-light" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                    </span>
+                    <span class="theme-icon theme-icon-dark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </span>
+                    <span id="theme-toggle-label">Modo oscuro</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero" id="portada">
+        <div class="hero-container">
+            <p class="eyebrow">Proyecto personal para docentes, asesores y equipos de apoyo</p>
+            <h1>Aula Clara</h1>
+            <p class="hero-lead">Planifica clases inclusivas, detecta barreras y genera informes de apoyo docente con una metodología práctica basada en DUA, accesibilidad digital, ajustes razonables y convivencia respetuosa.</p>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="section-card overview-section" id="inicio" aria-labelledby="overview-title">
+            <div class="section-header">
+                <span class="section-kicker">Inicio</span>
+                <h2 id="overview-title">Una ruta simple para tomar mejores decisiones</h2>
+                <p>La inclusión no consiste en bajar exigencias, sino en diseñar entornos donde más estudiantes puedan acceder, participar y demostrar lo aprendido.</p>
+            </div>
+            <div class="principle-grid" id="principle-grid"></div>
+            <div class="decision-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Criterio pedagógico</span>
+                    <h3>Cómo saber si vas bien</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>Objetivo claro</h4>
+                        <p>La exigencia se mantiene y el apoyo no reemplaza el resultado de aprendizaje.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Barrera identificada</h4>
+                        <p>La decisión responde a una barrera concreta: acceso, comprensión, participación, expresión o convivencia.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Apoyo pertinente</h4>
+                        <p>La estrategia tiene sentido para ese curso o estudiante, no solo para una etiqueta diagnóstica.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Evidencia para ajustar</h4>
+                        <p>Después de la clase observas si aumentó participación, comprensión, autonomía o calidad de respuesta.</p>
+                    </article>
+                </div>
+            </div>
+            <div class="route-heading">
+                <h3>Ruta recomendada</h3>
+                <p>Empieza por el informe si necesitas dejar acuerdos; usa la biblioteca cuando quieras profundizar una decisión.</p>
+            </div>
+            <div class="route-strip" aria-label="Ruta recomendada de uso">
+                <a href="#informe">1. Crear informe</a>
+                <a href="#planificar">2. Revisar DUA</a>
+                <a href="#apoyos">3. Ajustar apoyos</a>
+                <a href="#accesible">4. Validar accesibilidad</a>
+            </div>
+            <div class="decision-panel scenario-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Uso rápido</span>
+                    <h3>Si estás en esta situación</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>Planificaré una clase</h4>
+                        <p>Comienza por DUA y usa el checklist para anticipar barreras del grupo completo.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Tengo estudiantes con apoyos acordados</h4>
+                        <p>Revisa buenas prácticas generales y luego selecciona las condiciones o necesidades que correspondan.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Subiré material al AVA</h4>
+                        <p>Ve a Aula accesible antes de publicar documentos, videos o instrucciones.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Estoy orientando a un docente</h4>
+                        <p>Usa Compartir informe para dejar acuerdos claros, recomendaciones trazables y un PDF listo para enviar.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card report-workbench" id="informe" aria-labelledby="report-title">
+            <div class="section-header">
+                <span class="section-kicker accent-dua">Crear informe</span>
+                <h2 id="report-title">Convierte decisiones inclusivas en un PDF claro</h2>
+                <p>El informe es el flujo principal de Aula Clara: reúne contexto, acuerdos, acciones DUA o apoyos específicos para compartirlos con un docente o equipo.</p>
+            </div>
+            <div class="report-choice-grid">
+                <article class="report-choice-card">
+                    <span class="number-token">01</span>
+                    <h3>Informe DUA</h3>
+                    <p>Documenta cómo una clase anticipa barreras para todo el grupo: objetivos, opciones de participación, materiales y formas de respuesta.</p>
+                    <ul class="acc-list">
+                        <li>Primero marca acciones en el checklist DUA.</li>
+                        <li>Luego descarga o comparte el resumen formal.</li>
+                    </ul>
+                    <div class="report-choice-actions">
+                        <a class="btn btn-secondary" href="#planificar">Revisar checklist</a>
+                        <button class="btn btn-primary btn-open-report" type="button" data-report-mode="dua">Crear informe DUA</button>
+                    </div>
+                </article>
+                <article class="report-choice-card">
+                    <span class="number-token">02</span>
+                    <h3>Informe de apoyos</h3>
+                    <p>Ordena recomendaciones cuando existan estudiantes con apoyos acordados, agrupando condiciones repetidas sin duplicar información.</p>
+                    <ul class="acc-list">
+                        <li>Registra estudiantes, RUT y condiciones.</li>
+                        <li>El PDF agrupa condiciones repetidas automáticamente.</li>
+                    </ul>
+                    <div class="report-choice-actions">
+                        <a class="btn btn-secondary" href="#apoyos">Revisar apoyos</a>
+                        <button class="btn btn-primary btn-open-report" type="button" data-report-mode="supports">Crear informe de apoyos</button>
+                    </div>
+                </article>
+                <article class="report-choice-card">
+                    <span class="number-token">03</span>
+                    <h3>Informe combinado</h3>
+                    <p>Une acciones DUA y apoyos específicos en un solo documento para asesorías donde se revisa la clase y además existen estudiantes con acuerdos individuales.</p>
+                    <ul class="acc-list">
+                        <li>Marca acciones DUA relevantes.</li>
+                        <li>Registra estudiantes y condiciones de apoyo.</li>
+                    </ul>
+                    <div class="report-choice-actions">
+                        <a class="btn btn-secondary" href="#planificar">Completar DUA</a>
+                        <button class="btn btn-primary btn-open-report" type="button" data-report-mode="combined">Crear informe combinado</button>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-card planner-section" id="planificar" aria-labelledby="planner-title">
+            <div class="section-header">
+                <span class="section-kicker accent-dua">Planificar con DUA</span>
+                <h2 id="planner-title">Checklist de planificación inclusiva</h2>
+                <p>Recorre cuatro etapas de planificación inclusiva. Marca las acciones que ya incorporaste y usa las tarjetas como orientación breve para convertir decisiones pedagógicas en evidencias compartibles.</p>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span class="progress-label">Cobertura del checklist DUA</span>
+                    <span class="progress-val" id="progress-text">0% cubierto</span>
+                </div>
+                <div class="progress-bar-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-aria">
+                    <div class="progress-bar-fill" id="progress-bar"></div>
+                </div>
+                <p class="progress-helper" id="progress-helper">Revisión inicial: usa el porcentaje como guía de reflexión, no como nota de calidad.</p>
+                <p class="progress-helper">Antes de compartir el informe, revisa si las acciones marcadas responden a barreras reales del curso y si mantienen el objetivo de aprendizaje.</p>
+            </div>
+
+            <div class="tabs-nav" id="dua-tabs" role="tablist" aria-label="Etapas de implementación DUA"></div>
+            <div class="tab-content-container" id="dua-panels"></div>
+
+            <div class="resource-band" id="resource-band"></div>
+
+            <div class="planner-actions">
+                <button class="btn btn-secondary" id="btn-reset-checklist" type="button">Limpiar checklist</button>
+                <button class="btn btn-secondary btn-open-report" type="button" data-report-mode="dua">Compartir informe</button>
+            </div>
+        </section>
+
+        <section class="section-card" id="apoyos" aria-labelledby="supports-title">
+            <div class="section-header">
+                <span class="section-kicker accent-support">Apoyos por necesidad</span>
+                <h2 id="supports-title">Adecuaciones de acceso y apoyos específicos</h2>
+                <p>Busca orientaciones por tipo de necesidad. Úsalas cuando el DUA general no elimina por completo una barrera o cuando requieres medidas más personalizadas. Las recomendaciones deben ajustarse a barreras reales y preferencias del estudiante, no solo al diagnóstico.</p>
+            </div>
+
+            <div class="good-practices" id="good-practices"></div>
+
+            <div class="selector-box">
+                <label for="support-select">Selecciona una necesidad educativa o discapacidad</label>
+                <select id="support-select" class="select-control"></select>
+            </div>
+
+            <div class="decision-panel escalation-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Criterio de derivación</span>
+                    <h3>Cuándo pedir apoyo especializado</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>La barrera persiste</h4>
+                        <p>Ya aplicaste ajustes generales y aun así el estudiante no logra acceder, participar o demostrar aprendizaje.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Hay riesgo o crisis</h4>
+                        <p>Existe desregulación intensa, afectación de bienestar, seguridad o necesidad de coordinación especializada.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Se requiere acuerdo formal</h4>
+                        <p>La medida implica tiempos, formatos, apoyos o seguimiento que deben quedar coordinados con el equipo de apoyo correspondiente.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>No hay certeza</h4>
+                        <p>Si la estrategia puede bajar exigencia, vulnerar privacidad o generar trato desigual, conviene consultar antes de implementarla.</p>
+                    </article>
+                </div>
+            </div>
+
+            <div class="support-layout">
+                <div id="support-results" class="results-box hidden"></div>
+            </div>
+            <div class="section-footer-action">
+                <button class="btn btn-primary btn-open-report" type="button" data-report-mode="supports">Compartir informe</button>
+            </div>
+        </section>
+
+        <section class="section-card" id="accesible" aria-labelledby="access-title">
+            <div class="section-header">
+                <span class="section-kicker accent-access">Aula accesible</span>
+                <h2 id="access-title">Materiales digitales listos para todos</h2>
+                <p>Revisa documentos, recursos audiovisuales y publicaciones en AVA antes de compartirlos. La accesibilidad digital se diseña desde el inicio.</p>
+            </div>
+
+            <div class="tabs-nav" id="access-tabs" role="tablist" aria-label="Revisión de accesibilidad digital"></div>
+            <div class="tab-content-container" id="access-panels"></div>
+        </section>
+
+        <section class="section-card" id="lenguaje" aria-labelledby="language-title">
+            <div class="section-header">
+                <span class="section-kicker accent-language">Lenguaje y convivencia</span>
+                <h2 id="language-title">Vocabulario inclusivo y trato respetuoso</h2>
+                <p>Las palabras pueden reforzar barreras o abrir participación. Consulta términos a evitar, alternativas recomendadas y conceptos clave.</p>
+            </div>
+
+            <div class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <label class="sr-only" for="vocab-search">Buscar en vocabulario inclusivo</label>
+                <input type="text" id="vocab-search" class="search-control" placeholder="Busca un término: minusválido, autismo, lengua de señas, desregulación...">
+            </div>
+
+            <div class="vocab-table-container">
+                <table class="vocab-table">
+                    <thead>
+                        <tr>
+                            <th>Evita decir</th>
+                            <th>Prefiere decir</th>
+                            <th>Por qué importa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="vocab-table-body"></tbody>
+                </table>
+            </div>
+            <div class="glossary-box">
+                <h3>Glosario breve</h3>
+                <div class="glossary-grid" id="glossary-container"></div>
+            </div>
+        </section>
+
+        <section class="section-card criteria-section" id="criterios" aria-labelledby="criteria-title">
+            <div class="section-header">
+                <span class="section-kicker accent-access">Criterios y fuentes</span>
+                <h2 id="criteria-title">Marco de uso responsable</h2>
+                <p>Estos criterios dan contexto al informe: orientan la revisión profesional, el marco chileno y las fuentes públicas que sostienen la metodología.</p>
+            </div>
+            <div class="decision-panel national-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Chile</span>
+                    <h3>Marco nacional que conviene considerar</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>Ley 20.422</h4>
+                        <p>Base legal chilena sobre igualdad de oportunidades, inclusión social, accesibilidad y no discriminación por discapacidad.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Ley 21.545</h4>
+                        <p>Marco específico sobre inclusión, atención integral y derechos de personas autistas en ámbitos sociales, de salud y educación.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>MINEDUC</h4>
+                        <p>Orientaciones de educación inclusiva, diversificación de la enseñanza y construcción de comunidades educativas sin barreras.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>SENADIS</h4>
+                        <p>Documentos, herramientas y criterios técnicos sobre discapacidad, accesibilidad e inclusión educativa en Chile.</p>
+                    </article>
+                </div>
+            </div>
+            <div class="decision-panel responsibility-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Uso responsable</span>
+                    <h3>Qué promete Aula Clara y qué no</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>Sí ayuda a decidir</h4>
+                        <p>Ordena barreras, apoyos, criterios DUA y acuerdos para que la conversación pedagógica sea más clara.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Sí deja evidencia</h4>
+                        <p>Genera informes breves para documentar recomendaciones, responsables y próximos ajustes.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>No diagnostica</h4>
+                        <p>No reemplaza evaluación clínica, psicoeducativa, jurídica ni el criterio de equipos profesionales.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>No automatiza derechos</h4>
+                        <p>Cuando una medida sea formal, sensible o compleja, debe validarse con la institución y la normativa aplicable.</p>
+                    </article>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="print-sheet" id="recommendations-print" aria-label="Resumen imprimible de recomendaciones"></section>
+    </main>
+
+    <dialog class="report-dialog" id="report-dialog" aria-labelledby="cart-title">
+        <form method="dialog" class="report-modal">
+            <div class="report-header">
+                <div class="resource-heading">
+                    <span class="source-pill">Recomendaciones acordadas</span>
+                    <h3 id="cart-title">Compartir informe</h3>
+                    <p id="report-intro">Prepara un informe formal para descargar como PDF y compartir por correo.</p>
+                </div>
+                <button class="dialog-close" type="submit" aria-label="Cerrar informe">×</button>
+            </div>
+            <div class="report-body">
+                <div class="cart-fields">
+                    <label for="advisor-name">Asesor/a o responsable</label>
+                    <input id="advisor-name" class="text-control" type="text" placeholder="Nombre del asesor/a">
+                    <label for="teacher-email">Correo docente</label>
+                    <input id="teacher-email" class="text-control" type="email" placeholder="docente@institucion.cl">
+                    <label for="case-context">Contexto breve</label>
+                    <textarea id="case-context" class="text-control" rows="4" placeholder="Curso, estudiantes, acuerdos o foco de apoyo..."></textarea>
+                </div>
+                <div class="support-students-panel" id="support-students-panel">
+                    <label for="support-student-count">Cantidad de estudiantes con apoyos acordados</label>
+                    <input id="support-student-count" class="text-control" type="number" min="1" max="8" value="1">
+                    <div id="support-students" class="support-students"></div>
+                </div>
+                <div id="cart-items" class="cart-items"></div>
+            </div>
+            <div class="cart-actions">
+                <button class="btn btn-primary" id="btn-email-recommendations" type="button">Abrir correo</button>
+                <button class="btn btn-secondary" id="btn-print-recommendations" type="button">Descargar PDF</button>
+                <button class="btn btn-secondary" id="btn-clear-recommendations" type="button">Limpiar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <details class="ref-collapsible">
+                <summary class="ref-summary">
+                    <span>Fuentes base y referencias recomendadas</span>
+                    <span class="summary-chevron" aria-hidden="true">▼</span>
+                </summary>
+                <div class="ref-grid" id="references-grid"></div>
+            </details>
+            <div class="footer-bottom">
+                <p>Aula Clara es un prototipo personal para planificación inclusiva.</p>
+                <p class="footer-disclaimer">El contenido debe consolidarse con fuentes públicas, criterios profesionales y revisión experta antes de uso comercial.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="data.js?v=split4"></script>
+    <script src="tabs.js?v=split4"></script>
+    <script src="theme.js?v=split4"></script>
+    <script src="content.js?v=split4"></script>
+    <script src="dua.js?v=split4"></script>
+    <script src="supports.js?v=split4"></script>
+    <script src="report.js?v=split4"></script>
+    <script src="navigation.js?v=split4"></script>
+    <script src="app.js?v=split4"></script>
+</body>
+</html>

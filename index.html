@@ -3,33 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inclusión Activa - Planificador de Clases Inclusivas | Duoc UC</title>
-    <!-- Google Fonts -->
+    <title>Planificador Inclusivo UIE - Apoyo docente Duoc UC</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Main Stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body class="theme-light">
-
-    <!-- BARRA DE NAVEGACIÓN Y CONFIGURACIÓN DE ACCESIBILIDAD -->
-    <nav class="navbar" role="navigation" aria-label="Menú principal de accesibilidad">
+    <nav class="navbar" aria-label="Navegación principal">
         <div class="nav-container">
-            <div class="nav-brand">
-                <span class="brand-logo" aria-hidden="true">UIE</span>
-                <div class="brand-text">
-                    <span class="brand-title">Inclusión Activa</span>
-                    <span class="brand-sub">Unidad de Inclusión Educativa - Duoc UC</span>
+            <a class="nav-brand" href="#inicio" aria-label="Ir al inicio">
+                <span class="brand-mark brand-mark-personal" aria-hidden="true">
+                    <span class="brand-u">U</span><span class="brand-i">I</span><span class="brand-e">E</span>
+                </span>
+                <span class="brand-text">
+                    <span class="brand-title">Unidad de</span>
+                    <span class="brand-sub">Inclusión Educativa</span>
+                </span>
+            </a>
+
+            <div class="nav-actions">
+                <div class="nav-links" aria-label="Áreas de apoyo docente">
+                    <a href="#inicio" data-view="inicio">Inicio</a>
+                    <a href="#planificar" data-view="dua">DUA</a>
+                    <a href="#apoyos" data-view="adecuaciones">Adecuaciones curriculares</a>
+                    <a href="#apoyos-adicionales" data-view="adicionales">Apoyos adicionales</a>
                 </div>
-            </div>
-            
-            <!-- CONMUTADOR DE TEMAS -->
-            <div class="theme-switcher">
-                <span class="switcher-label">Contraste y Color:</span>
-                <div class="switcher-buttons" role="radiogroup" aria-label="Seleccionar modo de visualización">
-                    <button class="btn-theme active" id="theme-light" role="radio" aria-checked="true" aria-label="Modo Claro">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+
+                <button class="btn-theme active" id="theme-toggle" type="button" aria-label="Cambiar a modo oscuro" aria-pressed="false">
+                    <span class="theme-icon theme-icon-light" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="5"></circle>
                             <line x1="12" y1="1" x2="12" y2="3"></line>
                             <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -40,482 +43,520 @@
                             <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
                             <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                         </svg>
-                        <span>Claro</span>
-                    </button>
-                    <button class="btn-theme" id="theme-dark" role="radio" aria-checked="false" aria-label="Modo Oscuro">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    </span>
+                    <span class="theme-icon theme-icon-dark" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
                         </svg>
-                        <span>Oscuro</span>
-                    </button>
-                    <button class="btn-theme" id="theme-contrast" role="radio" aria-checked="false" aria-label="Modo Alto Contraste">
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <path d="M12 2a10 10 0 0 0 0 20v-20z" fill="currentColor"></path>
-                        </svg>
-                        <span>Alto Contraste</span>
-                    </button>
-                </div>
+                    </span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- INTRODUCCIÓN Y CONTEXTO -->
-    <header class="hero" role="banner">
+    <header class="hero" id="portada">
         <div class="hero-container">
-            <h1 class="hero-title">Planificador de Clases Inclusivas</h1>
-            <p class="hero-lead">Un espacio interactivo diseñado para que el profesorado de <strong>Duoc UC</strong> estructure experiencias de aprendizaje accesibles, dinámicas y libres de barreras, alineadas con las Directrices DUA 3.0 y el Marco Normativo Nacional.</p>
-            
-            <div class="model-badge-box">
-                <div class="badge-item">
-                    <span class="badge-icon" aria-hidden="true">✔</span>
-                    <div>
-                        <strong>Modelo Social</strong>
-                        <span>La discapacidad se define por las barreras del entorno, no por las limitaciones individuales.</span>
-                    </div>
-                </div>
-                <div class="badge-item">
-                    <span class="badge-icon" aria-hidden="true">★</span>
-                    <div>
-                        <strong>Marco DUA 3.0</strong>
-                        <span>Diseño centrado en la variabilidad del estudiante, promoviendo su plena autogestión.</span>
-                    </div>
-                </div>
-            </div>
+            <p class="eyebrow">Herramienta de apoyo docente Duoc UC</p>
+            <h1>Planificador Inclusivo UIE</h1>
+            <p class="hero-lead">Un punto de encuentro para comprender qué se espera del docente al aplicar DUA, definir adecuaciones curriculares de acceso y coordinar apoyos para estudiantes con discapacidad o necesidades específicas.</p>
         </div>
     </header>
 
-    <main class="main-content" role="main">
-
-        <!-- SECCIÓN 1: PLANIFICADOR DUA (CHECKLIST INTERACTIVA) -->
-        <section class="section-card" id="planner-section" aria-labelledby="planner-title">
+    <main class="main-content">
+        <section class="section-card overview-section" id="inicio" aria-labelledby="overview-title" data-view="inicio">
             <div class="section-header">
-                <span class="section-number" aria-hidden="true">01</span>
-                <h2 id="planner-title" class="section-title">Chequeo DUA de Planificación de Clases</h2>
+                <span class="section-kicker">Inicio</span>
+                <h2 id="overview-title">Diseña apoyos claros para una clase inclusiva</h2>
+                <p>Esta herramienta ayuda a diseñar clases inclusivas desde DUA, definir adecuaciones curriculares cuando corresponda y consultar apoyos complementarios para situaciones específicas.</p>
             </div>
-            <p class="section-desc">Selecciona las etapas de tu clase y marca las acciones que estás incorporando. La barra te mostrará tu avance en la creación de un entorno inclusivo.</p>
-            
-            <!-- Barra de Progreso Reactiva -->
+            <div class="start-flow" aria-label="Flujo principal de uso">
+                <article class="start-step">
+                    <span>1</span>
+                    <h3>Diseña con DUA</h3>
+                    <p>Selecciona decisiones para anticipar barreras, diversificar participación y sostener el objetivo de aprendizaje.</p>
+                </article>
+                <article class="start-step">
+                    <span>2</span>
+                    <h3>Define adecuaciones</h3>
+                    <p>Si corresponde, registra estudiantes de forma anónima y suma adecuaciones según sus condiciones o necesidades.</p>
+                </article>
+                <article class="start-step">
+                    <span>3</span>
+                    <h3>Consulta apoyos adicionales</h3>
+                    <p>Revisa accesibilidad digital, crisis, trayectoria práctica o vocabulario cuando la situación lo requiera.</p>
+                </article>
+            </div>
+            <div class="overview-action">
+                <a class="btn btn-primary" href="#planificar">Comenzar con DUA</a>
+            </div>
+            <div class="decision-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Criterios de buen uso</span>
+                    <h3>Criterios para un buen apoyo</h3>
+                </div>
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>Objetivo claro</h4>
+                        <p>La exigencia se mantiene y el apoyo no reemplaza el resultado de aprendizaje.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Barrera identificada</h4>
+                        <p>La decisión responde a una barrera concreta: acceso, comprensión, participación, expresión o convivencia.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Apoyo pertinente</h4>
+                        <p>La estrategia tiene sentido para ese curso o estudiante, no solo para una etiqueta diagnóstica.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Evidencia para ajustar</h4>
+                        <p>Después de la clase observas si aumentó participación, comprensión, autonomía o calidad de respuesta.</p>
+                    </article>
+                </div>
+            </div>
+            <div class="decision-panel reference-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Marco de referencia</span>
+                    <h3>Respaldo y alcance</h3>
+                </div>
+                <p class="small-note">Considera Ley 20.422, Ley 21.545, Ley 21.015 y Ley 21.690 como marco general. Esta herramienta orienta decisiones docentes; no diagnostica, no reemplaza protocolos ni automatiza medidas formales.</p>
+            </div>
+        </section>
+
+        <section class="section-card planner-section" id="planificar" aria-labelledby="planner-title" data-view="dua">
+            <div class="section-header">
+                <span class="section-kicker accent-dua">Base DUA</span>
+                <h2 id="planner-title">Plan de apoyo para la clase</h2>
+                <p>Selecciona las decisiones DUA que usarás como base común. No es una evaluación ni una lista que deba completarse al 100%: elige solo lo pertinente para reducir barreras manteniendo el resultado de aprendizaje.</p>
+            </div>
+
             <div class="progress-container">
                 <div class="progress-header">
-                    <span class="progress-label">Progreso de Clase Inclusiva:</span>
-                    <span class="progress-val" id="progress-text">0% completado</span>
+                    <span class="progress-label">Herramientas base seleccionadas</span>
+                    <span class="progress-val" id="progress-text">0 decisiones seleccionadas</span>
                 </div>
-                <div class="progress-bar-bg" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar-aria">
-                    <div class="progress-bar-fill" id="progress-bar" style="width: 0%;"></div>
-                </div>
+                <p class="progress-helper" id="progress-helper">Elige solo lo que tenga sentido para el objetivo, el curso y las barreras reales que anticipas.</p>
+                <p class="progress-helper">Estas decisiones serán la base del plan. Las adecuaciones específicas se agregan después, si hay estudiantes que lo requieren.</p>
             </div>
 
-            <!-- Navegación por Etapas (Pestañas) -->
-            <div class="tabs-nav" role="tablist" aria-label="Etapas de planificación DUA">
-                <button class="tab-link active" role="tab" aria-selected="true" aria-controls="panel-explore" id="tab-explore">
-                    <span class="tab-num">1</span> Exploración
-                </button>
-                <button class="tab-link" role="tab" aria-selected="false" aria-controls="panel-prepare" id="tab-prepare">
-                    <span class="tab-num">2</span> Preparación
-                </button>
-                <button class="tab-link" role="tab" aria-selected="false" aria-controls="panel-integrate" id="tab-integrate">
-                    <span class="tab-num">3</span> Integración
-                </button>
-                <button class="tab-link" role="tab" aria-selected="false" aria-controls="panel-optimize" id="tab-optimize">
-                    <span class="tab-num">4</span> Optimización
-                </button>
-            </div>
+            <div class="tabs-nav" id="dua-tabs" role="tablist" aria-label="Etapas de implementación DUA"></div>
+            <div class="tab-content-container" id="dua-panels"></div>
 
-            <!-- Contenidos de los Paneles -->
-            <div class="tab-content-container">
-                
-                <!-- Panel 1: Exploración -->
-                <div class="tab-panel active" id="panel-explore" role="tabpanel" aria-labelledby="tab-explore">
-                    <div class="panel-intro">
-                        <h3>Fase de Exploración <span class="badge-stage">Antes del Semestre / Clases</span></h3>
-                        <p>Foco en conocer el perfil del aula, identificar barreras existentes y anticipar las necesidades de variabilidad.</p>
-                    </div>
-                    
-                    <div class="checklist-items">
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Revisión de estudiantes PAEDIS:</strong> Consultar la información institucional de apoyo para identificar si en el aula hay estudiantes adscritos al programa de inclusión que cuenten con adecuaciones formales preestablecidas.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Diagnóstico inicial de variabilidad:</strong> Realizar una breve actividad de consulta, encuesta o diálogo grupal inicial para levantar información sobre preferencias, intereses y estilos de aprendizaje de mis estudiantes.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Detección de barreras físicas y sensoriales:</strong> Evaluar si el aula física tiene limitaciones (rampas, enchufes para PC, iluminación parpadeante) o si el Ambiente Virtual de Aprendizaje (AVA) es legible para todos.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Observación de dinámicas sociales:</strong> Identificar el nivel de cohesión del grupo, la predisposición a la participación oral en público y la forma en que los alumnos interactúan y cooperan espontáneamente.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Identificación de estresores del aula:</strong> Anticipar fuentes de ruido excesivo o distractores visuales que puedan perturbar a alumnos con hipersensibilidad sensorial (por ejemplo, autismo).</span>
-                        </label>
-                    </div>
-                    
-                    <div class="panel-tech-tips">
-                        <strong class="tip-title">💡 Herramientas Recomendadas para esta fase:</strong>
-                        <p>Usa encuestas breves y anónimas mediante <strong>Mentimeter</strong> o foros de discusión guiados en <strong>Blackboard AVA</strong> para conocer los intereses y motivaciones del estudiantado de forma no invasiva.</p>
-                    </div>
-                </div>
-
-                <!-- Panel 2: Preparación -->
-                <div class="tab-panel" id="panel-prepare" role="tabpanel" aria-labelledby="tab-prepare" hidden>
-                    <div class="panel-intro">
-                        <h3>Fase de Preparación <span class="badge-stage">Diseño de la Sesión</span></h3>
-                        <p>Foco en diversificar el material didáctico, formular directrices explícitas y estructurar secuencias organizadas.</p>
-                    </div>
-                    
-                    <div class="checklist-items">
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Definición explícita de objetivos:</strong> Formular los objetivos y metas de aprendizaje de forma clara, presentándolos en múltiples formatos (AVA, pizarra, esquemas gráficos) al inicio de la sesión.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Creación de recursos en formatos editables:</strong> Diseñar apuntes y presentaciones en formatos flexibles que el estudiante pueda personalizar (fuentes de letra grande, alto contraste, lectores de pantalla).</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Evaluación de accesibilidad digital:</strong> Utilizar la herramienta **Blackboard Ally** en los materiales que se subirán al AVA para certificar que cumplan con la legibilidad y contengan textos alternativos (alt text).</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Estructuración de tareas paso a paso:</strong> Elaborar una secuencia detallada y lógica de las actividades a realizar en clase (listas de verificación o cartas Gantt) para reducir la carga de la función ejecutiva.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Diversificación de metodologías de trabajo:</strong> Planificar la clase permitiendo rutas opcionales: trabajo individual, parejas o grupos pequeños, de modo que cada estudiante escoja según sus preferencias y perfil.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Preparación de material de apoyo visual:</strong> Elaborar organizadores gráficos, glosarios de términos disciplinares y apoyos de traducción para conceptos de difícil interpretación.</span>
-                        </label>
-                    </div>
-                    
-                    <div class="panel-tech-tips">
-                        <strong class="tip-title">💡 Herramientas Recomendadas para esta fase:</strong>
-                        <p>Diseña tus diapositivas en <strong>Canva</strong> o <strong>Genially</strong> cuidando los contrastes de color, y genera plantillas en <strong>Excel</strong> o listas de tareas que actúen como andamiaje organizativo.</p>
-                    </div>
-                </div>
-
-                <!-- Panel 3: Integración -->
-                <div class="tab-panel" id="panel-integrate" role="tabpanel" aria-labelledby="tab-integrate" hidden>
-                    <div class="panel-intro">
-                        <h3>Fase de Integración <span class="badge-stage">Ejecución en el Aula</span></h3>
-                        <p>Foco en impartir la clase bajo entornos dinámicos, inclusivos y con múltiples medios de representación y respuesta.</p>
-                    </div>
-                    
-                    <div class="checklist-items">
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Inicio estructurado y contextualizado:</strong> Presentar el plan de la clase y el cronograma de forma verbal y escrita, y recuperar conocimientos previos activando la memoria a largo plazo.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Instrucciones orales y escritas:</strong> Al indicar una tarea o evaluación, entregar la directriz de forma verbal y a la vez anotada (en pizarra, AVA o documento impreso), evitando malentendidos.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Uso de lenguaje claro y directo:</strong> Evitar la ironía, el sarcasmo, analogías complejas o dobles sentidos sin explicarlos de manera posterior, cuidando la accesibilidad cognitiva de estudiantes CEA.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Uso de múltiples formatos representativos:</strong> Integrar gráficos, videos con subtítulos y transcripciones, simuladores o elementos físicos para ilustrar la información clave.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Gestión de la participación e interacción física:</strong> Permitir que los alumnos escojan su formato de respuesta (escritura en PC, expresión oral o apuntes a mano) y respetar su necesidad de moverse o usar audífonos.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Monitoreo y mediación en grupos:</strong> Supervisar la interacción entre pares, asignando roles definidos a cada integrante del grupo y vigilando que no existan dinámicas excluyentes.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Retroalimentación oportuna en el proceso:</strong> Ofrecer comentarios frecuentes y orientados a la acción que destaquen el esfuerzo y la mejora progresiva, no solo el resultado final.</span>
-                        </label>
-                    </div>
-                    
-                    <div class="panel-tech-tips">
-                        <strong class="tip-title">💡 Herramientas Recomendadas para esta fase:</strong>
-                        <p>Usa cuestionarios interactivos sincrónicos/asincrónicos como **Quizizz** o **Kahoot!** para motivar, simula procesos complejos con **PhET Online**, o permite respuestas visuales mediante un muro colaborativo en **Padlet**.</p>
-                    </div>
-                </div>
-
-                <!-- Panel 4: Optimización -->
-                <div class="tab-panel" id="panel-optimize" role="tabpanel" aria-labelledby="tab-optimize" hidden>
-                    <div class="panel-intro">
-                        <h3>Fase de Optimización <span class="badge-stage">Post-Clase y Evaluación</span></h3>
-                        <p>Foco en reflexionar sobre las prácticas aplicadas, analizar los recursos de inclusión y retroalimentar de cara a la mejora continua.</p>
-                    </div>
-                    
-                    <div class="checklist-items">
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Cierre reflexivo con los estudiantes:</strong> Implementar una actividad final breve donde el alumnado formalice lo aprendido, exprese sus dudas y autoevalúe su propio progreso.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Análisis del comportamiento del AVA:</strong> Revisar cómo interactuaron los estudiantes con los materiales digitales, si accedieron de forma fluida y si se requiere optimizar la estructura.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Evaluación de las herramientas y didáctica:</strong> Reflexionar sobre si el uso de la tecnología (e.g. apps, encuestas) redujo las barreras o generó algún distractor que deba corregirse.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Identificación de aciertos y mejoras:</strong> Registrar las estrategias que resultaron más exitosas con los estudiantes NEE para fortalecerlas, y detectar momentos de desconexión.</span>
-                        </label>
-                        <label class="check-item">
-                            <input type="checkbox" class="DUA-checkbox" data-weight="1">
-                            <span class="check-box-custom"></span>
-                            <span class="check-text"><strong>Coordinación con el equipo de soporte (UIE):</strong> Si persistieron barreras a pesar de los ajustes DUA, levantar el caso de manera privada con los asesores de inclusión de la sede.</span>
-                        </label>
-                    </div>
-                    
-                    <div class="panel-tech-tips">
-                        <strong class="tip-title">💡 Herramientas Recomendadas para esta fase:</strong>
-                        <p>Realiza análisis de accesibilidad automáticos y visuales de tus tareas en Blackboard con **Ally**, o graba cápsulas aclaratorias cortas de retroalimentación asíncrona mediante **Kaltura**.</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Botones de Acción de la Checklist -->
             <div class="planner-actions">
-                <button class="btn btn-secondary" id="btn-reset-checklist">Limpiar Selección</button>
-                <button class="btn btn-primary" id="btn-print-plan">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="margin-right: 8px;">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                    Imprimir / Guardar Planificación (PDF)
-                </button>
+                <button class="btn btn-secondary" id="btn-reset-checklist" type="button">Limpiar checklist</button>
             </div>
         </section>
 
-        <!-- SECCIÓN 2: BUSCADOR DE ADECUACIONES DE ACCESO -->
-        <section class="section-card" id="accommodations-section" aria-labelledby="accommodations-title">
+        <section class="section-card" id="experiencias" aria-labelledby="experiences-title" data-view="dua">
             <div class="section-header">
-                <span class="section-number" aria-hidden="true">02</span>
-                <h2 id="accommodations-title" class="section-title">Buscador de Adecuaciones de Acceso de Duoc UC</h2>
+                <span class="section-kicker accent-dua">Experiencias DUA</span>
+                <h2 id="experiences-title">Casos reales para inspirar decisiones de aula</h2>
+                <p>Estos ejemplos no son recetas. Funcionan como banco de ideas para adaptar actividades, herramientas y formas de participación según el curso, la asignatura y las barreras detectadas.</p>
             </div>
-            <p class="section-desc">Selecciona la Necesidad Educativa Especial (NEE) o tipo de discapacidad del estudiante para conocer las adaptaciones metodológicas y de acceso recomendadas institucionalmente.</p>
-            
-            <!-- Selector Dinámico -->
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>Construcción</h4>
+                    <p>Proyecto de remodelación con fotografías locales, Remodel AI, foro AVA, seguimiento de proceso y retroalimentación entre pares para aumentar compromiso y transferencia al contexto real.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Salud</h4>
+                    <p>Mentimeter anónimo, apoyo visual, gráficos, diálogo guiado y juego Stop-Bachillerato para favorecer participación total y comprensión de conceptos técnicos.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Ingeniería</h4>
+                    <p>Quizizz, Canva, videos breves, guía en AVA, checklist digital y simulador PhET para alternar explicación, práctica, revisión y reflexión final.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Clave común</h4>
+                    <p>Los casos parten explorando barreras, preparan opciones, observan la implementación y ajustan la clase siguiente. Ese ciclo importa más que la herramienta usada.</p>
+                </article>
+            </div>
+            <div class="context-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Tecnología con propósito</span>
+                    <h3>Herramientas sugeridas por función</h3>
+                </div>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Planificar e idear</h5><p>ChatGPT, Gemini o Perplexity pueden ayudar a generar alternativas de actividad, ejemplos, rúbricas o preguntas, revisando siempre pertinencia y fuente.</p></article>
+                    <article class="mini-card"><h5>Representar información</h5><p>Canva, Prezi, Genially y Fliki apoyan presentaciones, infografías, videos y materiales visuales más flexibles.</p></article>
+                    <article class="mini-card"><h5>Activar participación</h5><p>Mentimeter, Padlet, Kahoot, Quizizz y Puzzel permiten respuestas anónimas, colaboración, juego, práctica sincrónica o asincrónica.</p></article>
+                    <article class="mini-card"><h5>Accesibilidad en AVA</h5><p>Ally y Kaltura ayudan a revisar accesibilidad, ofrecer formatos alternativos, subtítulos y preguntas integradas en videos.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card" id="apoyos" aria-labelledby="supports-title" data-view="adecuaciones">
+            <div class="section-header">
+                <span class="section-kicker accent-support">Adecuaciones de acceso</span>
+                <h2 id="supports-title">Agrega apoyos específicos cuando corresponda</h2>
+                <p>Usa esta parte cuando el diseño DUA general no elimina por completo una barrera. Las recomendaciones deben ajustarse a barreras reales y preferencias del estudiante, no solo al diagnóstico.</p>
+            </div>
+
+            <div class="good-practices" id="good-practices"></div>
+
             <div class="selector-box">
-                <label for="nee-select" class="sr-only">Seleccionar Necesidad Educativa Especial o Discapacidad</label>
-                <select id="nee-select" class="select-control">
-                    <option value="" disabled selected>-- Elige una condición o discapacidad --</option>
-                    <option value="fisica">Discapacidad Física</option>
-                    <option value="auditiva">Discapacidad Sensorial Auditiva</option>
-                    <option value="visual">Discapacidad Sensorial Visual</option>
-                    <option value="sordoceguera">Discapacidad Sensorial Sordoceguera</option>
-                    <option value="tactil">Discapacidad Sensorial Táctil</option>
-                    <option value="vestibular">Discapacidad Sensorial Vestibular</option>
-                    <option value="visceral">Discapacidad Visceral (Orgánica)</option>
-                    <option value="intelectual">Discapacidad Intelectual (Cognitiva)</option>
-                    <option value="psiquica">Discapacidad Psíquica Mental</option>
-                    <option value="neurodesarrollo">Condición del Espectro Autista (TEA / CEA)</option>
-                </select>
+                <label for="support-select">Selecciona una necesidad educativa o discapacidad</label>
+                <select id="support-select" class="select-control"></select>
             </div>
 
-            <!-- Contenedor Dinámico de Resultados de Adecuación -->
-            <div id="accommodations-results" class="results-box hidden">
-                <div class="results-title-header">
-                    <h3 id="selected-nee-name">Nombre de NEE</h3>
-                    <span class="badge-source">Ficha Oficial UIE Duoc UC</span>
+            <div class="support-layout">
+                <div id="support-results" class="results-box hidden"></div>
+            </div>
+
+            <div class="decision-panel escalation-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Criterio de derivación</span>
+                    <h3>Cuándo pedir apoyo especializado</h3>
                 </div>
-                
-                <div class="grid-accommodations">
-                    
-                    <!-- Tarjeta 1: Presentación de la Información -->
-                    <div class="acc-card">
-                        <div class="acc-card-header">
-                            <span class="acc-card-icon">🖥️</span>
-                            <h4>Presentación de la Información</h4>
-                        </div>
-                        <ul id="acc-presentation" class="acc-list">
-                            <li>Cargando...</li>
-                        </ul>
-                    </div>
-
-                    <!-- Tarjeta 2: Formas de Respuesta -->
-                    <div class="acc-card">
-                        <div class="acc-card-header">
-                            <span class="acc-card-icon">✍️</span>
-                            <h4>Formas de Respuesta del Estudiante</h4>
-                        </div>
-                        <ul id="acc-response" class="acc-list">
-                            <li>Cargando...</li>
-                        </ul>
-                    </div>
-
-                    <!-- Tarjeta 3: Entorno -->
-                    <div class="acc-card">
-                        <div class="acc-card-header">
-                            <span class="acc-card-icon">🚪</span>
-                            <h4>Ajustes en el Entorno / Aula</h4>
-                        </div>
-                        <ul id="acc-environment" class="acc-list">
-                            <li>Cargando...</li>
-                        </ul>
-                    </div>
-
-                    <!-- Tarjeta 4: Tiempo -->
-                    <div class="acc-card">
-                        <div class="acc-card-header">
-                            <span class="acc-card-icon">⏱️</span>
-                            <h4>Organización del Tiempo</h4>
-                        </div>
-                        <ul id="acc-time" class="acc-list">
-                            <li>Cargando...</li>
-                        </ul>
-                    </div>
-
+                <div class="decision-grid">
+                    <article class="mini-card">
+                        <h4>La barrera persiste</h4>
+                        <p>Ya aplicaste ajustes generales y aun así el estudiante no logra acceder, participar o demostrar aprendizaje.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Hay riesgo o crisis</h4>
+                        <p>Existe desregulación intensa, afectación de bienestar, seguridad o necesidad de coordinación especializada.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>Se requiere acuerdo formal</h4>
+                        <p>La medida implica tiempos, formatos, apoyos o seguimiento que deben quedar coordinados con el equipo de apoyo correspondiente.</p>
+                    </article>
+                    <article class="mini-card">
+                        <h4>No hay certeza</h4>
+                        <p>Si la estrategia puede bajar exigencia, vulnerar privacidad o generar trato desigual, conviene consultar antes de implementarla.</p>
+                    </article>
                 </div>
             </div>
-            
-            <div id="accommodations-placeholder" class="placeholder-box">
-                <p>Elige una opción en el menú superior para desplegar las sugerencias específicas de accesibilidad.</p>
+            <div class="decision-panel reference-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Materiales y AVA</span>
+                    <h3>Cuando el apoyo depende de un recurso digital</h3>
+                </div>
+                <p class="small-note">Si la adecuación implica documentos, videos, instrucciones en AVA, subtítulos, contraste, fuente o texto alternativo, revisa Accesibilidad digital en Apoyos adicionales antes de compartir el plan.</p>
+            </div>
+
+            <div class="section-footer-action">
+                <button class="btn btn-primary btn-open-report" type="button">Compartir plan de apoyo docente</button>
             </div>
         </section>
 
-        <!-- SECCIÓN 3: VOCABULARIO INCLUSIVO Y GLOSARIO -->
-        <section class="section-card" id="vocabulary-section" aria-labelledby="vocabulary-title">
+        <section class="section-card" id="accesible" aria-labelledby="access-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
             <div class="section-header">
-                <span class="section-number" aria-hidden="true">03</span>
-                <h2 id="vocabulary-title" class="section-title">Vocabulario Inclusivo: "Usted diga / Evite decir"</h2>
+                <span class="section-kicker accent-access">Accesibilidad digital</span>
+                <h2 id="access-title">Revisa barreras digitales antes de compartir</h2>
+                <p>La accesibilidad digital es parte del plan de apoyo: ayuda a que las instrucciones, documentos, videos y recursos del AVA puedan ser usados por más estudiantes desde el inicio.</p>
             </div>
-            <p class="section-desc">El lenguaje moldea nuestra percepción de la realidad. Revisa y actualiza los términos que utilizas al referirte a la discapacidad y la neurodiversidad bajo el enfoque de derechos de Duoc UC.</p>
-            
-            <!-- Barra de búsqueda del Vocabulario -->
-            <div class="search-box">
-                <label for="vocab-search" class="sr-only">Buscar término en vocabulario o glosario</label>
-                <input type="text" id="vocab-search" class="search-control" placeholder="Escribe un concepto para verificar (ej: minusválido, autista, retraso, meltdown)...">
-                <span class="search-icon" aria-hidden="true">🔍</span>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>Material legible</h4>
+                    <p>Prefiere fuentes sans serif como Arial, Calibri, Verdana, Tahoma o Atkinson Hyperlegible. Usa mínimo 11 puntos; en macrotipo, 24 puntos puede ser referencia.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Estructura y lectura</h4>
+                    <p>Usa encabezados reales, listas con viñetas o numeración, alineación izquierda, interlineado amplio y evita justificar textos extensos.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Imágenes y audiovisuales</h4>
+                    <p>Incluye texto alternativo, subtítulos, transcripciones y audiodescripción cuando el contenido visual sea relevante.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>AVA ordenado</h4>
+                    <p>Publica materiales con nombres claros, secuencia lógica e instrucciones visibles. Revisa Ally y corrige barreras antes de compartir.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-card" id="lectura-facil" aria-labelledby="easy-read-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
+            <div class="section-header">
+                <span class="section-kicker accent-access">Lectura fácil</span>
+                <h2 id="easy-read-title">Haz comprensibles instrucciones, guías y evaluaciones</h2>
+                <p>La lectura fácil ayuda cuando un texto puede transformarse en barrera de comprensión. No baja la exigencia académica: aclara el acceso a la información para que el estudiante pueda concentrarse en el aprendizaje esperado.</p>
+            </div>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>Cuándo usarla</h4>
+                    <p>Instrucciones extensas, criterios de evaluación, reglamentos, pasos de taller, guías de trabajo, consentimientos o comunicaciones importantes.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Redacción clara</h4>
+                    <p>Usa frases cortas, una idea por oración, voz activa, palabras frecuentes y explica términos técnicos indispensables.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Diseño que guía</h4>
+                    <p>Ordena con títulos informativos, listas, espacios suficientes, alineación izquierda, buen contraste y apoyos visuales útiles.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Validación</h4>
+                    <p>La norma UNE destaca revisar si el texto se entiende. Cuando sea posible, valida con personas destinatarias o con apoyos especializados.</p>
+                </article>
+            </div>
+            <div class="context-panel">
+                <h4>Checklist rápida antes de publicar</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Propósito visible</h5><p>El estudiante entiende qué debe hacer, para qué sirve y qué producto se espera.</p></article>
+                    <article class="mini-card"><h5>Pasos concretos</h5><p>La tarea está dividida en acciones numeradas y en orden temporal.</p></article>
+                    <article class="mini-card"><h5>Palabras necesarias</h5><p>Evita siglas, abreviaturas y tecnicismos sin explicación. Si son obligatorios, agrega ejemplo.</p></article>
+                    <article class="mini-card"><h5>Revisión real</h5><p>Pide a otra persona leer el texto y decir qué entendió. Ajusta si aparecen dudas.</p></article>
+                </div>
+            </div>
+            <div class="context-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">UNE 153101:2018 EX</span>
+                    <h3>Idea clave de la norma</h3>
+                </div>
+                <p class="small-note">La lectura fácil combina pautas de redacción, diseño y validación de comprensibilidad. En esta herramienta se usa como orientación docente para crear materiales más claros; una certificación formal requeriría un proceso de validación específico.</p>
+            </div>
+        </section>
+
+        <section class="section-card" id="apoyos-adicionales" aria-labelledby="additional-title" data-view="adicionales">
+            <div class="section-header">
+                <span class="section-kicker accent-language">Apoyos adicionales</span>
+                <h2 id="additional-title">Elige un tema de apoyo complementario</h2>
+                <p>Estos temas no forman parte del flujo principal del plan, pero ayudan cuando aparece una necesidad específica: crisis, accesibilidad, lectura fácil, trayectoria laboral o vocabulario inclusivo.</p>
+            </div>
+            <div class="start-flow additional-menu" aria-label="Menú de apoyos adicionales">
+                <a class="start-step" href="#crisis" aria-label="Crisis y bienestar">
+                    <span>1</span>
+                    <h3>Crisis y bienestar</h3>
+                    <p>Orientaciones pedagógicas para prevención, respuesta y coordinación posterior.</p>
+                </a>
+                <a class="start-step" href="#accesible" aria-label="Accesibilidad digital">
+                    <span>2</span>
+                    <h3>Accesibilidad digital</h3>
+                    <p>Revisión de documentos, AVA, videos, fuentes, contraste y formatos accesibles.</p>
+                </a>
+                <a class="start-step" href="#lectura-facil" aria-label="Lectura fácil">
+                    <span>3</span>
+                    <h3>Lectura fácil</h3>
+                    <p>Pautas para instrucciones, guías y evaluaciones más comprensibles.</p>
+                </a>
+                <a class="start-step" href="#laboral" aria-label="Trayectoria y práctica">
+                    <span>4</span>
+                    <h3>Trayectoria y práctica</h3>
+                    <p>Apoyos para práctica profesional, empleabilidad y transición al mundo laboral.</p>
+                </a>
+                <a class="start-step" href="#lenguaje" aria-label="Vocabulario inclusivo">
+                    <span>5</span>
+                    <h3>Vocabulario inclusivo</h3>
+                    <p>Términos recomendados, conceptos clave y trato respetuoso.</p>
+                </a>
+            </div>
+        </section>
+
+        <section class="section-card crisis-section" id="crisis" aria-labelledby="crisis-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
+            <div class="section-header">
+                <span class="section-kicker accent-language">Apoyos adicionales</span>
+                <h2 id="crisis-title">Cómo apoyar a un estudiante que se descompensa</h2>
+                <p>Orientación pedagógica inicial para docentes. En una crisis no buscamos resolver todo: buscamos calma, seguridad, dignidad y conexión con la red de apoyo cuando corresponda.</p>
+            </div>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>1. Proteger y desactivar</h4>
+                    <p>Mantén tono suave, reduce estímulos, evita rodear o confrontar, y prioriza seguridad. Si es posible, ofrece un espacio tranquilo.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>2. Contener y orientar</h4>
+                    <p>Pregunta brevemente qué necesita, valida la emoción y usa frases cortas. Puedes ofrecer respiración, pausa o apoyo sensorial acordado.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>3. Conectar y derivar</h4>
+                    <p>Cuando vuelva la calma, pregunta cómo prefiere continuar. Si fue grave o recurrente, activa la red institucional correspondiente.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Si hay riesgo</h4>
+                    <p>Activa los canales institucionales correspondientes. La prioridad es seguridad, dignidad, contención del entorno y coordinación profesional.</p>
+                </article>
+            </div>
+            <div class="context-panel">
+                <h4>Preguntas guía para el docente</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>¿Qué cambió?</h5><p>Rutina, sala, evaluación, grupo, ruido, instrucciones, presión de tiempo o exposición pública.</p></article>
+                    <article class="mini-card"><h5>¿Qué barrera apareció?</h5><p>Sensorial, comunicacional, social, emocional, digital, actitudinal o de comprensión.</p></article>
+                    <article class="mini-card"><h5>¿Qué ajuste previene?</h5><p>Anticipación, pausa, alternativa de participación, instrucciones escritas, roles claros o apoyo especializado.</p></article>
+                </div>
+            </div>
+            <div class="context-panel">
+                <h4>Botiquín de contención para el aula</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Respiración 4-4-4-4</h5><p>Inhalar, sostener, exhalar y sostener durante cuatro segundos cada paso. Repetir solo si la persona lo acepta.</p></article>
+                    <article class="mini-card"><h5>Zona tranquila</h5><p>Identifica un lugar de menor ruido, luz y tránsito para reducir sobrecarga sin exponer al estudiante.</p></article>
+                    <article class="mini-card"><h5>Tarjeta de salida</h5><p>Permite pedir descanso sin verbalizarlo. Puede ser una señal simple, discreta y acordada previamente.</p></article>
+                    <article class="mini-card"><h5>Apoyos sensoriales</h5><p>Permite audífonos, objetos de autorregulación u otros apoyos si ayudan a recuperar calma y no interrumpen la seguridad.</p></article>
+                </div>
+            </div>
+            <div class="context-panel">
+                <h4>Acuerdos que conviene dejar definidos</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Plan preventivo</h5><p>Identifica desencadenantes frecuentes, apoyos sensoriales permitidos, pausas, persona de contacto y criterios para pedir ayuda.</p></article>
+                    <article class="mini-card"><h5>Registro breve</h5><p>Anota hechos observables, barreras detectadas y ajustes probados. Evita interpretaciones diagnósticas o juicios de intención.</p></article>
+                    <article class="mini-card"><h5>Continuidad académica</h5><p>Define cómo retomar contenidos, evaluaciones o asistencia sin exponer al estudiante ni convertir la crisis en sanción automática.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card labor-section" id="laboral" aria-labelledby="labor-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
+            <div class="section-header">
+                <span class="section-kicker accent-support">Trayectoria y práctica</span>
+                <h2 id="labor-title">Apoyos para práctica, empleabilidad e inclusión laboral</h2>
+                <p>En formación técnico-profesional, la inclusión también debe acompañar la transición desde el aula hacia prácticas, entrevistas, ambientes productivos y empleo.</p>
+            </div>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>Preparar la práctica</h4>
+                    <p>Levanta funciones esenciales, horarios, rutas, riesgos, supervisión, apoyos técnicos y formas de comunicación con la empresa.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Ajustes razonables</h4>
+                    <p>Identifica adaptaciones de acceso, tiempos, herramientas, instrucciones, ambiente o evaluación de desempeño sin bajar estándares profesionales.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Conversación con empresas</h4>
+                    <p>Enfoca la conversación en barreras, apoyos y desempeño esperado. Evita exponer diagnósticos sin consentimiento.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Seguimiento</h4>
+                    <p>Define señales de alerta, responsables, frecuencia de retroalimentación y ajustes si cambian las condiciones del entorno laboral.</p>
+                </article>
+            </div>
+            <div class="context-panel">
+                <h4>Ruta de coordinación para prácticas inclusivas</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>1. Perfil del puesto</h5><p>Separa tareas esenciales de tareas accesorias. Esto permite ajustar barreras sin alterar la competencia profesional esperada.</p></article>
+                    <article class="mini-card"><h5>2. Consentimiento y privacidad</h5><p>Define con el estudiante qué información se compartirá con la empresa, con qué propósito y quién será contraparte.</p></article>
+                    <article class="mini-card"><h5>3. Ajustes y evidencias</h5><p>Registra apoyos acordados, criterios de desempeño, frecuencia de seguimiento y evidencias para retroalimentar la experiencia.</p></article>
+                </div>
+            </div>
+            <div class="context-panel">
+                <h4>De la formación a la práctica</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Antes de iniciar</h5><p>Revisar misión, valores, reglamento interno, funciones, lugar de trabajo, jefatura directa, horarios, vestimenta, EPP y ruta de traslado.</p></article>
+                    <article class="mini-card"><h5>Primer día</h5><p>Dejar listo contacto de recepción, documentos, plan B de transporte, margen de llegada y canal para pedir asistencia o acompañamiento.</p></article>
+                    <article class="mini-card"><h5>Durante la práctica</h5><p>Usar planner diario, bloques de tiempo, pausas, matriz de prioridades y revisión al cierre de la jornada para reducir sobrecarga.</p></article>
+                </div>
+            </div>
+            <div class="context-panel">
+                <h4>Habilidades laborales que conviene acompañar</h4>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Identidad profesional</h5><p>Trabajar aceptación del rol, recepción de instrucciones, persistencia, tolerancia a cambios, autonomía y solicitud oportuna de ayuda.</p></article>
+                    <article class="mini-card"><h5>Comunicación asertiva</h5><p>Ensayar mensajes directos, respetuosos y claros para preguntar, pedir apoyo, confirmar instrucciones y conversar con supervisor/a.</p></article>
+                    <article class="mini-card"><h5>Autorregulación</h5><p>Preparar estrategias personales: respiración, pausa breve, cambio de foco, objetos sensoriales, ajustes del ambiente y red de apoyo.</p></article>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card" id="lenguaje" aria-labelledby="language-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
+            <div class="section-header">
+                <span class="section-kicker accent-language">Lenguaje y convivencia</span>
+                <h2 id="language-title">Vocabulario inclusivo y trato respetuoso</h2>
+                <p>Las palabras pueden reforzar barreras o abrir participación. Consulta términos a evitar, alternativas recomendadas y conceptos clave.</p>
             </div>
 
-            <!-- Tabla de Vocabulario Correcto vs Incorrecto -->
+            <div class="context-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Comunidad inclusiva</span>
+                    <h3>Tres gestos simples al comunicar</h3>
+                </div>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Escuchar con atención</h5><p>Reconoce ritmos, necesidades y sensibilidades diversas antes de proponer una respuesta.</p></article>
+                    <article class="mini-card"><h5>Nombrar con respeto</h5><p>Usa lenguaje centrado en la persona, la preferencia del estudiante y los apoyos, no en etiquetas peyorativas.</p></article>
+                    <article class="mini-card"><h5>Validar con empatía</h5><p>Frases como “¿quieres que repita?” o “tómate tu tiempo” reducen presión y abren participación.</p></article>
+                    <article class="mini-card"><h5>Cuidar lo digital</h5><p>En AVA o Teams, usa fuentes legibles, buen contraste, texto alternativo y subtítulos cuando corresponda.</p></article>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <span class="search-icon" aria-hidden="true">⌕</span>
+                <label class="sr-only" for="vocab-search">Buscar en vocabulario inclusivo</label>
+                <input type="text" id="vocab-search" class="search-control" placeholder="Busca un término: minusválido, autismo, lengua de señas, desregulación...">
+            </div>
+
             <div class="vocab-table-container">
                 <table class="vocab-table">
                     <thead>
                         <tr>
-                            <th scope="col" style="width: 30%;">❌ Evitar / Expresión obsoleta</th>
-                            <th scope="col" style="width: 30%;">✔️ Término Preferido</th>
-                            <th scope="col" style="width: 40%;">⚖️ Razón / Enfoque Social</th>
+                            <th>Evita decir</th>
+                            <th>Prefiere decir</th>
+                            <th>Por qué importa</th>
                         </tr>
                     </thead>
-                    <tbody id="vocab-table-body">
-                        <!-- Cargado dinámicamente desde JavaScript -->
-                    </tbody>
+                    <tbody id="vocab-table-body"></tbody>
                 </table>
             </div>
-
-            <!-- Glosario de Conceptos Destacados de Neurodiversidad -->
             <div class="glossary-box">
-                <h3 class="glossary-title">Glosario de Neurodiversidad y Espectro Autista</h3>
-                <div class="glossary-grid" id="glossary-container">
-                    <!-- Cargado dinámicamente desde JavaScript -->
-                </div>
+                <h3>Glosario breve</h3>
+                <div class="glossary-grid" id="glossary-container"></div>
             </div>
         </section>
 
+        <section class="print-sheet" id="recommendations-print" aria-label="Resumen imprimible de recomendaciones"></section>
     </main>
 
-    <!-- PIE DE PÁGINA Y DOCUMENTOS DE REFERENCIA COLLAPSIBLE -->
-    <footer class="footer" role="contentinfo">
+    <dialog class="report-dialog" id="report-dialog" aria-labelledby="cart-title">
+        <form method="dialog" class="report-modal">
+            <div class="report-header">
+                <div class="resource-heading">
+                    <span class="source-pill">Apoyo docente</span>
+                    <h3 id="cart-title">Compartir plan de apoyo docente</h3>
+                    <p id="report-intro">Descarga el PDF o prepara un correo breve. Solo indica cuÃ¡ntos estudiantes requieren apoyo, su nombre si corresponde y las condiciones acordadas.</p>
+                </div>
+                <button class="dialog-close" type="submit" aria-label="Cerrar resumen">×</button>
+            </div>
+            <div class="report-body">
+                <div class="cart-fields">
+                    <label for="teacher-email">Correo docente opcional</label>
+                    <input id="teacher-email" class="text-control" type="email" placeholder="docente@institucion.cl">
+                    <label for="case-context">Contexto breve opcional</label>
+                    <textarea id="case-context" class="text-control" rows="3" placeholder="Curso, foco de apoyo o acuerdos relevantes..."></textarea>
+                </div>
+                <div class="support-students-panel" id="support-students-panel">
+                    <label for="support-student-count">Cantidad de estudiantes con apoyos acordados</label>
+                    <input id="support-student-count" class="text-control" type="number" min="1" max="8" value="1">
+                    <div id="support-students" class="support-students"></div>
+                </div>
+                <div id="cart-items" class="cart-items"></div>
+            </div>
+            <div class="cart-actions">
+                <button class="btn btn-primary" id="btn-email-recommendations" type="button">Abrir correo</button>
+                <button class="btn btn-secondary" id="btn-print-recommendations" type="button">Descargar PDF</button>
+                <button class="btn btn-secondary" id="btn-clear-recommendations" type="button">Limpiar</button>
+            </div>
+        </form>
+    </dialog>
+
+    <footer class="footer">
         <div class="footer-container">
-            
-            <!-- DOCUMENTOS DE REFERENCIA EXPANDIBLES -->
+            <div class="footer-main">
+                <div>
+                    <strong>Planificador Inclusivo UIE</strong>
+                    <p>Apoyo docente, adecuaciones curriculares y trayectorias formativas inclusivas.</p>
+                </div>
+                <p>Coordinación de Inclusión, Duoc UC Campus Arauco.</p>
+            </div>
             <details class="ref-collapsible">
                 <summary class="ref-summary">
-                    <span class="summary-title">📄 Documentación y Recursos de Referencia Interna</span>
+                    <span>Fuentes consultadas</span>
                     <span class="summary-chevron" aria-hidden="true">▼</span>
                 </summary>
-                <div class="ref-content">
-                    <p class="ref-intro">Puedes consultar o descargar directamente las versiones completas de los documentos institucionales internos de **Duoc UC** y las pautas oficiales del **CAST (DUA 3.0)** que sustentan esta plataforma interactiva:</p>
-                    <div class="ref-grid">
-                        <a href="Guía Adecuaciones Curriculares de Acceso.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Guía de Adecuaciones Curriculares de Acceso</span>
-                                <span class="ref-card-meta">Subdirección de Inclusión Académica - Duoc UC</span>
-                            </div>
-                        </a>
-                        <a href="Orientaciones Vocabulario Inclusivo.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Orientaciones para un Vocabulario Inclusivo</span>
-                                <span class="ref-card-meta">Subdirección de Inclusión Académica - Duoc UC</span>
-                            </div>
-                        </a>
-                        <a href="Experiencia DUA.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Experiencia DUA en Duoc UC (Puerto Montt)</span>
-                                <span class="ref-card-meta">Manual de Sistematización y Buenas Prácticas</span>
-                            </div>
-                        </a>
-                        <a href="Guia Orientaciones Autismo v2024.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Orientaciones docentes: Estudiantes autistas</span>
-                                <span class="ref-card-meta">Estrategias teóricas y metodológicas (TEA/CEA)</span>
-                            </div>
-                        </a>
-                        <a href="Guía de Introducción a la Accesibilidad Digital.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Guía de Introducción a la Accesibilidad Digital</span>
-                                <span class="ref-card-meta">Pautas para creación de recursos accesibles y Blackboard Ally</span>
-                            </div>
-                        </a>
-                        <a href="articulo-dua-3.0-morilla-y-alvarez.pdf" class="ref-card" target="_blank" title="Descargar PDF original">
-                            <div class="ref-icon">PDF</div>
-                            <div class="ref-card-details">
-                                <span class="ref-card-title">Artículo: Pautas del DUA Versión 3.0</span>
-                                <span class="ref-card-meta">Traducción y Adaptación al aula de Morilla & Álvarez</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
+                <ul class="ref-list" id="references-grid"></ul>
             </details>
-
             <div class="footer-bottom">
-                <p>&copy; 2026 Inclusión Activa. Diseñado para la comunidad docente de Duoc UC.</p>
-                <p class="footer-disclaimer">Esta es una plataforma interactiva de consulta rápida. Para resoluciones formales, consulta con la Subdirección de Inclusión Académica de tu sede.</p>
+                <p>Prototipo de trabajo. Validar con lineamientos oficiales UIE antes de implementación.</p>
             </div>
         </div>
     </footer>
 
-    <!-- App Scripts -->
-    <script src="app.js"></script>
+    <script src="data.js?v=split6"></script>
+    <script src="tabs.js?v=split6"></script>
+    <script src="theme.js?v=split6"></script>
+    <script src="content.js?v=split6"></script>
+    <script src="dua.js?v=split6"></script>
+    <script src="supports.js?v=split6"></script>
+    <script src="report.js?v=split6"></script>
+    <script src="navigation.js?v=split6"></script>
+    <script src="app.js?v=split6"></script>
 </body>
 </html>
