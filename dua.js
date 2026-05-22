@@ -31,7 +31,9 @@ function renderDua(onChecklistChange = () => {}) {
                     <label class="check-item">
                         <input type="checkbox" class="DUA-checkbox" data-check-id="${stage.id}-${itemIndex}">
                         <span class="check-box-custom"></span>
-                        <span class="check-text">${item}</span>
+                        <span class="check-content">
+                            <span class="check-text">${item}</span>
+                        </span>
                     </label>
                 `).join('')}
             </div>
@@ -105,19 +107,19 @@ function getDuaStageSummary() {
 function getDuaCoverageLevel(checked, total = 0) {
     if (checked === 0) {
         return {
-            label: 'Maleta vacía',
-            text: 'elige las decisiones DUA que usarás como base común de la clase antes de agregar adecuaciones específicas.'
+            label: 'Base por definir',
+            text: 'selecciona acciones DUA para preparar la clase antes de revisar apoyos específicos.'
         };
     }
     if (checked <= Math.max(4, Math.ceil(total * 0.25))) {
         return {
             label: 'Base inicial',
-            text: 'ya hay decisiones útiles; revisa si también estás cubriendo claridad, participación, materiales y expresión del aprendizaje.'
+            text: 'ya hay acciones seleccionadas; puedes agregar otras si anticipas más barreras en el curso.'
         };
     }
     return {
         label: 'Base consistente',
-        text: 'la clase cuenta con una selección clara de herramientas DUA; ahora agrega adecuaciones solo si hay estudiantes que lo requieren.'
+        text: 'la clase cuenta con una base DUA clara; continúa con adecuaciones si hay estudiantes que requieren apoyos específicos.'
     };
 }
 

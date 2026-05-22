@@ -13,13 +13,8 @@
     <nav class="navbar" aria-label="Navegación principal">
         <div class="nav-container">
             <a class="nav-brand" href="#inicio" aria-label="Ir al inicio">
-                <span class="brand-mark brand-mark-personal" aria-hidden="true">
-                    <span class="brand-u">U</span><span class="brand-i">I</span><span class="brand-e">E</span>
-                </span>
-                <span class="brand-text">
-                    <span class="brand-title">Unidad de</span>
-                    <span class="brand-sub">Inclusión Educativa</span>
-                </span>
+                <img class="brand-logo brand-logo-light" src="Logo UIE/UIE.png" alt="Unidad de Inclusión Educativa">
+                <img class="brand-logo brand-logo-dark" src="Logo UIE/UIE_blanco.png" alt="" aria-hidden="true">
             </a>
 
             <div class="nav-actions">
@@ -120,29 +115,48 @@
                 </div>
                 <p class="small-note">Considera Ley 20.422, Ley 21.545, Ley 21.015 y Ley 21.690 como marco general. Esta herramienta orienta decisiones docentes; no diagnostica, no reemplaza protocolos ni automatiza medidas formales.</p>
             </div>
+            <div class="feedback-panel">
+                <div>
+                    <span class="source-pill">Etapa piloto</span>
+                    <h3>Comparte tu experiencia</h3>
+                    <p>Después de usar el planificador, responde un formulario breve para aportar mejoras desde tu práctica docente.</p>
+                    <p class="small-note">Tiempo estimado: 3 minutos.</p>
+                </div>
+                <a class="btn btn-primary" href="https://forms.cloud.microsoft/r/9RwvPGcZME" target="_blank" rel="noopener">Responder formulario</a>
+            </div>
         </section>
 
         <section class="section-card planner-section" id="planificar" aria-labelledby="planner-title" data-view="dua">
             <div class="section-header">
                 <span class="section-kicker accent-dua">Base DUA</span>
                 <h2 id="planner-title">Plan de apoyo para la clase</h2>
-                <p>Selecciona las decisiones DUA que usarás como base común. No es una evaluación ni una lista que deba completarse al 100%: elige solo lo pertinente para reducir barreras manteniendo el resultado de aprendizaje.</p>
+                <p>Prepara una base común de clase: anticipa barreras, ofrece opciones de participación y mantén claro el resultado de aprendizaje.</p>
             </div>
 
             <div class="progress-container">
                 <div class="progress-header">
-                    <span class="progress-label">Herramientas base seleccionadas</span>
+                    <span class="progress-label">Decisiones DUA seleccionadas</span>
                     <span class="progress-val" id="progress-text">0 decisiones seleccionadas</span>
                 </div>
-                <p class="progress-helper" id="progress-helper">Elige solo lo que tenga sentido para el objetivo, el curso y las barreras reales que anticipas.</p>
-                <p class="progress-helper">Estas decisiones serán la base del plan. Las adecuaciones específicas se agregan después, si hay estudiantes que lo requieren.</p>
+                <p class="progress-helper" id="progress-helper">Selecciona las acciones que usarás en la clase.</p>
+                <p class="progress-helper">Luego, si hay estudiantes que requieren apoyos específicos, agrega adecuaciones curriculares de acceso.</p>
             </div>
 
             <div class="tabs-nav" id="dua-tabs" role="tablist" aria-label="Etapas de implementación DUA"></div>
             <div class="tab-content-container" id="dua-panels"></div>
 
+            <div class="context-panel compact-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">DUA 3.0 oficial</span>
+                    <h3>Organizador gráfico de CAST</h3>
+                </div>
+                <p>Consulta el organizador gráfico oficial de las pautas DUA 3.0 en español latinoamericano como marco de referencia.</p>
+                <a class="btn btn-secondary" href="https://udlguidelines.cast.org/static/udlg3-graphicorganizer-digital-numbers-a11y-spanish-latin-america.pdf" target="_blank" rel="noopener">Abrir infografía DUA 3.0 en español</a>
+            </div>
+
             <div class="planner-actions">
                 <button class="btn btn-secondary" id="btn-reset-checklist" type="button">Limpiar checklist</button>
+                <a class="btn btn-primary" href="#apoyos">Continuar a adecuaciones curriculares</a>
             </div>
         </section>
 
@@ -150,24 +164,39 @@
             <div class="section-header">
                 <span class="section-kicker accent-dua">Experiencias DUA</span>
                 <h2 id="experiences-title">Casos reales para inspirar decisiones de aula</h2>
-                <p>Estos ejemplos no son recetas. Funcionan como banco de ideas para adaptar actividades, herramientas y formas de participación según el curso, la asignatura y las barreras detectadas.</p>
+                <p>Revisa experiencias aplicadas en aula para reconocer barreras, tomar decisiones DUA y adaptar ideas a tu asignatura, curso y resultado de aprendizaje.</p>
             </div>
             <div class="decision-grid">
                 <article class="mini-card">
-                    <h4>Construcción</h4>
-                    <p>Proyecto de remodelación con fotografías locales, Remodel AI, foro AVA, seguimiento de proceso y retroalimentación entre pares para aumentar compromiso y transferencia al contexto real.</p>
+                    <span class="source-pill">Compromiso</span>
+                    <h4>Construcción: remodelación conectada con el entorno</h4>
+                    <p><strong>Barrera detectada:</strong> clases percibidas como monótonas, baja interacción en algunas secciones y necesidad de alternativas frente a la expresión oral.</p>
+                    <p><strong>Decisión DUA:</strong> trabajar con edificaciones locales, elección autónoma, roles de equipo, foro AVA, seguimiento cercano y retroalimentación entre pares.</p>
+                    <p><strong>Para replicar:</strong> conecta la actividad con un problema real del territorio o del futuro laboral, y deja evidencia de proceso para sostener participación.</p>
+                    <p class="small-note">Fuente: Experiencia DUA en Duoc UC, Escuela de Construcción.</p>
                 </article>
                 <article class="mini-card">
-                    <h4>Salud</h4>
-                    <p>Mentimeter anónimo, apoyo visual, gráficos, diálogo guiado y juego Stop-Bachillerato para favorecer participación total y comprensión de conceptos técnicos.</p>
+                    <span class="source-pill">Representación</span>
+                    <h4>Salud: conceptos técnicos en múltiples formatos</h4>
+                    <p><strong>Barrera detectada:</strong> participación dispar, dificultad para interpretar gráficos y conceptos técnicos, y estudiantes que casi no respondían oralmente.</p>
+                    <p><strong>Decisión DUA:</strong> iniciar con Mentimeter anónimo, definir vocabulario mediante diálogo, usar gráficos de la realidad nacional, material editable y juego Stop-Bachillerato.</p>
+                    <p><strong>Para replicar:</strong> combina texto, imagen, diálogo, datos reales y juego cuando necesites reforzar comprensión y retención de conceptos complejos.</p>
+                    <p class="small-note">Fuente: Experiencia DUA en Duoc UC, Escuela de Salud.</p>
                 </article>
                 <article class="mini-card">
-                    <h4>Ingeniería</h4>
-                    <p>Quizizz, Canva, videos breves, guía en AVA, checklist digital y simulador PhET para alternar explicación, práctica, revisión y reflexión final.</p>
+                    <span class="source-pill">Acción y expresión</span>
+                    <h4>Ingeniería: distintas formas de practicar y demostrar</h4>
+                    <p><strong>Barrera detectada:</strong> dificultad con explicaciones teóricas extensas, distracción, necesidad de apoyo visual y poca claridad para reconocer lo aprendido al cierre.</p>
+                    <p><strong>Decisión DUA:</strong> activar conocimientos con Quizizz, explicar con Canva y videos breves, resolver ejercicios en duplas o individualmente, usar checklist y comparar con simulador PhET.</p>
+                    <p><strong>Para replicar:</strong> divide tareas complejas en pasos, ofrece más de una forma de respuesta y cierra con reflexión breve sobre avances y dificultades.</p>
+                    <p class="small-note">Fuente: Experiencia DUA en Duoc UC, Escuela de Ingeniería.</p>
                 </article>
                 <article class="mini-card">
-                    <h4>Clave común</h4>
-                    <p>Los casos parten explorando barreras, preparan opciones, observan la implementación y ajustan la clase siguiente. Ese ciclo importa más que la herramienta usada.</p>
+                    <span class="source-pill">Ciclo DUA</span>
+                    <h4>Qué tienen en común</h4>
+                    <p>Los tres casos siguen el ciclo descrito en el documento: exploración del curso, preparación de estrategias, integración en aula y optimización posterior.</p>
+                    <p>La herramienta tecnológica no es el centro. Lo importante es que responde a una barrera observada y se ajusta según la evidencia de la clase.</p>
+                    <p class="small-note">Fuente: Experiencia DUA en Duoc UC, etapas de implementación.</p>
                 </article>
             </div>
             <div class="context-panel compact-panel">
@@ -193,49 +222,81 @@
 
             <div class="good-practices" id="good-practices"></div>
 
-            <div class="selector-box">
-                <label for="support-select">Selecciona una necesidad educativa o discapacidad</label>
-                <select id="support-select" class="select-control"></select>
+            <div class="support-students-panel planning-panel" id="support-students-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Plan de adecuaciones</span>
+                    <h3>Estudiantes con apoyos acordados</h3>
+                    <p>Indica cuántos estudiantes considerarás en el plan. El nombre es opcional; si queda vacío, se usará Estudiante 1, Estudiante 2, etc.</p>
+                </div>
+                <label for="support-student-count">Cantidad de estudiantes con apoyos acordados</label>
+                <input id="support-student-count" class="text-control" type="number" min="1" max="8" value="1">
+                <div id="support-students" class="support-students"></div>
+                <div class="section-footer-action inline-action">
+                    <button class="btn btn-primary btn-open-report" type="button">Compartir plan de apoyo docente</button>
+                </div>
             </div>
 
             <div class="support-layout">
                 <div id="support-results" class="results-box hidden"></div>
             </div>
 
-            <div class="decision-panel escalation-panel compact-panel">
-                <div class="resource-heading">
-                    <span class="source-pill">Criterio de derivación</span>
-                    <h3>Cuándo pedir apoyo especializado</h3>
-                </div>
-                <div class="decision-grid">
-                    <article class="mini-card">
-                        <h4>La barrera persiste</h4>
-                        <p>Ya aplicaste ajustes generales y aun así el estudiante no logra acceder, participar o demostrar aprendizaje.</p>
-                    </article>
-                    <article class="mini-card">
-                        <h4>Hay riesgo o crisis</h4>
-                        <p>Existe desregulación intensa, afectación de bienestar, seguridad o necesidad de coordinación especializada.</p>
-                    </article>
-                    <article class="mini-card">
-                        <h4>Se requiere acuerdo formal</h4>
-                        <p>La medida implica tiempos, formatos, apoyos o seguimiento que deben quedar coordinados con el equipo de apoyo correspondiente.</p>
-                    </article>
-                    <article class="mini-card">
-                        <h4>No hay certeza</h4>
-                        <p>Si la estrategia puede bajar exigencia, vulnerar privacidad o generar trato desigual, conviene consultar antes de implementarla.</p>
-                    </article>
-                </div>
-            </div>
-            <div class="decision-panel reference-panel compact-panel">
-                <div class="resource-heading">
-                    <span class="source-pill">Materiales y AVA</span>
-                    <h3>Cuando el apoyo depende de un recurso digital</h3>
-                </div>
-                <p class="small-note">Si la adecuación implica documentos, videos, instrucciones en AVA, subtítulos, contraste, fuente o texto alternativo, revisa Accesibilidad digital en Apoyos adicionales antes de compartir el plan.</p>
-            </div>
-
             <div class="section-footer-action">
-                <button class="btn btn-primary btn-open-report" type="button">Compartir plan de apoyo docente</button>
+                <a class="btn btn-secondary" href="#apoyos-adicionales">Revisar apoyos adicionales</a>
+            </div>
+        </section>
+
+        <section class="section-card" id="apoyo-especializado" aria-labelledby="specialized-title" data-view="adecuaciones">
+            <div class="section-header">
+                <span class="section-kicker accent-support">Coordinación de apoyo</span>
+                <h2 id="specialized-title">Cómo pedir apoyo especializado</h2>
+                <p>Solicita apoyo especializado cuando la adecuación requiera coordinación, formalización, seguimiento o resguardo de bienestar.</p>
+            </div>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>La barrera persiste</h4>
+                    <p>Ya aplicaste ajustes generales y aun así el estudiante no logra acceder, participar o demostrar aprendizaje.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Hay riesgo o crisis</h4>
+                    <p>Existe desregulación intensa, afectación de bienestar, seguridad o necesidad de coordinación especializada.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Se requiere acuerdo formal</h4>
+                    <p>La medida implica tiempos, formatos, apoyos o seguimiento que deben quedar coordinados con el equipo de apoyo correspondiente.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>No hay certeza</h4>
+                    <p>Si la estrategia puede bajar exigencia, vulnerar privacidad o generar trato desigual, conviene consultar antes de implementarla.</p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section-card" id="recurso-digital" aria-labelledby="digital-support-title" data-view="adecuaciones">
+            <div class="section-header">
+                <span class="section-kicker accent-access">Materiales y AVA</span>
+                <h2 id="digital-support-title">Cuando el apoyo depende de un recurso digital</h2>
+                <p>Si la adecuación implica documentos, videos, instrucciones en AVA, subtítulos, contraste, fuente o texto alternativo, revisa accesibilidad digital antes de compartir el plan.</p>
+            </div>
+            <div class="decision-grid">
+                <article class="mini-card">
+                    <h4>Documentos</h4>
+                    <p>Usa estructura con títulos, listas, contraste suficiente, fuente legible y texto alternativo en imágenes relevantes.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Videos y audio</h4>
+                    <p>Agrega subtítulos, transcripción o alternativa textual cuando el contenido audiovisual sea necesario para aprender o evaluar.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>AVA / Blackboard</h4>
+                    <p>Publica instrucciones claras, archivos editables cuando sea posible y rutas de navegación simples para encontrar materiales.</p>
+                </article>
+                <article class="mini-card">
+                    <h4>Revisión rápida</h4>
+                    <p>Antes de enviar el plan, confirma que el recurso pueda leerse, navegarse y comprenderse sin depender de un único formato.</p>
+                </article>
+            </div>
+            <div class="section-footer-action">
+                <a class="btn btn-secondary" href="#accesible">Revisar accesibilidad digital</a>
             </div>
         </section>
 
@@ -305,7 +366,23 @@
                     <span class="source-pill">UNE 153101:2018 EX</span>
                     <h3>Idea clave de la norma</h3>
                 </div>
-                <p class="small-note">La lectura fácil combina pautas de redacción, diseño y validación de comprensibilidad. En esta herramienta se usa como orientación docente para crear materiales más claros; una certificación formal requeriría un proceso de validación específico.</p>
+                <p class="small-note">La lectura fácil combina pautas de redacción, diseño y validación de comprensibilidad. Úsala como orientación docente para crear materiales más claros; una certificación formal requiere un proceso de validación específico.</p>
+            </div>
+            <div class="context-panel gem-resource-panel">
+                <div class="resource-heading">
+                    <span class="source-pill">Herramienta sugerida</span>
+                    <h3>Adaptador Técnico a Lectura Fácil</h3>
+                </div>
+                <p>Una Gem es un asistente de Gemini configurado para una tarea específica. En este caso, ayuda a transformar textos docentes a lectura fácil en contexto técnico-profesional.</p>
+                <p>Úsala después de revisar los criterios anteriores. Pega una guía, prueba, rúbrica o instrucción, e indica la asignatura, el objetivo de aprendizaje y si el material es para enseñar, practicar o evaluar.</p>
+                <div class="mini-grid">
+                    <article class="mini-card"><h5>Qué pedirle</h5><p>“Adapta este texto a lectura fácil sin responder las preguntas ni bajar la exigencia académica”.</p></article>
+                    <article class="mini-card"><h5>Qué revisar</h5><p>Comprueba que conserve conceptos técnicos, habilidad evaluada, criterios de logro y datos necesarios.</p></article>
+                    <article class="mini-card"><h5>Qué evitar</h5><p>No uses la versión final sin revisión docente. La Gem orienta, pero no reemplaza validación pedagógica ni accesible.</p></article>
+                </div>
+                <div class="gem-action">
+                    <a class="btn btn-primary" href="https://gemini.google.com/gem/1aSvOGA6VAIglGHFb1UNDAdHHfY_C2oC8?usp=sharing" target="_blank" rel="noopener">Abrir Gem en Gemini</a>
+                </div>
             </div>
         </section>
 
@@ -313,7 +390,7 @@
             <div class="section-header">
                 <span class="section-kicker accent-language">Apoyos adicionales</span>
                 <h2 id="additional-title">Elige un tema de apoyo complementario</h2>
-                <p>Estos temas no forman parte del flujo principal del plan, pero ayudan cuando aparece una necesidad específica: crisis, accesibilidad, lectura fácil, trayectoria laboral o vocabulario inclusivo.</p>
+                <p>Consulta orientaciones complementarias para situaciones específicas: crisis, accesibilidad, lectura fácil, trayectoria laboral, vocabulario inclusivo y documentos base.</p>
             </div>
             <div class="start-flow additional-menu" aria-label="Menú de apoyos adicionales">
                 <a class="start-step" href="#crisis" aria-label="Crisis y bienestar">
@@ -329,7 +406,7 @@
                 <a class="start-step" href="#lectura-facil" aria-label="Lectura fácil">
                     <span>3</span>
                     <h3>Lectura fácil</h3>
-                    <p>Pautas para instrucciones, guías y evaluaciones más comprensibles.</p>
+                    <p>Pautas UNE y recurso Gem para adaptar instrucciones, guías y evaluaciones.</p>
                 </a>
                 <a class="start-step" href="#laboral" aria-label="Trayectoria y práctica">
                     <span>4</span>
@@ -340,6 +417,11 @@
                     <span>5</span>
                     <h3>Vocabulario inclusivo</h3>
                     <p>Términos recomendados, conceptos clave y trato respetuoso.</p>
+                </a>
+                <a class="start-step" href="#referencias" aria-label="Referencias y documentos base">
+                    <span>6</span>
+                    <h3>Referencias</h3>
+                    <p>Documentos base y fuentes consultadas para respaldar la herramienta.</p>
                 </a>
             </div>
         </section>
@@ -492,6 +574,22 @@
             </div>
         </section>
 
+        <section class="section-card" id="referencias" aria-labelledby="references-title" data-view="adicionales" data-additional-topic="true">
+            <a class="back-link" href="#apoyos-adicionales">← Ver apoyos adicionales</a>
+            <div class="section-header">
+                <span class="section-kicker accent-language">Apoyos adicionales</span>
+                <h2 id="references-title">Referencias y documentos base</h2>
+                <p>Consulta los documentos institucionales y fuentes complementarias que respaldan las orientaciones del planificador.</p>
+            </div>
+            <details class="ref-collapsible" open>
+                <summary class="ref-summary">
+                    <span>Ver documentos y fuentes</span>
+                    <span class="summary-chevron" aria-hidden="true">▼</span>
+                </summary>
+                <ul class="ref-list" id="references-grid"></ul>
+            </details>
+        </section>
+
         <section class="print-sheet" id="recommendations-print" aria-label="Resumen imprimible de recomendaciones"></section>
     </main>
 
@@ -501,28 +599,21 @@
                 <div class="resource-heading">
                     <span class="source-pill">Apoyo docente</span>
                     <h3 id="cart-title">Compartir plan de apoyo docente</h3>
-                    <p id="report-intro">Descarga el PDF o prepara un correo breve. Solo indica cuÃ¡ntos estudiantes requieren apoyo, su nombre si corresponde y las condiciones acordadas.</p>
+                    <p id="report-intro">Descarga el PDF del plan o abre un correo con un mensaje base editable. Por seguridad del navegador, el PDF debe adjuntarse manualmente al correo.</p>
                 </div>
                 <button class="dialog-close" type="submit" aria-label="Cerrar resumen">×</button>
             </div>
             <div class="report-body">
-                <div class="cart-fields">
-                    <label for="teacher-email">Correo docente opcional</label>
-                    <input id="teacher-email" class="text-control" type="email" placeholder="docente@institucion.cl">
-                    <label for="case-context">Contexto breve opcional</label>
-                    <textarea id="case-context" class="text-control" rows="3" placeholder="Curso, foco de apoyo o acuerdos relevantes..."></textarea>
-                </div>
-                <div class="support-students-panel" id="support-students-panel">
-                    <label for="support-student-count">Cantidad de estudiantes con apoyos acordados</label>
-                    <input id="support-student-count" class="text-control" type="number" min="1" max="8" value="1">
-                    <div id="support-students" class="support-students"></div>
-                </div>
                 <div id="cart-items" class="cart-items"></div>
             </div>
             <div class="cart-actions">
-                <button class="btn btn-primary" id="btn-email-recommendations" type="button">Abrir correo</button>
-                <button class="btn btn-secondary" id="btn-print-recommendations" type="button">Descargar PDF</button>
-                <button class="btn btn-secondary" id="btn-clear-recommendations" type="button">Limpiar</button>
+                <button class="btn btn-primary" id="btn-print-recommendations" type="button">Descargar PDF</button>
+                <button class="btn btn-secondary" id="btn-email-recommendations" type="button">Abrir correo</button>
+            </div>
+            <div class="report-empty-actions hidden" id="report-empty-actions" aria-label="Crear plan de apoyo docente">
+                <button class="btn btn-primary" id="btn-empty-dua" type="button">Ir a DUA</button>
+                <button class="btn btn-secondary" id="btn-empty-supports" type="button">Ir a adecuaciones</button>
+                <button class="btn btn-secondary" id="btn-empty-close" type="button">Cerrar</button>
             </div>
         </form>
     </dialog>
@@ -532,31 +623,27 @@
             <div class="footer-main">
                 <div>
                     <strong>Planificador Inclusivo UIE</strong>
-                    <p>Apoyo docente, adecuaciones curriculares y trayectorias formativas inclusivas.</p>
+                    <p>Herramienta de apoyo docente para planificar DUA y adecuaciones curriculares de acceso.</p>
                 </div>
-                <p>Coordinación de Inclusión, Duoc UC Campus Arauco.</p>
+                <div class="footer-meta">
+                    <p>Diseñado por el equipo de Inclusión Académica de Duoc UC Campus Arauco.</p>
+                    <p>Documentos base y fuentes: Apoyos adicionales / Referencias.</p>
+                </div>
             </div>
-            <details class="ref-collapsible">
-                <summary class="ref-summary">
-                    <span>Fuentes consultadas</span>
-                    <span class="summary-chevron" aria-hidden="true">▼</span>
-                </summary>
-                <ul class="ref-list" id="references-grid"></ul>
-            </details>
             <div class="footer-bottom">
-                <p>Prototipo de trabajo. Validar con lineamientos oficiales UIE antes de implementación.</p>
+                <p>Uso orientativo para acompañar decisiones docentes y coordinación de apoyos.</p>
             </div>
         </div>
     </footer>
 
-    <script src="data.js?v=split6"></script>
-    <script src="tabs.js?v=split6"></script>
-    <script src="theme.js?v=split6"></script>
-    <script src="content.js?v=split6"></script>
-    <script src="dua.js?v=split6"></script>
-    <script src="supports.js?v=split6"></script>
-    <script src="report.js?v=split6"></script>
-    <script src="navigation.js?v=split6"></script>
-    <script src="app.js?v=split6"></script>
+    <script src="data.js?v=split50"></script>
+    <script src="tabs.js?v=split50"></script>
+    <script src="theme.js?v=split50"></script>
+    <script src="content.js?v=split50"></script>
+    <script src="dua.js?v=split50"></script>
+    <script src="supports.js?v=split50"></script>
+    <script src="report.js?v=split50"></script>
+    <script src="navigation.js?v=split50"></script>
+    <script src="app.js?v=split50"></script>
 </body>
 </html>

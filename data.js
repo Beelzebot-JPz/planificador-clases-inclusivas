@@ -79,7 +79,8 @@ const duaStagesData = [
             'Incluí opciones de elección auténtica vinculadas al objetivo.',
             'Preparé materiales con estructura, contraste, fuente legible y texto alternativo.',
             'Diseñé instrucciones paso a paso con tiempos, roles y criterios explícitos.',
-            'Anticipé alternativas de respuesta: escrita, oral, visual, práctica o digital.'
+            'Anticipé alternativas de respuesta: escrita, oral, visual, práctica o digital.',
+            'Preparé vocabulario, símbolos o conceptos clave con ejemplos y apoyos visuales.'
         ],
         example: 'Para una evaluación aplicada, permite escoger entre informe breve, demostración técnica o defensa oral con pauta común.'
     },
@@ -96,7 +97,8 @@ const duaStagesData = [
             'Organicé trabajo colaborativo con roles definidos, normas de convivencia e instrucciones orales, escritas y visuales.',
             'Entregué retroalimentación oportuna, clara y empática, usando texto, audio, video o ejemplos según necesidad.',
             'Consideré tanto el proceso de colaboración como el producto final al retroalimentar.',
-            'Permití pausas, aclaraciones o apoyos cuando aparecieron barreras no previstas.'
+            'Permití pausas, aclaraciones o apoyos cuando aparecieron barreras no previstas.',
+            'Verifiqué comprensión durante la clase con preguntas, reformulación o ejemplos antes de avanzar.'
         ],
         example: 'En trabajo grupal, asigna roles visibles: coordinación, registro, vocería y control de tiempos, permitiendo ajustes si un rol genera sobrecarga.'
     },
@@ -112,7 +114,9 @@ const duaStagesData = [
             'Pregunté al curso qué facilitó o dificultó el aprendizaje.',
             'Ajusté materiales del AVA según accesibilidad, claridad y navegación.',
             'Registré apoyos que conviene reutilizar o personalizar.',
-            'Planifiqué una mejora concreta para la siguiente clase.'
+            'Planifiqué una mejora concreta para la siguiente clase.',
+            'Dejé criterios, pasos y recursos visibles para que el estudiante pueda revisar su avance.',
+            'Incluí una breve autoevaluación o cierre metacognitivo para reconocer estrategias útiles.'
         ],
         example: 'Si muchos estudiantes pidieron instrucciones nuevamente, convierte la pauta en una lista visible con ejemplo de entrega esperada.'
     }

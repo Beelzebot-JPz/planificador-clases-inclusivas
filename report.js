@@ -1,31 +1,32 @@
 (function () {
 const { goodPracticesData } = window.UiePlannerData;
 const { getCheckedDuaItems, getDuaStageSummary } = window.UiePlannerDua;
-const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, recommendationCategories, renderSupportStudents } = window.UiePlannerSupports;
+const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, recommendationCategories } = window.UiePlannerSupports;
 
 const REPORT_TITLE = 'Plan de apoyo docente para la clase';
 
 function initReports() {
     const emailButton = document.getElementById('btn-email-recommendations');
     const printButton = document.getElementById('btn-print-recommendations');
-    const clearButton = document.getElementById('btn-clear-recommendations');
-    const supportStudentCount = document.getElementById('support-student-count');
+    const emptyDuaButton = document.getElementById('btn-empty-dua');
+    const emptySupportsButton = document.getElementById('btn-empty-supports');
+    const emptyCloseButton = document.getElementById('btn-empty-close');
 
     if (emailButton) emailButton.addEventListener('click', openRecommendationEmail);
     if (printButton) {
         printButton.addEventListener('click', () => {
+            if (!hasReportContent()) {
+                renderPlanSummary();
+                return;
+            }
             updatePrintableRecommendations();
             document.body.classList.add('printing-recommendations');
             window.print();
         });
     }
-    if (clearButton) {
-        clearButton.addEventListener('click', () => {
-            document.querySelectorAll('.condition-check').forEach(box => box.checked = false);
-            document.querySelectorAll('.student-name').forEach(input => input.value = '');
-            renderPlanSummary();
-        });
-    }
+    if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
+    if (emptySupportsButton) emptySupportsButton.addEventListener('click', () => goToReportSource('apoyos'));
+    if (emptyCloseButton) emptyCloseButton.addEventListener('click', closeReportDialog);
 
     document.querySelectorAll('.btn-open-report').forEach(button => {
         button.addEventListener('click', () => {
@@ -36,11 +37,6 @@ function initReports() {
         });
     });
 
-    if (supportStudentCount) {
-        supportStudentCount.addEventListener('change', () => renderSupportStudents(renderPlanSummary));
-        supportStudentCount.addEventListener('input', () => renderSupportStudents(renderPlanSummary));
-    }
-
     window.addEventListener('afterprint', () => {
         document.body.classList.remove('printing-recommendations');
     });
@@ -49,10 +45,8 @@ function initReports() {
 function configureReportDialog() {
     const title = document.getElementById('cart-title');
     const intro = document.getElementById('report-intro');
-    const supportStudentsPanel = document.getElementById('support-students-panel');
     if (title) title.textContent = 'Compartir plan de apoyo docente';
-    if (intro) intro.textContent = 'Descarga el PDF o prepara un correo breve. Solo indica cuántos estudiantes requieren apoyo, su nombre si corresponde y las condiciones acordadas.';
-    if (supportStudentsPanel) supportStudentsPanel.classList.remove('hidden');
+    if (intro) intro.textContent = 'Descarga el PDF del plan o abre un correo con un mensaje base editable. Por seguridad del navegador, el PDF debe adjuntarse manualmente al correo.';
 }
 
 function renderPlanSummary() {
@@ -65,11 +59,18 @@ function renderPlanSummary() {
     const groupedConditions = groupStudentsByCondition(students);
 
     if (!checkedDua.length && !students.length) {
-        container.innerHTML = '<p class="cart-empty">Selecciona decisiones DUA y, si corresponde, estudiantes con apoyos acordados para preparar el plan.</p>';
-        updatePrintableRecommendations();
+        setReportEmptyMode(true);
+        container.innerHTML = `
+            <div class="report-empty-state" role="status">
+                <strong>Aún no hay información para generar el plan.</strong>
+                <p>Selecciona al menos una decisión DUA o registra estudiantes con apoyos acordados en Adecuaciones curriculares. Con esos datos se podrá descargar un PDF formal o abrir un correo con mensaje base editable.</p>
+            </div>
+        `;
+        clearPrintableRecommendations();
         return;
     }
 
+    setReportEmptyMode(false);
     container.innerHTML = `
         <article class="cart-item">
             <strong>Base DUA para la clase</strong>
@@ -86,69 +87,149 @@ function renderPlanSummary() {
 }
 
 function openRecommendationEmail() {
-    if (!getCheckedDuaItems().length && !getSelectedSupportStudentGroups().length) return;
-    const email = document.getElementById('teacher-email')?.value.trim() || '';
+    if (!hasReportContent()) {
+        renderPlanSummary();
+        return;
+    }
+
     const body = buildEmailCoverMessage();
-    window.location.href = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(REPORT_TITLE)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:?subject=${encodeURIComponent(REPORT_TITLE)}&body=${encodeURIComponent(body)}`;
+    window.location.href = mailto;
 }
 
 function buildEmailCoverMessage() {
-    const context = document.getElementById('case-context')?.value.trim();
+    const checkedDua = getCheckedDuaItems();
+    const students = getSelectedSupportStudentGroups();
+    const groupedConditions = groupStudentsByCondition(students);
     const lines = [
         'Hola,',
         '',
-        'Comparto el plan de apoyo docente acordado. El detalle debe adjuntarse como PDF descargado desde la herramienta.',
-        ''
+        'Comparto el plan de apoyo docente acordado para la clase.',
+        '',
+        'El plan considera:',
+        `- Base DUA: ${checkedDua.length ? `${checkedDua.length} decisión(es) seleccionada(s)` : 'sin decisiones DUA seleccionadas'}.`,
+        `- Adecuaciones curriculares de acceso: ${students.length ? `${students.length} estudiante(s) con apoyos acordados` : 'sin estudiantes registrados'}.`
     ];
-    if (context) lines.push('Contexto breve:', context, '');
-    lines.push('Quedo atento/a a comentarios o ajustes.');
+    if (groupedConditions.length) {
+        lines.push(`- Condiciones consideradas: ${groupedConditions.map(grouped => grouped.condition.name).join(', ')}.`);
+    }
+    lines.push(
+        '',
+        'Adjunto el PDF con el detalle de las recomendaciones para su revisión y seguimiento.',
+        '',
+        'Quedo atento/a a comentarios o ajustes.'
+    );
     return lines.join('\n');
+}
+
+function hasReportContent() {
+    return getCheckedDuaItems().length > 0 || getSelectedSupportStudentGroups().length > 0;
+}
+
+function setReportEmptyMode(isEmpty) {
+    document.querySelector('.cart-fields')?.classList.toggle('hidden', isEmpty);
+    document.querySelector('.cart-actions')?.classList.toggle('hidden', isEmpty);
+    document.getElementById('report-empty-actions')?.classList.toggle('hidden', !isEmpty);
+}
+
+function closeReportDialog() {
+    const dialog = document.getElementById('report-dialog');
+    if (dialog?.open) dialog.close();
+}
+
+function goToReportSource(sectionId) {
+    closeReportDialog();
+    if (window.location.hash === `#${sectionId}`) {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+    }
+    window.location.hash = sectionId;
+}
+
+function clearPrintableRecommendations() {
+    const sheet = document.getElementById('recommendations-print');
+    if (sheet) sheet.innerHTML = '';
+}
+
+function escapeHtml(value = '') {
+    return String(value).replace(/[&<>"']/g, character => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    }[character]));
+}
+
+function formatReportDate() {
+    return new Intl.DateTimeFormat('es-CL', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    }).format(new Date());
 }
 
 function updatePrintableRecommendations() {
     const sheet = document.getElementById('recommendations-print');
     if (!sheet) return;
 
-    const context = document.getElementById('case-context')?.value.trim();
     const checkedDua = getCheckedDuaItems();
     const students = getSelectedSupportStudentGroups();
     const groupedConditions = groupStudentsByCondition(students);
     const duaSummary = getDuaStageSummary();
 
+    if (!checkedDua.length && !students.length) {
+        clearPrintableRecommendations();
+        return;
+    }
+
+    const goodPracticesNumber = checkedDua.length ? 2 : 1;
+    const firstSupportNumber = goodPracticesNumber + 1;
+
     sheet.innerHTML = `
-        <h2>${REPORT_TITLE}</h2>
-        ${context ? `<p><strong>Contexto:</strong> ${context}</p>` : ''}
-        <article>
-            <h3>1. Base DUA para toda la clase</h3>
-            <p><strong>Decisiones seleccionadas:</strong> ${duaSummary.checked}.</p>
-            <p><strong>Lectura orientadora:</strong> ${duaSummary.level.label}. ${duaSummary.level.text}</p>
-            <p>Esta sección no califica la clase ni exige completar todas las opciones. Resume decisiones pedagógicas pertinentes para reducir barreras y sostener el resultado de aprendizaje.</p>
-        </article>
+        <header class="print-report-header">
+            <div class="print-brand">
+                <img class="print-logo" src="Logo%20UIE/UIE.png" alt="Unidad de Inclusión Educativa">
+            </div>
+            <div class="print-report-meta">
+                <span>Plan de apoyo docente</span>
+                <span>Equipo de Inclusión Académica · Duoc UC Campus Arauco</span>
+                <span>${formatReportDate()}</span>
+            </div>
+        </header>
+        <h1>${REPORT_TITLE}</h1>
+        <p class="print-intro">Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.</p>
         ${checkedDua.length ? `
-            ${duaSummary.stages.map(stage => `
-                <article>
-                    <h3>${stage.label}</h3>
-                    ${stage.items.length ? `<ul>${stage.items.map(item => `<li>${item.text}</li>`).join('')}</ul>` : '<p>No se seleccionaron decisiones en esta etapa.</p>'}
-                </article>
-            `).join('')}
-        ` : '<article><h3>Base DUA</h3><p>No hay decisiones DUA seleccionadas.</p></article>'}
-        <article>
-            <h3>2. Buenas prácticas generales para adecuaciones</h3>
+            <section class="print-report-section">
+                <h2>1. Base DUA para toda la clase</h2>
+                <p><strong>Decisiones seleccionadas:</strong> ${duaSummary.checked}.</p>
+                <p><strong>Lectura orientadora:</strong> ${duaSummary.level.label}. ${duaSummary.level.text}</p>
+                <p>Estas decisiones describen la base común de clase: apoyos pedagógicos generales para anticipar barreras, diversificar la participación y sostener el resultado de aprendizaje.</p>
+                ${duaSummary.stages.map(stage => `
+                    <div class="print-subsection">
+                        <h3>${stage.label}</h3>
+                        ${stage.items.length ? `<ul>${stage.items.map(item => `<li>${item.text}</li>`).join('')}</ul>` : '<p>No se seleccionaron decisiones en esta etapa.</p>'}
+                    </div>
+                `).join('')}
+            </section>
+        ` : ''}
+        <section class="print-report-section">
+            <h2>${goodPracticesNumber}. Buenas prácticas generales para adecuaciones</h2>
             <ul>${goodPracticesData.map(item => `<li><strong>${item.title}:</strong> ${item.text}</li>`).join('')}</ul>
-        </article>
-        ${groupedConditions.length ? groupedConditions.map((grouped, index) => `
-            <article>
-                <h3>${index + 3}. ${grouped.condition.name}</h3>
-                <p><strong>Aplica a:</strong> ${grouped.students.map(student => formatStudentLabel(student)).join(', ')}</p>
+        </section>
+        ${groupedConditions.map((grouped, index) => `
+            <section class="print-report-section">
+                <h2>${index + firstSupportNumber}. ${grouped.condition.name}</h2>
+                <p><strong>Aplica a:</strong> ${grouped.students.map(student => escapeHtml(formatStudentLabel(student))).join(', ')}</p>
                 ${recommendationCategories(grouped.condition).map(group => `
-                    <h4>${group.title}</h4>
+                    <h3>${group.title}</h3>
                     <ul>${group.items.map(item => `<li>${item}</li>`).join('')}</ul>
                 `).join('')}
-                <p><em>Fuente: ${grouped.condition.source}</em></p>
-            </article>
-        `).join('') : '<article><h3>Apoyos específicos</h3><p>No hay estudiantes o condiciones seleccionadas.</p></article>'}
-        <article>
-            <h3>Seguimiento y mejora</h3>
+                <p class="print-source">Fuente: ${grouped.condition.source}</p>
+            </section>
+        `).join('')}
+        <section class="print-report-section">
+            <h2>Seguimiento y mejora</h2>
             <ul>
                 <li>¿Qué barrera apareció o persistió durante la clase?</li>
                 <li>¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?</li>
@@ -156,7 +237,10 @@ function updatePrintableRecommendations() {
                 <li>¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?</li>
                 <li>¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?</li>
             </ul>
-        </article>
+        </section>
+        <footer class="print-report-footer">
+            Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
+        </footer>
     `;
 }
 
