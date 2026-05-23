@@ -246,12 +246,7 @@ function renderSupportStudents(onStudentChange = () => {}) {
     const countInput = document.getElementById('support-student-count');
     if (!container || !countInput) return;
     if (countInput.dataset.boundStudents !== 'true') {
-        let debounceTimer = null;
         countInput.addEventListener('focus', () => countInput.select());
-        countInput.addEventListener('input', () => {
-            clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(() => renderSupportStudents(onStudentChange), 400);
-        });
         countInput.addEventListener('change', () => renderSupportStudents(onStudentChange));
         countInput.dataset.boundStudents = 'true';
     }

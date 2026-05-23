@@ -19,14 +19,9 @@ function initReports() {
                 renderPlanSummary();
                 return;
             }
-            updatePrintableRecommendations();
-            document.body.classList.add('printing-recommendations');
-            window.print();
+            generatePdf();
         });
     }
-    if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
-    if (emptySupportsButton) emptySupportsButton.addEventListener('click', () => goToReportSource('apoyos'));
-    if (emptyCloseButton) emptyCloseButton.addEventListener('click', closeReportDialog);
 
     document.querySelectorAll('.btn-open-report').forEach(button => {
         button.addEventListener('click', () => {
@@ -242,6 +237,55 @@ function updatePrintableRecommendations() {
             Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
         </footer>
     `;
+}
+
+function generatePdf() {
+    updatePrintableRecommendations();
+    const sheet = document.getElementById('recommendations-print');
+    if (!sheet) return;
+
+    const printButton = document.getElementById('btn-print-recommendations');
+    if (printButton) {
+        printButton.disabled = true;
+        printButton.textContent = 'Generando PDF...';
+    }
+
+    const clone = sheet.cloneNode(true);
+    clone.style.display = 'block';
+    clone.style.position = 'fixed';
+    clone.style.left = '-9999px';
+    clone.style.top = '0';
+    clone.style.width = '210mm';
+    clone.style.background = '#fff';
+    clone.style.color = '#111827';
+    clone.style.padding = '18mm';
+    clone.style.fontFamily = "'Atkinson Hyperlegible', 'Inter', sans-serif";
+    clone.style.fontSize = '12pt';
+    clone.style.lineHeight = '1.5';
+    document.body.appendChild(clone);
+
+    const opt = {
+        margin: 0,
+        filename: 'plan-apoyo-docente.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+    };
+
+    html2pdf().set(opt).from(clone).save().then(() => {
+        document.body.removeChild(clone);
+        if (printButton) {
+            printButton.disabled = false;
+            printButton.textContent = 'Descargar PDF';
+        }
+    }).catch(() => {
+        document.body.removeChild(clone);
+        if (printButton) {
+            printButton.disabled = false;
+            printButton.textContent = 'Descargar PDF';
+        }
+    });
 }
 
 window.UiePlannerReport = {
