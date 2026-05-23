@@ -19,9 +19,7 @@ function initReports() {
                 renderPlanSummary();
                 return;
             }
-            updatePrintableRecommendations();
-            document.body.classList.add('printing-recommendations');
-            window.print();
+            generatePdfMake();
         });
     }
     if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
@@ -242,6 +240,124 @@ function updatePrintableRecommendations() {
             Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
         </footer>
     `;
+}
+
+function generatePdfMake() {
+    const checkedDua = getCheckedDuaItems();
+    const students = getSelectedSupportStudentGroups();
+    const groupedConditions = groupStudentsByCondition(students);
+    const duaSummary = getDuaStageSummary();
+
+    const content = [];
+
+    // Header
+    content.push({
+        columns: [
+            { text: 'Plan de apoyo docente', style: 'headerTitle', width: '*' },
+            {
+                stack: [
+                    { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+                    { text: formatReportDate(), style: 'headerMeta' }
+                ],
+                width: 'auto',
+                alignment: 'right'
+            }
+        ]
+    });
+    content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 2, lineColor: '#b42318' }] });
+    content.push({ text: '' });
+
+    // Title
+    content.push({ text: REPORT_TITLE, style: 'mainTitle' });
+    content.push({ text: 'Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.', style: 'introText' });
+    content.push({ text: '' });
+
+    // DUA Section
+    if (checkedDua.length) {
+        content.push({ text: '1. Base DUA para toda la clase', style: 'sectionTitle' });
+        content.push({ text: 'Decisiones seleccionadas: ' + duaSummary.checked, style: 'bodyText' });
+        content.push({ text: 'Lectura orientadora: ' + duaSummary.level.label + '. ' + duaSummary.level.text, style: 'bodyText' });
+        content.push({ text: 'Estas decisiones describen la base común de clase: apoyos pedagógicos generales para anticipar barreras, diversificar la participación y sostener el resultado de aprendizaje.', style: 'bodyText' });
+        content.push({ text: '' });
+
+        duaSummary.stages.forEach(function(stage) {
+            content.push({ text: stage.label, style: 'subSectionTitle' });
+            if (stage.items.length) {
+                content.push({ ul: stage.items.map(function(item) { return item.text; }) });
+            } else {
+                content.push({ text: 'No se seleccionaron decisiones en esta etapa.', style: 'bodyText' });
+            }
+            content.push({ text: '' });
+        });
+    }
+
+    // Good Practices
+    const goodPracticesNumber = checkedDua.length ? 2 : 1;
+    content.push({ text: goodPracticesNumber + '. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
+    content.push({
+        ul: goodPracticesData.map(function(item) {
+            return { text: [{ text: item.title + ': ', bold: true }, item.text] };
+        })
+    });
+    content.push({ text: '' });
+
+    // Conditions
+    groupedConditions.forEach(function(grouped, index) {
+        const sectionNum = index + goodPracticesNumber + 1;
+        content.push({ text: sectionNum + '. ' + grouped.condition.name, style: 'sectionTitle' });
+        content.push({ text: 'Aplica a: ' + grouped.students.map(function(student) { return formatStudentLabel(student); }).join(', '), style: 'bodyText' });
+        content.push({ text: '' });
+
+        recommendationCategories(grouped.condition).forEach(function(group) {
+            content.push({ text: group.title, style: 'subSectionTitle' });
+            content.push({ ul: group.items });
+            content.push({ text: '' });
+        });
+
+        content.push({ text: 'Fuente: ' + grouped.condition.source, style: 'sourceText' });
+        content.push({ text: '' });
+    });
+
+    // Follow-up
+    const followUpNum = goodPracticesNumber + groupedConditions.length + 1;
+    content.push({ text: followUpNum + '. Seguimiento y mejora', style: 'sectionTitle' });
+    content.push({
+        ul: [
+            '¿Qué barrera apareció o persistió durante la clase?',
+            '¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?',
+            '¿La retroalimentación fue clara, oportuna y centrada en el proceso?',
+            '¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?',
+            '¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?'
+        ]
+    });
+    content.push({ text: '' });
+
+    // Footer
+    content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+    content.push({ text: '' });
+    content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });
+
+    const docDefinition = {
+        content: content,
+        styles: {
+            headerTitle: { fontSize: 14, bold: true, color: '#b42318' },
+            headerMeta: { fontSize: 9, color: '#4b5563' },
+            mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+            introText: { fontSize: 11, color: '#374151', margin: [0, 0, 0, 16], italics: true },
+            sectionTitle: { fontSize: 14, bold: true, color: '#111827', margin: [0, 12, 0, 8] },
+            subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+            bodyText: { fontSize: 11, color: '#111827', margin: [0, 4, 0, 4] },
+            sourceText: { fontSize: 9, color: '#6b7280', margin: [0, 4, 0, 4] },
+            footerText: { fontSize: 9, color: '#6b7280', margin: [0, 8, 0, 0] }
+        },
+        defaultStyle: {
+            fontSize: 11,
+            color: '#111827'
+        },
+        pageMargins: [40, 40, 40, 40]
+    };
+
+    pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
 }
 
 window.UiePlannerReport = {
