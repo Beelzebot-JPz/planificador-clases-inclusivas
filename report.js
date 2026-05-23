@@ -242,7 +242,7 @@ function updatePrintableRecommendations() {
 function generatePdf() {
     updatePrintableRecommendations();
     const sheet = document.getElementById('recommendations-print');
-    if (!sheet) return;
+    if (!sheet || !sheet.innerHTML.trim()) return;
 
     const printButton = document.getElementById('btn-print-recommendations');
     if (printButton) {
@@ -250,42 +250,74 @@ function generatePdf() {
         printButton.textContent = 'Generando PDF...';
     }
 
-    const clone = sheet.cloneNode(true);
-    clone.style.display = 'block';
-    clone.style.position = 'fixed';
-    clone.style.left = '-9999px';
-    clone.style.top = '0';
-    clone.style.width = '210mm';
-    clone.style.background = '#fff';
-    clone.style.color = '#111827';
-    clone.style.padding = '18mm';
-    clone.style.fontFamily = "'Atkinson Hyperlegible', 'Inter', sans-serif";
-    clone.style.fontSize = '12pt';
-    clone.style.lineHeight = '1.5';
-    document.body.appendChild(clone);
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'position:fixed;left:0;top:0;width:210mm;background:#fff;color:#111827;font-family:"Atkinson Hyperlegible","Inter",sans-serif;font-size:12pt;line-height:1.5;padding:18mm;z-index:-1;opacity:0.01;';
+    wrapper.innerHTML = sheet.innerHTML;
+
+    applyPrintStyles(wrapper);
+    document.body.appendChild(wrapper);
 
     const opt = {
-        margin: 0,
+        margin: [10, 10, 10, 10],
         filename: 'plan-apoyo-docente.pdf',
         image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
         pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    html2pdf().set(opt).from(clone).save().then(() => {
-        document.body.removeChild(clone);
+    html2pdf().set(opt).from(wrapper).save().then(() => {
+        document.body.removeChild(wrapper);
         if (printButton) {
             printButton.disabled = false;
             printButton.textContent = 'Descargar PDF';
         }
     }).catch(() => {
-        document.body.removeChild(clone);
+        document.body.removeChild(wrapper);
         if (printButton) {
             printButton.disabled = false;
             printButton.textContent = 'Descargar PDF';
         }
     });
+}
+
+function applyPrintStyles(container) {
+    const header = container.querySelector('.print-report-header');
+    if (header) header.style.cssText = 'display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:2px solid #b42318;padding-bottom:12px;margin-bottom:18px;';
+
+    const logo = container.querySelector('.print-logo');
+    if (logo) logo.style.cssText = 'display:block;width:190px;height:auto;object-fit:contain;';
+
+    const meta = container.querySelector('.print-report-meta');
+    if (meta) {
+        meta.style.cssText = 'text-align:right;white-space:nowrap;color:#4b5563;font-size:9.5pt;';
+        meta.querySelectorAll('span').forEach(s => s.style.display = 'block');
+    }
+
+    const h1 = container.querySelector('h1');
+    if (h1) h1.style.cssText = 'font-size:20pt;line-height:1.15;margin:0 0 8px;color:#111827;';
+
+    const intro = container.querySelector('.print-intro');
+    if (intro) intro.style.cssText = 'border-left:4px solid #b42318;color:#374151;margin:0 0 16px;padding:6px 0 6px 10px;';
+
+    container.querySelectorAll('.print-report-section').forEach(section => {
+        section.style.cssText = 'border:1px solid #d1d5db;border-radius:8px;margin:12px 0;padding:12px 14px;page-break-inside:avoid;';
+        section.querySelectorAll('h2').forEach(h2 => h2.style.cssText = 'color:#111827;font-size:13.5pt;line-height:1.25;margin:0 0 8px;');
+        section.querySelectorAll('h3').forEach(h3 => h3.style.cssText = 'color:#b42318;font-size:10.5pt;line-height:1.25;margin:10px 0 4px;');
+    });
+
+    container.querySelectorAll('.print-subsection').forEach(sub => {
+        sub.style.cssText = 'border-top:1px solid #e5e7eb;margin-top:10px;padding-top:8px;';
+    });
+
+    container.querySelectorAll('p').forEach(p => p.style.margin = '5px 0');
+    container.querySelectorAll('ul').forEach(ul => ul.style.cssText = 'margin:6px 0;padding-left:18px;');
+
+    const source = container.querySelector('.print-source');
+    if (source) source.style.cssText = 'color:#6b7280;font-size:9pt;margin-top:10px;';
+
+    const footer = container.querySelector('.print-report-footer');
+    if (footer) footer.style.cssText = 'border-top:1px solid #d1d5db;color:#6b7280;font-size:9pt;margin-top:18px;padding-top:8px;';
 }
 
 window.UiePlannerReport = {
