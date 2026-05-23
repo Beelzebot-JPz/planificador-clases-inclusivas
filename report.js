@@ -34,6 +34,10 @@ function initReports() {
             if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
         });
     });
+
+    window.addEventListener('afterprint', function() {
+        document.body.classList.remove('printing-recommendations');
+    });
 }
 
 function configureReportDialog() {
@@ -240,46 +244,28 @@ function updatePrintableRecommendations() {
 
 function generatePdf() {
     updatePrintableRecommendations();
-    const sheet = document.getElementById('recommendations-print');
+    var sheet = document.getElementById('recommendations-print');
     if (!sheet || !sheet.innerHTML.trim()) return;
 
-    var printWindow = window.open('', '_blank');
-    if (!printWindow) {
+    var css = 'body{font-family:"Atkinson Hyperlegible","Inter",sans-serif;font-size:12pt;line-height:1.5;color:#111827;margin:0;padding:18mm}@page{margin:18mm}.print-report-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:2px solid #b42318;padding-bottom:12px;margin-bottom:18px}.print-brand{display:flex;gap:12px;align-items:center}.print-logo{display:block;width:190px;height:auto;object-fit:contain}.print-report-meta span{display:block}.print-report-meta{text-align:right;white-space:nowrap;color:#4b5563;font-size:9.5pt}h1{font-size:20pt;line-height:1.15;margin:0 0 8px;color:#111827}.print-intro{border-left:4px solid #b42318;color:#374151;margin:0 0 16px;padding:6px 0 6px 10px}.print-report-section{border:1px solid #d1d5db;border-radius:8px;margin:12px 0;padding:12px 14px;page-break-inside:avoid}.print-report-section h2{color:#111827;font-size:13.5pt;line-height:1.25;margin:0 0 8px}.print-report-section h3{color:#b42318;font-size:10.5pt;line-height:1.25;margin:10px 0 4px}.print-subsection{border-top:1px solid #e5e7eb;margin-top:10px;padding-top:8px}p{margin:5px 0}ul{margin:6px 0;padding-left:18px}.print-source{color:#6b7280;font-size:9pt;margin-top:10px}.print-report-footer{border-top:1px solid #d1d5db;color:#6b7280;font-size:9pt;margin-top:18px;padding-top:8px}';
+
+    var html = '<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Plan de apoyo docente</title><style>' + css + '</style></head><body>' + sheet.innerHTML + '</body></html>';
+
+    var blob = new Blob([html], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var win = window.open(url, '_blank');
+
+    if (!win) {
+        URL.revokeObjectURL(url);
+        document.body.classList.add('printing-recommendations');
         window.print();
         return;
     }
 
-    printWindow.document.write('<!DOCTYPE html><html lang="es"><head>');
-    printWindow.document.write('<meta charset="UTF-8">');
-    printWindow.document.write('<meta name="viewport" content="width=device-width, initial-scale=1.0">');
-    printWindow.document.write('<title>Plan de apoyo docente</title>');
-    printWindow.document.write('<style>');
-    printWindow.document.write('body{font-family:"Atkinson Hyperlegible","Inter",sans-serif;font-size:12pt;line-height:1.5;color:#111827;margin:0;padding:18mm;}');
-    printWindow.document.write('@page{margin:18mm;}');
-    printWindow.document.write('.print-report-header{display:flex;justify-content:space-between;gap:18px;align-items:flex-start;border-bottom:2px solid #b42318;padding-bottom:12px;margin-bottom:18px;}');
-    printWindow.document.write('.print-brand{display:flex;gap:12px;align-items:center;}');
-    printWindow.document.write('.print-logo{display:block;width:190px;height:auto;object-fit:contain;}');
-    printWindow.document.write('.print-report-meta span{display:block;}');
-    printWindow.document.write('.print-report-meta{text-align:right;white-space:nowrap;color:#4b5563;font-size:9.5pt;}');
-    printWindow.document.write('h1{font-size:20pt;line-height:1.15;margin:0 0 8px;color:#111827;}');
-    printWindow.document.write('.print-intro{border-left:4px solid #b42318;color:#374151;margin:0 0 16px;padding:6px 0 6px 10px;}');
-    printWindow.document.write('.print-report-section{border:1px solid #d1d5db;border-radius:8px;margin:12px 0;padding:12px 14px;page-break-inside:avoid;}');
-    printWindow.document.write('.print-report-section h2{color:#111827;font-size:13.5pt;line-height:1.25;margin:0 0 8px;}');
-    printWindow.document.write('.print-report-section h3{color:#b42318;font-size:10.5pt;line-height:1.25;margin:10px 0 4px;}');
-    printWindow.document.write('.print-subsection{border-top:1px solid #e5e7eb;margin-top:10px;padding-top:8px;}');
-    printWindow.document.write('p{margin:5px 0;}');
-    printWindow.document.write('ul{margin:6px 0;padding-left:18px;}');
-    printWindow.document.write('.print-source{color:#6b7280;font-size:9pt;margin-top:10px;}');
-    printWindow.document.write('.print-report-footer{border-top:1px solid #d1d5db;color:#6b7280;font-size:9pt;margin-top:18px;padding-top:8px;}');
-    printWindow.document.write('</style></head><body>');
-    printWindow.document.write(sheet.innerHTML);
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-
-    setTimeout(function() {
-        printWindow.print();
-        setTimeout(function() { printWindow.close(); }, 500);
-    }, 300);
+    win.onload = function() {
+        URL.revokeObjectURL(url);
+        try { win.print(); } catch(e) {}
+    };
 }
 
 window.UiePlannerReport = {
