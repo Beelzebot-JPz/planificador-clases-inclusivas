@@ -1403,22 +1403,6 @@ body.theme-dark .theme-icon-dark {
     outline: 3px solid color-mix(in oklch, var(--ring) 35%, transparent);
 }
 
-#support-student-count {
-    max-width: 120px;
-    text-align: center;
-    font-size: 18px;
-    font-weight: 700;
-    padding: 11px 8px;
-    -moz-appearance: textfield;
-}
-
-#support-student-count::-webkit-inner-spin-button,
-#support-student-count::-webkit-outer-spin-button {
-    -webkit-appearance: inner-spin-button;
-    opacity: 1;
-    height: 100%;
-}
-
 .condition-checklist {
     display: grid;
     gap: 8px;
