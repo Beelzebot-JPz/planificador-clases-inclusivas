@@ -19,9 +19,7 @@ function initReports() {
                 renderPlanSummary();
                 return;
             }
-            updatePrintableRecommendations();
-            document.body.classList.add('printing-recommendations');
-            window.print();
+            openPdfWindow();
         });
     }
     if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
@@ -37,9 +35,6 @@ function initReports() {
         });
     });
 
-    window.addEventListener('afterprint', () => {
-        document.body.classList.remove('printing-recommendations');
-    });
 }
 
 function configureReportDialog() {
@@ -242,6 +237,46 @@ function updatePrintableRecommendations() {
             Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
         </footer>
     `;
+}
+
+function openPdfWindow() {
+    updatePrintableRecommendations();
+    const sheet = document.getElementById('recommendations-print');
+    if (!sheet || !sheet.innerHTML.trim()) return;
+
+    const css = `
+        body { font-family: "Atkinson Hyperlegible", "Inter", sans-serif; font-size: 12pt; line-height: 1.5; color: #111827; margin: 0; padding: 18mm; }
+        .print-report-header { display: flex; justify-content: space-between; gap: 18px; align-items: flex-start; border-bottom: 2px solid #b42318; padding-bottom: 12px; margin-bottom: 18px; }
+        .print-brand { display: flex; gap: 12px; align-items: center; }
+        .print-logo { display: block; width: 190px; height: auto; object-fit: contain; }
+        .print-report-meta span { display: block; }
+        .print-report-meta { text-align: right; white-space: nowrap; color: #4b5563; font-size: 9.5pt; }
+        h1 { font-size: 20pt; line-height: 1.15; margin: 0 0 8px; color: #111827; }
+        .print-intro { border-left: 4px solid #b42318; color: #374151; margin: 0 0 16px; padding: 6px 0 6px 10px; }
+        .print-report-section { border: 1px solid #d1d5db; border-radius: 8px; margin: 12px 0; padding: 12px 14px; }
+        .print-report-section h2 { color: #111827; font-size: 13.5pt; line-height: 1.25; margin: 0 0 8px; }
+        .print-report-section h3 { color: #b42318; font-size: 10.5pt; line-height: 1.25; margin: 10px 0 4px; }
+        .print-subsection { border-top: 1px solid #e5e7eb; margin-top: 10px; padding-top: 8px; }
+        p { margin: 5px 0; }
+        ul { margin: 6px 0; padding-left: 18px; }
+        .print-source { color: #6b7280; font-size: 9pt; margin-top: 10px; }
+        .print-report-footer { border-top: 1px solid #d1d5db; color: #6b7280; font-size: 9pt; margin-top: 18px; padding-top: 8px; }
+    `;
+
+    const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan de apoyo docente</title>
+    <style>${css}</style>
+</head>
+<body>${sheet.innerHTML}</body>
+</html>`;
+
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
 }
 
 window.UiePlannerReport = {
