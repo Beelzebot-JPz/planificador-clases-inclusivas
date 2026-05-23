@@ -242,30 +242,58 @@ function updatePrintableRecommendations() {
     `;
 }
 
+function imageToBase64(url, callback) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+        var canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        callback(canvas.toDataURL('image/png'));
+    };
+    img.onerror = function() {
+        callback(null);
+    };
+    img.src = url;
+}
+
 function generatePdfMake() {
-    const checkedDua = getCheckedDuaItems();
-    const students = getSelectedSupportStudentGroups();
-    const groupedConditions = groupStudentsByCondition(students);
-    const duaSummary = getDuaStageSummary();
+    imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
+        var checkedDua = getCheckedDuaItems();
+        var students = getSelectedSupportStudentGroups();
+        var groupedConditions = groupStudentsByCondition(students);
+        var duaSummary = getDuaStageSummary();
 
-    const content = [];
+        var content = [];
 
-    // Header
-    content.push({
-        columns: [
-            { text: 'Plan de apoyo docente', style: 'headerTitle', width: '*' },
-            {
-                stack: [
-                    { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
-                    { text: formatReportDate(), style: 'headerMeta' }
-                ],
-                width: 'auto',
-                alignment: 'right'
-            }
-        ]
-    });
-    content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 2, lineColor: '#b42318' }] });
-    content.push({ text: '' });
+        // Header with logo
+        var headerColumns = [];
+        if (logoBase64) {
+            headerColumns.push({
+                image: logoBase64,
+                width: 120,
+                height: 40,
+                fit: [120, 40],
+                alignment: 'left'
+            });
+        }
+        headerColumns.push({
+            stack: [
+                { text: 'Plan de apoyo docente', style: 'headerTitle' },
+                { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+                { text: formatReportDate(), style: 'headerMeta' }
+            ],
+            alignment: 'right'
+        });
+
+        content.push({
+            columns: headerColumns,
+            columnGap: 10
+        });
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 2, lineColor: '#b42318' }] });
+        content.push({ text: '' });
 
     // Title
     content.push({ text: REPORT_TITLE, style: 'mainTitle' });
