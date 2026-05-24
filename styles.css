@@ -1620,6 +1620,9 @@ body.theme-dark .theme-icon-dark {
     margin: 0;
     font-family: 'Outfit', sans-serif;
     font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .support-student-card > label {
@@ -2568,6 +2571,37 @@ a.ref-card:focus-visible {
 .access-matrix-table-wrap,
 .matrix-legend {
     display: none;
+}
+
+.radar-visibility-toggle {
+    align-items: center;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    font-size: 0.68rem;
+    font-weight: 400;
+    gap: 3px;
+    user-select: none;
+}
+
+.radar-visibility-toggle input[type="checkbox"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 13px;
+    margin: 0;
+    width: 13px;
+}
+
+.radar-empty-text {
+    fill: var(--text-secondary);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.radar-empty-sub {
+    fill: var(--text-secondary);
+    font-size: 0.65rem;
+    opacity: 0.7;
 }
 
 @media print {

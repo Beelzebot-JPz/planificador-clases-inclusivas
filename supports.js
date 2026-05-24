@@ -117,6 +117,7 @@ function renderSelectedSupportRecommendations() {
     if (!results) return;
     const students = getSelectedSupportStudentGroups();
     const profiles = groupStudentsByProfile(students);
+    console.log('renderSelectedSupportRecs: students=' + students.length + ' profiles=' + profiles.length);
 
     if (!profiles.length) {
         results.classList.add('hidden');
@@ -168,27 +169,7 @@ function renderBarrierMap(students) {
         };
     });
 
-    const extraCount = Math.max(0, students.length - profiles.length);
-    const axisPoints = barrierDimensions.map((_, index) => radarPoint(center, maxRadius, index, barrierDimensions.length));
-    const rings = [1, 2, 3, 4].map(level => {
-        const points = barrierDimensions.map((_, index) => radarPoint(center, (maxRadius / 4) * level, index, barrierDimensions.length));
-        return `<polygon points="${points.map(point => `${point.x},${point.y}`).join(' ')}" class="radar-ring"></polygon>`;
-    }).join('');
-    const axes = axisPoints.map(point => `<line x1="${center}" y1="${center}" x2="${point.x}" y2="${point.y}" class="radar-axis"></line>`).join('');
-    const labels = axisPoints.map((point, index) => {
-        const labelPoint = radarPoint(center, maxRadius + 22, index, barrierDimensions.length);
-        return `<text x="${labelPoint.x}" y="${labelPoint.y}" class="radar-label">${barrierDimensions[index].label}</text>`;
-    }).join('');
-    const polygons = profiles.map(profile => {
-        const points = barrierDimensions.map((dimension, index) => {
-            const radius = (Math.max(0, Math.min(4, profile.values[dimension.key] || 0)) / 4) * maxRadius;
-            return radarPoint(center, radius, index, barrierDimensions.length);
-        });
-        return `
-            <polygon points="${points.map(point => `${point.x},${point.y}`).join(' ')}" class="radar-profile" style="--profile-color: ${profile.color};"></polygon>
-            ${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="3.5" class="radar-dot" style="--profile-color: ${profile.color};"></circle>`).join('')}
-        `;
-    }).join('');
+    const extraCount = Math.max(0, students.length - 4);
 
     return `
         <div class="barrier-map-panel">
@@ -482,7 +463,8 @@ function getSelectedSupportStudentGroups() {
     return Array.from(document.querySelectorAll('.support-student-card')).map(card => {
         const index = card.dataset.studentIndex;
         const name = card.querySelector('.student-name')?.value.trim();
-        const conditions = Array.from(card.querySelectorAll('.condition-check:checked'))
+        const checked = Array.from(card.querySelectorAll('.condition-check:checked'));
+        const conditions = checked
             .map(box => ({ key: box.value, ...accommodationsData[box.value] }))
             .filter(item => item.name);
         return {
