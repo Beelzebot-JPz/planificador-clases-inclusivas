@@ -28,7 +28,11 @@ function bindGlobalActions() {
     const search = document.getElementById('vocab-search');
 
     if (reset) {
-        reset.addEventListener('click', () => resetDuaChecklist(renderPlanSummary));
+        reset.addEventListener('click', function() {
+            if (confirm('¿Limpiar todas las decisiones DUA seleccionadas?')) {
+                resetDuaChecklist(renderPlanSummary);
+            }
+        });
     }
 
     if (search) {

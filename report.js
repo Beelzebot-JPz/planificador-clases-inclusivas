@@ -14,17 +14,27 @@ function initReports() {
 
     if (emailButton) emailButton.addEventListener('click', openRecommendationEmail);
     if (printButton) {
-        printButton.addEventListener('click', () => {
+        printButton.addEventListener('click', function() {
             if (!hasReportContent()) {
                 renderPlanSummary();
                 return;
             }
-            generatePdfMake();
+            printButton.disabled = true;
+            printButton.textContent = 'Generando PDF...';
+            ensurePdfMake(function() {
+                generatePdfMake();
+                printButton.disabled = false;
+                printButton.textContent = 'Descargar PDF';
+            });
         });
     }
     if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
     if (emptySupportsButton) emptySupportsButton.addEventListener('click', () => goToReportSource('apoyos'));
     if (emptyCloseButton) emptyCloseButton.addEventListener('click', closeReportDialog);
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeReportDialog();
+    });
 
     document.querySelectorAll('.btn-open-report').forEach(button => {
         button.addEventListener('click', () => {
@@ -257,6 +267,36 @@ function imageToBase64(url, callback) {
     img.src = url;
 }
 
+function ensurePdfMake(callback) {
+    if (window.pdfMake) { callback(); return; }
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
+    script.onerror = function() {
+        restorePrintButton();
+        alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
+    };
+    var fonts = document.createElement('script');
+    fonts.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js';
+    var loaded = 0;
+    function onLoad() {
+        loaded++;
+        if (loaded === 2) callback();
+    }
+    script.onload = onLoad;
+    fonts.onload = onLoad;
+    fonts.onerror = script.onerror;
+    document.head.appendChild(script);
+    document.head.appendChild(fonts);
+}
+
+function restorePrintButton() {
+    var btn = document.getElementById('btn-print-recommendations');
+    if (btn) {
+        btn.disabled = false;
+        btn.textContent = 'Descargar PDF';
+    }
+}
+
 function generatePdfMake() {
     var checkedDua = getCheckedDuaItems();
     var students = getSelectedSupportStudentGroups();
@@ -371,7 +411,11 @@ function generatePdfMake() {
             pageMargins: [40, 40, 40, 40]
         };
 
-        pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
+        try {
+            pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
+        } catch(e) {
+            restorePrintButton();
+        }
     });
 }
 
