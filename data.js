@@ -132,79 +132,289 @@ const accommodationsData = {
     fisica: {
         name: 'Discapacidad física o movilidad reducida',
         source: 'Adecuaciones de Acceso',
-        context: ['Asegura rutas accesibles, mesa adecuada y espacio de circulación.', 'Coordina ubicación estratégica según movilidad, fatiga o uso de apoyos.'],
-        materials: ['Disponibiliza materiales digitales con anticipación.', 'Permite uso de computador, grabación o ayudas técnicas.'],
-        methods: ['Flexibiliza formato de actividades prácticas cuando exista dificultad motora.', 'Divide tareas extensas en etapas verificables.'],
-        interaction: ['Evita asumir ayuda sin preguntarla; acuerda apoyos con la persona.', 'Considera participación oral, digital o asistida.'],
-        time: ['Otorga tiempo adicional o pausas cuando exista fatiga, dolor o barreras de desplazamiento.']
+        context: [
+            'Asegura rutas accesibles, mesa adecuada y espacio de circulación.',
+            'Coordina ubicación estratégica según movilidad, fatiga o uso de apoyos.',
+            'Otorga tiempo adicional o pausas cuando exista fatiga, dolor o barreras de desplazamiento.'
+        ],
+        materials: [
+            'Disponibiliza materiales digitales con anticipación.'
+        ],
+        methods: [
+            'Flexibiliza formato de actividades prácticas cuando exista dificultad motora.',
+            'Divide tareas extensas en etapas verificables.'
+        ],
+        interaction: [
+            'Evita asumir ayuda sin preguntarla; acuerda apoyos con la persona.',
+            'Considera participación oral, digital o asistida.'
+        ],
+        evaluacion: [
+            'Si hay dificultad en expresión oral, otorga tiempo adicional para exposiciones.',
+            'Ofrece exponer solo frente al docente si la ansiedad lo requiere.',
+            'Flexibiliza plazos de entrega cuando exista fatiga.'
+        ],
+        tech: [
+            'Permite uso de computador, grabación o ayudas técnicas.',
+            'Facilita acceso a tecnologías de apoyo para escritura o comunicación.'
+        ]
     },
     auditiva: {
         name: 'Discapacidad auditiva',
         source: 'Adecuaciones de Acceso',
-        context: ['Facilita asiento con buena visibilidad del docente, intérprete o pizarra.', 'Reduce ruido de fondo y ordena turnos de habla.'],
-        materials: ['Entrega instrucciones y contenidos clave por escrito.', 'Asegura subtítulos, transcripciones o guiones de material audiovisual.'],
-        methods: ['Apoya explicaciones orales con esquemas, palabras clave y ejemplos escritos.', 'Verifica comprensión sin exponer públicamente.'],
-        interaction: ['Respeta lengua de señas, lectura labial, audífonos, implantes o intérprete según corresponda.', 'Habla de frente y evita cubrir la boca.'],
-        time: ['Da tiempo adicional para procesar instrucciones escritas extensas o mediadas por interpretación.']
+        context: [
+            'Facilita asiento con buena visibilidad del docente, intérprete o pizarra.',
+            'Reduce ruido de fondo y ordena turnos de habla.'
+        ],
+        materials: [
+            'Entrega instrucciones y contenidos clave por escrito.',
+            'Asegura subtítulos, transcripciones o guiones de material audiovisual.',
+            'Da tiempo adicional para procesar instrucciones escritas extensas o mediadas por interpretación.'
+        ],
+        methods: [
+            'Apoya explicaciones orales con esquemas, palabras clave y ejemplos escritos.',
+            'Verifica comprensión sin exponer públicamente.'
+        ],
+        interaction: [
+            'Respeta lengua de señas, lectura labial, audífonos, implantes o intérprete según corresponda.',
+            'Habla de frente y evita cubrir la boca.'
+        ],
+        evaluacion: [
+            'Entrega por escrito toda la información que se daría en forma oral durante la evaluación.',
+            'Permite el uso de recursos de apoyo habituales en evaluaciones orales o escritas.'
+        ],
+        tech: [
+            'Facilita el uso de intérprete de lengua de señas, Transvoz u otras tecnologías de transcripción.'
+        ]
     },
     visual: {
         name: 'Discapacidad visual o baja visión',
         source: 'Adecuaciones de Acceso',
-        context: ['Coordina ubicación, iluminación y acceso a enchufes según necesidad.', 'Evita cambiar mobiliario sin avisar.'],
-        materials: ['Usa documentos accesibles, editables y compatibles con lector de pantalla.', 'Describe imágenes, gráficos y acciones realizadas en pizarra.'],
-        methods: ['No dependas solo del color, la ubicación visual o gestos para comunicar información.', 'Ofrece alternativas táctiles, auditivas o digitales cuando sea pertinente.'],
-        interaction: ['Pregunta preferencias de formato: macrotipo, lector de pantalla, audio o Braille digital.', 'Lee en voz alta información proyectada relevante.'],
-        time: ['Otorga más tiempo para lectura, navegación, evaluación o producción escrita.']
+        context: [
+            'Coordina ubicación, iluminación y acceso a enchufes según necesidad.',
+            'Evita cambiar mobiliario sin avisar.'
+        ],
+        materials: [
+            'Usa documentos accesibles, editables y compatibles con lector de pantalla.',
+            'Describe imágenes, gráficos y acciones realizadas en pizarra.',
+            'Otorga más tiempo para lectura y navegación de materiales.'
+        ],
+        methods: [
+            'No dependas solo del color, la ubicación visual o gestos para comunicar información.',
+            'Ofrece alternativas táctiles, auditivas o digitales cuando sea pertinente.'
+        ],
+        interaction: [
+            'Pregunta preferencias de formato: macrotipo, lector de pantalla, audio o Braille digital.',
+            'Lee en voz alta información proyectada relevante.'
+        ],
+        evaluacion: [
+            'Permite realizar evaluaciones por medios digitales y plataformas virtuales.',
+            'Dispón el material escrito con anticipación para su adaptación.',
+            'Otorga más tiempo en evaluaciones si es necesario.'
+        ],
+        tech: [
+            'Asegura compatibilidad con lectores de pantalla y dispositivos Braille.',
+            'Revisa accesibilidad con herramientas como Blackboard Ally.'
+        ]
     },
     sordoceguera: {
         name: 'Sordoceguera',
         source: 'Adecuaciones de Acceso',
-        context: ['Asigna lugar cómodo para estudiante y guía intérprete.', 'Anticipa cambios de sala, mobiliario o actividad.'],
-        materials: ['Sube materiales al AVA con anticipación y formatos compatibles con líneas Braille.', 'Prioriza recursos táctiles o descripciones textuales claras.'],
-        methods: ['Organiza secuencias previsibles, con información esencial claramente jerarquizada.', 'Evita actividades dependientes de estímulos simultáneos no accesibles.'],
-        interaction: ['Coordina comunicación a través de guía intérprete cuando corresponda.', 'Confirma acuerdos de apoyo antes de actividades fuera del aula.'],
-        time: ['Flexibiliza tiempos de desplazamiento, comunicación, lectura y respuesta.']
+        context: [
+            'Asigna lugar cómodo para estudiante y guía intérprete.',
+            'Anticipa cambios de sala, mobiliario o actividad.',
+            'Flexibiliza tiempos de desplazamiento y comunicación.'
+        ],
+        materials: [
+            'Sube materiales al AVA con anticipación y formatos compatibles con líneas Braille.',
+            'Prioriza recursos táctiles o descripciones textuales claras.'
+        ],
+        methods: [
+            'Organiza secuencias previsibles, con información esencial claramente jerarquizada.',
+            'Evita actividades dependientes de estímulos simultáneos no accesibles.'
+        ],
+        interaction: [
+            'Coordina comunicación a través de guía intérprete cuando corresponda.',
+            'Confirma acuerdos de apoyo antes de actividades fuera del aula.'
+        ],
+        evaluacion: [
+            'Acuerda formatos de evaluación que permitan expresar los aprendizajes.',
+            'Prioriza evaluaciones de ejecución práctica cuando sea posible.'
+        ],
+        tech: [
+            'Asegura que la tecnología usada sea compatible con líneas Braille y guía intérprete.'
+        ]
+    },
+    tactil: {
+        name: 'Discapacidad sensorial táctil',
+        source: 'Adecuaciones de Acceso',
+        context: [
+            'Asegura mobiliario ergonómico (mesa y silla ajustables) según necesidad.',
+            'Reserva asiento con acceso a enchufe para trabajo en dispositivo electrónico si hay dificultad de escritura manual.'
+        ],
+        materials: [
+            'Disponibiliza materiales en AVA con anterioridad para consulta previa.'
+        ],
+        methods: [
+            'En actividades con manipulación de instrumentos, anticípate a las necesidades y ofrece alternativas.'
+        ],
+        interaction: [
+            'Permite salir de la sala si el estudiante lo requiere.'
+        ],
+        evaluacion: [
+            'Ofrece formatos alternativos (digital u oral) ante dificultades de escritura manual.',
+            'Otorga tiempo adicional para responder evaluaciones cuando sea necesario.',
+            'Flexibiliza plazos si el estudiante debe ausentarse por su condición.'
+        ],
+        tech: [
+            'Permite el uso de dispositivos electrónicos como alternativa a la escritura manual.'
+        ]
+    },
+    vestibular: {
+        name: 'Discapacidad sensorial vestibular',
+        source: 'Adecuaciones de Acceso',
+        context: [
+            'Mantén la sala ordenada y predecible, con iluminación adecuada y sin luces parpadeantes.',
+            'Reserva asiento contiguo a una pared, lejos de ventanas con altura o brillos intensos.',
+            'Evita movimientos bruscos o cambios repentinos que puedan generar desequilibrio.'
+        ],
+        materials: [
+            'Usa fuentes claras y formatos simples, sin animaciones ni transiciones innecesarias.',
+            'Ofrece textos de refuerzo para trabajo autónomo en formato amigable.'
+        ],
+        methods: [
+            'Evita exceso de estímulos visuales y auditivos durante las clases.',
+            'Si usas videos con estímulos intensos, avisa con anticipación para que el estudiante tome resguardos.'
+        ],
+        interaction: [
+            'Permite que el estudiante se mueva o se retire de la sala si es necesario.',
+            'En trabajos en equipo, entrega instrucciones y roles definidos con anticipación.'
+        ],
+        evaluacion: [
+            'Otorga tiempo adicional para responder evaluaciones si es necesario.',
+            'Flexibiliza plazos si el estudiante debe ausentarse por su condición.'
+        ],
+        tech: [
+            'Evita tecnologías con estímulos visuales intensos o parpadeantes en evaluaciones.'
+        ]
     },
     visceral: {
         name: 'Discapacidad visceral u orgánica',
         source: 'Adecuaciones de Acceso',
-        context: ['Coordina ubicación cercana a ventilación, salida o servicios si es necesario.', 'Considera mobiliario ergonómico o condiciones ambientales específicas.'],
-        materials: ['Mantén contenidos disponibles con anticipación para periodos de ausencia o fatiga.', 'Ofrece alternativas digitales para continuidad.'],
-        methods: ['Planifica actividades por tramos para reducir sobrecarga física.', 'Permite participación asincrónica cuando sea razonable.'],
-        interaction: ['Resguarda privacidad del diagnóstico y acuerda apoyos directamente con la persona.', 'Evita interpretaciones disciplinarias de pausas o ausencias justificadas.'],
-        time: ['Flexibiliza plazos, pausas y asistencia según controles, tratamientos o episodios de salud.']
+        context: [
+            'Coordina ubicación cercana a ventilación, salida o servicios si es necesario.',
+            'Considera mobiliario ergonómico o condiciones ambientales específicas.',
+            'Flexibiliza pausas y asistencia según controles, tratamientos o episodios de salud.'
+        ],
+        materials: [
+            'Mantén contenidos disponibles con anticipación para periodos de ausencia o fatiga.',
+            'Ofrece alternativas digitales para continuidad.'
+        ],
+        methods: [
+            'Planifica actividades por tramos para reducir sobrecarga física.',
+            'Permite participación asincrónica cuando sea razonable.'
+        ],
+        interaction: [
+            'Resguarda privacidad del diagnóstico y acuerda apoyos directamente con la persona.',
+            'Evita interpretaciones disciplinarias de pausas o ausencias justificadas.'
+        ],
+        evaluacion: [
+            'Flexibiliza plazos de entrega y fechas de evaluación según condición de salud.',
+            'Otorga tiempo adicional para responder evaluaciones si es necesario.'
+        ],
+        tech: [
+            'Facilita plataformas digitales para continuidad cuando el estudiante no pueda asistir.'
+        ]
     },
     intelectual: {
         name: 'Discapacidad intelectual',
         source: 'Adecuaciones de Acceso',
-        context: ['Reduce distractores y ubica al estudiante donde pueda pedir apoyo con facilidad.', 'Mantén rutinas claras y predecibles.'],
-        materials: ['Usa lectura fácil, glosarios, ejemplos concretos y apoyos visuales simples.', 'Entrega instrucciones en pasos numerados.'],
-        methods: ['Modela la tarea antes de pedir desempeño autónomo.', 'Relaciona conceptos abstractos con situaciones reales o manipulables.'],
-        interaction: ['Verifica comprensión con preguntas concretas y sin infantilizar.', 'Refuerza avances y estrategias usadas.'],
-        time: ['Otorga tiempo adicional y divide evaluaciones o trabajos extensos.']
+        context: [
+            'Reduce distractores y ubica al estudiante donde pueda pedir apoyo con facilidad.',
+            'Mantén rutinas claras y predecibles.'
+        ],
+        materials: [
+            'Usa lectura fácil, glosarios, ejemplos concretos y apoyos visuales simples.',
+            'Entrega instrucciones en pasos numerados.'
+        ],
+        methods: [
+            'Modela la tarea antes de pedir desempeño autónomo.',
+            'Relaciona conceptos abstractos con situaciones reales o manipulables.'
+        ],
+        interaction: [
+            'Verifica comprensión con preguntas concretas y sin infantilizar.',
+            'Refuerza avances y estrategias usadas.'
+        ],
+        evaluacion: [
+            'Entrega con anticipación y por escrito las fechas de evaluaciones.',
+            'Segmenta instrucciones con pasos breves, a modo de lista de verificación.',
+            'Prefiere preguntas directas y guiadas, evita enunciados extensos o ambiguos.',
+            'Ofrece formatos alternativos (práctico, oral, visual) para comprobar aprendizajes.',
+            'Otorga tiempo adicional y flexibiliza plazos de entrega.'
+        ],
+        tech: [
+            'Apoya con organizadores gráficos digitales y calendarios de estudio.'
+        ]
     },
     psiquica: {
         name: 'Discapacidad psíquica o salud mental',
         source: 'Adecuaciones de Acceso',
-            context: ['Procura ambiente calmo, reglas conocidas y acceso claro a redes de apoyo.', 'Evita exposición innecesaria en situaciones de alta ansiedad.'],
-        materials: ['Disponibiliza materiales antes de la clase para anticipación.', 'Resume instrucciones críticas por escrito.'],
-        methods: ['Mantén estructura consistente y avisa cambios relevantes.', 'Ofrece alternativas graduales para participación oral o grupal.'],
-        interaction: ['Usa comunicación clara, respetuosa y no punitiva frente a crisis o ausencias.', 'Acuerda señales o canales de apoyo si corresponde.'],
-        time: ['Flexibiliza fechas y pausas cuando existan episodios de salud mental documentados.']
+        context: [
+            'Procura ambiente calmo, reglas conocidas y acceso claro a redes de apoyo.',
+            'Evita exposición innecesaria en situaciones de alta ansiedad.'
+        ],
+        materials: [
+            'Disponibiliza materiales antes de la clase para anticipación.',
+            'Resume instrucciones críticas por escrito.'
+        ],
+        methods: [
+            'Mantén estructura consistente y avisa cambios relevantes.',
+            'Ofrece alternativas graduales para participación oral o grupal.'
+        ],
+        interaction: [
+            'Usa comunicación clara, respetuosa y no punitiva frente a crisis o ausencias.',
+            'Acuerda señales o canales de apoyo si corresponde.'
+        ],
+        evaluacion: [
+            'Ofrece flexibilidad para presentaciones orales: opción sin público o solo frente al docente.',
+            'Flexibiliza fechas y plazos cuando existan episodios documentados.',
+            'Otorga tiempo adicional para responder evaluaciones si es necesario.'
+        ],
+        tech: [
+            'Permite entrega de trabajos por medios digitales cuando la presencialidad sea una barrera.'
+        ]
     },
     autismo: {
-        name: 'Neurodesarrollo / estudiantes autistas',
+        name: 'Condición del Neurodesarrollo',
         source: 'Autismo',
-        context: ['Anticipa estructura, reglas, tiempos de descanso y cambios de rutina.', 'Permite audífonos con cancelación de ruido u otros apoyos sensoriales en trabajo autónomo.'],
-        materials: ['Entrega material antes de la clase y usa instrucciones explícitas.', 'Evita ambigüedades, ironías o dobles sentidos no explicados.'],
-        methods: ['Divide actividades en pasos y explicita expectativas de logro.', 'Ofrece alternativas para participación social o trabajo grupal.'],
-        interaction: ['Reconoce fortalezas: foco, honestidad, organización, memoria o interés intenso.', 'Acuerda apoyos sin exigir divulgación pública de la condición.'],
-        time: ['Flexibiliza entregas, pausas y evaluaciones cuando exista sobrecarga o desregulación.'],
+        context: [
+            'Anticipa estructura, reglas, tiempos de descanso y cambios de rutina.',
+            'Permite audífonos con cancelación de ruido u otros apoyos sensoriales en trabajo autónomo.'
+        ],
+        materials: [
+            'Entrega material antes de la clase y usa instrucciones explícitas.',
+            'Evita ambigüedades, ironías o dobles sentidos no explicados.'
+        ],
+        methods: [
+            'Divide actividades en pasos y explicita expectativas de logro.',
+            'Ofrece alternativas para participación social o trabajo grupal.'
+        ],
+        interaction: [
+            'Reconoce fortalezas: foco, honestidad, organización, memoria o interés intenso.',
+            'Acuerda apoyos sin exigir divulgación pública de la condición.'
+        ],
+        evaluacion: [
+            'Flexibiliza entregas, pausas y evaluaciones cuando exista sobrecarga o desregulación.',
+            'Brinda información adicional durante la evaluación si el estudiante muestra signos de estrés.',
+            'Ofrece tiempo adicional si es necesario.'
+        ],
+        tech: [
+            'Permite el uso de audífonos con cancelación de ruido durante trabajo autónomo y evaluaciones.'
+        ],
         highlights: [
             { title: 'Anticipación', text: 'Comunica estructura, actividades, tiempos y cambios antes de la clase.' },
             { title: 'Claridad', text: 'Define expectativas, reglas de participación y criterios de evaluación sin ambigüedades.' },
             { title: 'Trabajo grupal', text: 'Usa roles explícitos, retroalimentación y opción de reuniones individuales si aparecen dificultades.' },
-                { title: 'Desregulación', text: 'Prioriza calma, flexibilidad, reducción de estímulos y coordinación con apoyos especializados.' }
+            { title: 'Desregulación', text: 'Prioriza calma, flexibilidad, reducción de estímulos y coordinación con apoyos especializados.' }
         ],
         regulation: [
             {
@@ -228,7 +438,7 @@ const accommodationsData = {
                 items: [
                     'Retoma la comunicación cuando la persona esté disponible para hacerlo.',
                     'Revisa qué desencadenó la situación y qué ajuste puede prevenirla.',
-                        'Coordina apoyos especializados cuando corresponda, resguardando privacidad y dignidad.'
+                    'Coordina apoyos especializados cuando corresponda, resguardando privacidad y dignidad.'
                 ]
             }
         ]
@@ -336,6 +546,20 @@ const glossaryData = [
     { term: 'Texto alternativo', desc: 'Descripción breve y funcional de una imagen para transmitir su propósito a quienes no la perciben visualmente.' }
 ];
 
+const accessMatrixActivities = [
+    { id: 'escribir',      label: 'Escribir',                         dims: ['evaluacion','tech'],          conds: ['fisica','tactil','intelectual'] },
+    { id: 'leer',          label: 'Leer',                             dims: ['materials'],                  conds: ['visual','sordoceguera','intelectual'] },
+    { id: 'hablar',        label: 'Hablar',                           dims: ['interaction'],                conds: ['auditiva','sordoceguera','autismo','psiquica'] },
+    { id: 'recordar',      label: 'Recordar cosas',                   dims: ['methods'],                    conds: ['intelectual','psiquica','autismo'] },
+    { id: 'examenes',      label: 'Rendir exámenes',                  dims: ['evaluacion'],                 conds: ['fisica','auditiva','visual','sordoceguera','tactil','vestibular','visceral','intelectual','psiquica','autismo'] },
+    { id: 'practicos',     label: 'Participar en ramos prácticos',    dims: ['methods','interaction'],      conds: ['fisica','auditiva','visual','sordoceguera','tactil','vestibular','autismo','visceral'] },
+    { id: 'sala_clases',   label: 'Participar en la sala de clases',  dims: ['interaction','context'],      conds: ['auditiva','visual','sordoceguera','autismo','psiquica'] },
+    { id: 'sociales',      label: 'Participar en actividades sociales',dims: ['interaction'],               conds: ['auditiva','sordoceguera','autismo','psiquica'] },
+    { id: 'practicas_rec', label: 'Participar en actividades prácticas',dims: ['interaction','context'],     conds: ['fisica','vestibular','auditiva','visual'] },
+    { id: 'ayuda',         label: 'Obtener ayuda',                    dims: ['interaction'],                conds: ['auditiva','sordoceguera','autismo','psiquica','intelectual'] },
+    { id: 'acceder',       label: 'Acceder a la institución',         dims: ['context'],                    conds: ['fisica','visual','vestibular'] }
+];
+
 window.UiePlannerData = {
     referencesData,
     principleCards,
@@ -346,7 +570,8 @@ window.UiePlannerData = {
     digitalAccessibilityData,
     vocabularyData,
     autismMyths,
-    glossaryData
+    glossaryData,
+    accessMatrixActivities
 };
 
 })();

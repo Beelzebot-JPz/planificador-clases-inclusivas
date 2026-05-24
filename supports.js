@@ -2,23 +2,25 @@
 const { accommodationsData, autismMyths, goodPracticesData } = window.UiePlannerData;
 
 const barrierDimensions = [
-    { key: 'comprension', label: 'Comprensión' },
-    { key: 'materiales', label: 'Materiales' },
-    { key: 'participacion', label: 'Participación' },
-    { key: 'regulacion', label: 'Regulación' },
-    { key: 'tiempo', label: 'Tiempo' },
-    { key: 'acceso', label: 'Acceso' }
+    { key: 'context', label: 'Contexto' },
+    { key: 'materials', label: 'Materiales' },
+    { key: 'methods', label: 'Métodos' },
+    { key: 'interaction', label: 'Interacción' },
+    { key: 'evaluacion', label: 'Evaluaciones' },
+    { key: 'tech', label: 'Tecnologías' }
 ];
 
 const barrierProfiles = {
-    fisica: { comprension: 1, materiales: 2, participacion: 2, regulacion: 1, tiempo: 3, acceso: 4 },
-    auditiva: { comprension: 2, materiales: 3, participacion: 3, regulacion: 1, tiempo: 2, acceso: 2 },
-    visual: { comprension: 2, materiales: 4, participacion: 2, regulacion: 1, tiempo: 3, acceso: 3 },
-    sordoceguera: { comprension: 3, materiales: 4, participacion: 4, regulacion: 2, tiempo: 4, acceso: 4 },
-    visceral: { comprension: 1, materiales: 2, participacion: 2, regulacion: 2, tiempo: 4, acceso: 3 },
-    intelectual: { comprension: 4, materiales: 3, participacion: 2, regulacion: 2, tiempo: 3, acceso: 1 },
-    psiquica: { comprension: 2, materiales: 2, participacion: 3, regulacion: 4, tiempo: 3, acceso: 1 },
-    autismo: { comprension: 3, materiales: 2, participacion: 4, regulacion: 4, tiempo: 3, acceso: 2 }
+    fisica:       { context: 4, materials: 2, methods: 2, interaction: 2, evaluacion: 2, tech: 3 },
+    auditiva:     { context: 2, materials: 3, methods: 3, interaction: 3, evaluacion: 2, tech: 3 },
+    visual:       { context: 2, materials: 4, methods: 2, interaction: 2, evaluacion: 3, tech: 4 },
+    sordoceguera: { context: 3, materials: 4, methods: 3, interaction: 4, evaluacion: 3, tech: 4 },
+    tactil:       { context: 2, materials: 2, methods: 2, interaction: 1, evaluacion: 2, tech: 2 },
+    vestibular:   { context: 4, materials: 2, methods: 2, interaction: 2, evaluacion: 2, tech: 1 },
+    visceral:     { context: 3, materials: 2, methods: 2, interaction: 2, evaluacion: 3, tech: 2 },
+    intelectual:  { context: 1, materials: 3, methods: 4, interaction: 2, evaluacion: 4, tech: 2 },
+    psiquica:     { context: 1, materials: 2, methods: 2, interaction: 3, evaluacion: 3, tech: 2 },
+    autismo:      { context: 3, materials: 2, methods: 3, interaction: 4, evaluacion: 3, tech: 2 }
 };
 
 const radarColors = ['#2563eb', '#16a34a', '#d97706', '#dc2626'];
@@ -28,18 +30,21 @@ const shortConditionNames = {
     auditiva: 'Auditiva',
     visual: 'Visual',
     sordoceguera: 'Sordoceguera',
+    tactil: 'Táctil',
+    vestibular: 'Vestibular',
     visceral: 'Visceral',
     intelectual: 'Intelectual',
     psiquica: 'Psíquica',
-    autismo: 'Autismo'
+    autismo: 'Neurodesarrollo'
 };
 
 const categoryLabels = {
-    context: 'Contexto de aula',
-    materials: 'Materiales',
-    methods: 'Metodología',
-    interaction: 'Interacción y evaluación',
-    time: 'Tiempos y flexibilidad'
+    context: 'Contexto aula',
+    materials: 'Materiales de estudio',
+    methods: 'Métodos de enseñanza',
+    interaction: 'Interacción en aula',
+    evaluacion: 'De las evaluaciones',
+    tech: 'Tecnologías asistivas'
 };
 
 // MERGE GUIDE: When adding new recommendations in data.js, check if they overlap
@@ -48,35 +53,36 @@ const categoryLabels = {
 // If no overlap is found, no action is needed: the recommendation displays normally.
 const mergeGroups = [
     {
-        category: 'time',
+        category: 'evaluacion',
         texts: [
-            'Otorga tiempo adicional o pausas cuando exista fatiga, dolor o barreras de desplazamiento.',
-            'Da tiempo adicional para procesar instrucciones escritas extensas o mediadas por interpretación.',
-            'Otorga más tiempo para lectura, navegación, evaluación o producción escrita.',
-            'Flexibiliza tiempos de desplazamiento, comunicación, lectura y respuesta.',
-            'Flexibiliza plazos, pausas y asistencia según controles, tratamientos o episodios de salud.',
-            'Otorga tiempo adicional y divide evaluaciones o trabajos extensos.',
-            'Flexibiliza fechas y pausas cuando existan episodios de salud mental documentados.',
+            'Otorga tiempo adicional para responder evaluaciones cuando sea necesario.',
+            'Otorga tiempo adicional para responder evaluaciones si es necesario.',
+            'Otorga más tiempo en evaluaciones si es necesario.',
+            'Ofrece tiempo adicional si es necesario.',
+            'Otorga tiempo adicional y flexibiliza plazos de entrega.'
+        ],
+        mergedText: 'Otorga tiempo adicional en evaluaciones y flexibiliza plazos según necesidad.'
+    },
+    {
+        category: 'evaluacion',
+        texts: [
+            'Flexibiliza plazos si el estudiante debe ausentarse por su condición.',
+            'Flexibiliza plazos de entrega cuando exista fatiga.',
+            'Flexibiliza plazos de entrega y fechas de evaluación según condición de salud.',
+            'Flexibiliza fechas y plazos cuando existan episodios documentados.',
             'Flexibiliza entregas, pausas y evaluaciones cuando exista sobrecarga o desregulación.'
         ],
-        mergedText: 'Flexibiliza tiempos, pausas y plazos según necesidad del estudiante.'
+        mergedText: 'Flexibiliza plazos de entrega y fechas de evaluación según la condición.'
     },
     {
         category: 'materials',
         texts: [
             'Disponibiliza materiales digitales con anticipación.',
-            'Mantén contenidos disponibles con anticipación para periodos de ausencia o fatiga.',
-            'Disponibiliza materiales antes de la clase para anticipación.'
+            'Disponibiliza materiales en AVA con anterioridad para consulta previa.',
+            'Disponibiliza materiales antes de la clase para anticipación.',
+            'Mantén contenidos disponibles con anticipación para periodos de ausencia o fatiga.'
         ],
         mergedText: 'Disponibiliza materiales con anticipación en el AVA.'
-    },
-    {
-        category: 'materials',
-        texts: [
-            'Entrega instrucciones y contenidos clave por escrito.',
-            'Resume instrucciones críticas por escrito.'
-        ],
-        mergedText: 'Entrega instrucciones y contenidos clave por escrito.'
     },
     {
         category: 'interaction',
@@ -87,6 +93,18 @@ const mergeGroups = [
         mergedText: 'Usa comunicación clara y respetuosa frente a crisis, pausas o ausencias justificadas.'
     }
 ];
+
+const matrixData = {};
+
+function getStudentMatrixProfile(studentIndex) {
+    const entry = matrixData[studentIndex];
+    return entry && entry.applied ? entry.profile : null;
+}
+
+function getStudentMatrixScores(studentIndex) {
+    const entry = matrixData[studentIndex];
+    return entry ? entry.scores || {} : {};
+}
 
 function renderSupports() {
     const results = document.getElementById('support-results');
@@ -126,15 +144,31 @@ function renderSelectedSupportRecommendations() {
 }
 
 function renderBarrierMap(students) {
-    const profiles = students.slice(0, 4).map((student, index) => ({
-        label: formatStudentLabel(student),
-        conditionLabel: formatStudentConditionLabel(student),
-        color: radarColors[index % radarColors.length],
-        values: mergeConditionProfiles(student.conditions.map(condition => condition.key))
-    }));
-    const extraCount = Math.max(0, students.length - profiles.length);
     const center = 150;
     const maxRadius = 100;
+    const matrixColor = '#7c3aed';
+    let hasAnyMatrix = false;
+    const profiles = students.slice(0, 4).map((student, index) => {
+        const studentIndex = student.cardIndex || (index + 1);
+        const matrixProfile = getStudentMatrixProfile(studentIndex);
+        if (matrixProfile) {
+            hasAnyMatrix = true;
+            return {
+                label: formatStudentLabel(student),
+                conditionLabel: 'Perfil desde matriz (CIF)',
+                color: matrixColor,
+                values: matrixProfile
+            };
+        }
+        return {
+            label: formatStudentLabel(student),
+            conditionLabel: formatStudentConditionLabel(student),
+            color: radarColors[index % radarColors.length],
+            values: mergeConditionProfiles(student.conditions.map(function(c) { return c.key; }))
+        };
+    });
+
+    const extraCount = Math.max(0, students.length - profiles.length);
     const axisPoints = barrierDimensions.map((_, index) => radarPoint(center, maxRadius, index, barrierDimensions.length));
     const rings = [1, 2, 3, 4].map(level => {
         const points = barrierDimensions.map((_, index) => radarPoint(center, (maxRadius / 4) * level, index, barrierDimensions.length));
@@ -161,7 +195,9 @@ function renderBarrierMap(students) {
             <div class="resource-heading">
                 <span class="source-pill">Mapa orientativo</span>
                 <h3>Mapa de barreras y apoyos del plan</h3>
-                <p>Este gráfico no diagnostica ni describe a la persona. Solo ayuda a visualizar dónde podrían requerirse apoyos según las condiciones seleccionadas y debe ajustarse con observación, conversación y evidencia.</p>
+                <p>${hasAnyMatrix
+                    ? 'Los perfiles que provienen de la matriz de acceso (CIF/OMS) aparecen en púrpura. Los demás derivan de las condiciones seleccionadas. Ningún dato diagnostica: ajusta con observación.'
+                    : 'Este gráfico no diagnostica ni describe a la persona. Solo ayuda a visualizar dónde podrían requerirse apoyos según las condiciones seleccionadas y debe ajustarse con observación, conversación y evidencia.'}</p>
             </div>
             <div class="barrier-map-layout">
                 <div class="radar-wrap" aria-label="Gráfico radar de apoyos posibles">
@@ -229,11 +265,12 @@ function supportRecommendationGroup(grouped) {
                 </div>
             </div>
             <div class="support-grid">
-                ${supportCategory('Contexto de aula', data.context)}
-                ${supportCategory('Materiales', data.materials)}
-                ${supportCategory('Metodología', data.methods)}
-                ${supportCategory('Interacción y evaluación', data.interaction)}
-                ${supportCategory('Tiempos y flexibilidad', data.time)}
+                ${supportCategory('Contexto aula', data.context)}
+                ${supportCategory('Materiales de estudio', data.materials)}
+                ${supportCategory('Métodos de enseñanza', data.methods)}
+                ${supportCategory('Interacción en aula', data.interaction)}
+                ${supportCategory('De las evaluaciones', data.evaluacion)}
+                ${supportCategory('Tecnologías asistivas', data.tech)}
             </div>
             ${data.highlights ? `
                 <div class="context-panel">
@@ -336,13 +373,25 @@ function renderSupportStudents(onStudentChange = () => {}) {
     }
 
     container.querySelectorAll('.support-student-card:not([data-events-bound])').forEach(function(card) {
-        card.querySelectorAll('input').forEach(function(input) {
+        var studentIndex = card.getAttribute('data-student-index');
+
+        card.querySelectorAll('.condition-check, .student-name').forEach(function(input) {
             input.addEventListener('input', onStudentChange);
             input.addEventListener('change', onStudentChange);
             input.addEventListener('input', renderSelectedSupportRecommendations);
             input.addEventListener('change', renderSelectedSupportRecommendations);
-            input.addEventListener('change', updateConditionSummaries);
+            input.addEventListener('change', function() { updateConditionSummaries(studentIndex); });
         });
+
+        card.querySelectorAll('input[type="radio"][name^="student-matrix"]').forEach(function(radio) {
+            radio.addEventListener('change', function() { updateStudentMatrixBadge(studentIndex); });
+        });
+
+        var applyBtn = card.querySelector('[id^="apply-matrix-"]');
+        var clearBtn = card.querySelector('[id^="clear-matrix-"]');
+        if (applyBtn) applyBtn.addEventListener('click', function() { applyStudentMatrix(studentIndex); });
+        if (clearBtn) clearBtn.addEventListener('click', function() { clearStudentMatrix(studentIndex); });
+
         card.setAttribute('data-events-bound', '');
     });
 
@@ -355,39 +404,77 @@ function createStudentCard(studentIndex) {
     var wrapper = document.createElement('article');
     wrapper.className = 'support-student-card';
     wrapper.setAttribute('data-student-index', String(studentIndex));
-    wrapper.innerHTML = `
-        <h4>Estudiante ${studentIndex}</h4>
-        <label for="student-name-${studentIndex}">Nombre del estudiante opcional</label>
-        <input id="student-name-${studentIndex}" class="text-control student-name" type="text" placeholder="Si queda vacío se usará Estudiante ${studentIndex}">
-        <details class="condition-dropdown">
-            <summary>
-                <span class="condition-summary-text">Seleccionar condiciones o necesidades</span>
-                <span class="condition-summary-count">Sin selección</span>
-            </summary>
-            <div class="condition-checklist" aria-label="Condiciones o necesidades del estudiante ${studentIndex}">
-                ${Object.entries(accommodationsData).map(([key, condition]) => `
-                    <label class="condition-option">
-                        <input type="checkbox" class="condition-check" value="${key}">
-                        <span>${condition.name}</span>
-                    </label>
-                `).join('')}
-            </div>
-        </details>
-    `;
+
+    var activities = window.UiePlannerData.accessMatrixActivities;
+    var matrixRows = activities.map(function(act) {
+        var cells = [4, 3, 2, 1].map(function(val) {
+            return '<td class="matrix-col-score">' +
+                '<label class="matrix-radio-group">' +
+                '<input type="radio" name="student-matrix-' + studentIndex + '-' + act.id + '" value="' + val + '">' +
+                '<span>' + val + '</span>' +
+                '</label></td>';
+        }).join('');
+        return '<tr><td class="matrix-activity-label">' + act.label + '</td>' + cells + '</tr>';
+    }).join('');
+
+    wrapper.innerHTML =
+        '<h4>Estudiante ' + studentIndex + '</h4>' +
+        '<label for="student-name-' + studentIndex + '">Nombre del estudiante (opcional)</label>' +
+        '<input id="student-name-' + studentIndex + '" class="text-control student-name" type="text" placeholder="Si queda vacío se usará Estudiante ' + studentIndex + '">' +
+        '<div class="student-card-status" id="student-status-' + studentIndex + '">Sin apoyos definidos</div>' +
+        '<details class="student-matrix-toggle">' +
+            '<summary>' +
+                '<span>Matriz de acceso (CIF/OMS)</span>' +
+                '<span class="student-matrix-badge" id="student-matrix-badge-' + studentIndex + '"></span>' +
+            '</summary>' +
+            '<div class="student-matrix-wrap">' +
+                '<table class="student-matrix-table">' +
+                    '<thead><tr><th>Actividad</th><th class="matrix-col-score">4</th><th class="matrix-col-score">3</th><th class="matrix-col-score">2</th><th class="matrix-col-score">1</th></tr></thead>' +
+                    '<tbody>' + matrixRows + '</tbody>' +
+                '</table>' +
+                '<div class="student-matrix-legend">' +
+                    '<span><strong>4</strong> Compatibilidad perfecta</span>' +
+                    '<span><strong>3</strong> Compatibilidad buena</span>' +
+                    '<span><strong>2</strong> Compatibilidad parcial</span>' +
+                    '<span><strong>1</strong> Incompatibilidad</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="student-matrix-actions">' +
+                '<button class="btn btn-primary btn-sm" id="apply-matrix-' + studentIndex + '" type="button">Aplicar puntajes</button>' +
+                '<button class="btn btn-secondary btn-sm" id="clear-matrix-' + studentIndex + '" type="button">Limpiar</button>' +
+            '</div>' +
+        '</details>' +
+        '<details class="condition-dropdown">' +
+            '<summary>' +
+                '<span class="condition-summary-text">Seleccionar condiciones</span>' +
+                '<span class="condition-summary-count" id="condition-count-' + studentIndex + '">Sin selección</span>' +
+            '</summary>' +
+            '<div class="condition-checklist" aria-label="Condiciones del estudiante ' + studentIndex + '">' +
+                Object.keys(accommodationsData).map(function(key) {
+                    return '<label class="condition-option"><input type="checkbox" class="condition-check" value="' + key + '"><span>' + accommodationsData[key].name + '</span></label>';
+                }).join('') +
+            '</div>' +
+        '</details>';
+
+    wrapper.setAttribute('data-matrix-ready', '');
+
     return wrapper;
 }
 
-function updateConditionSummaries() {
+function updateConditionSummaries(studentIndex) {
     document.querySelectorAll('.support-student-card').forEach(card => {
-        const selected = Array.from(card.querySelectorAll('.condition-check:checked'))
+        var idx = card.getAttribute('data-student-index');
+        var selected = Array.from(card.querySelectorAll('.condition-check:checked'))
             .map(box => accommodationsData[box.value]?.name)
             .filter(Boolean);
-        const count = card.querySelector('.condition-summary-count');
-        if (!count) return;
-        count.textContent = selected.length
-            ? `${selected.length} seleccionada(s)`
-            : 'Sin selección';
-        count.title = selected.join(', ');
+        var count = document.getElementById('condition-count-' + idx);
+        if (count) {
+            count.textContent = selected.length
+                ? `${selected.length} seleccionada(s)`
+                : 'Sin selección';
+            count.title = selected.join(', ');
+        }
+        updateStudentStatusBadge(idx);
     });
 }
 
@@ -400,6 +487,7 @@ function getSelectedSupportStudentGroups() {
             .filter(item => item.name);
         return {
             label: `Estudiante ${index}`,
+            cardIndex: Number(index),
             name,
             conditions
         };
@@ -408,11 +496,12 @@ function getSelectedSupportStudentGroups() {
 
 function recommendationCategories(condition) {
     return [
-        { title: 'Contexto de aula', items: condition.context },
-        { title: 'Materiales', items: condition.materials },
-        { title: 'Metodología', items: condition.methods },
-        { title: 'Interacción y evaluación', items: condition.interaction },
-        { title: 'Tiempos y flexibilidad', items: condition.time }
+        { title: 'Contexto aula', items: condition.context },
+        { title: 'Materiales de estudio', items: condition.materials },
+        { title: 'Métodos de enseñanza', items: condition.methods },
+        { title: 'Interacción en aula', items: condition.interaction },
+        { title: 'De las evaluaciones', items: condition.evaluacion },
+        { title: 'Tecnologías asistivas', items: condition.tech }
     ];
 }
 
@@ -429,7 +518,8 @@ function groupStudentsByCondition(students) {
             }
             map.get(condition.key).students.push({
                 label: student.label,
-                name: student.name
+                name: student.name,
+                cardIndex: student.cardIndex
             });
         });
     });
@@ -447,13 +537,13 @@ function groupStudentsByProfile(students) {
         if (!map.has(key)) {
             map.set(key, { conditions: student.conditions.slice(), students: [] });
         }
-        map.get(key).students.push({ label: student.label, name: student.name });
+        map.get(key).students.push({ label: student.label, name: student.name, cardIndex: student.cardIndex });
     });
     return Array.from(map.values());
 }
 
 function getMergedRecommendations(conditionKeys) {
-    const categories = ['context', 'materials', 'methods', 'interaction', 'time'];
+    const categories = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'];
     const result = {};
 
     categories.forEach(function(cat) {
@@ -519,7 +609,7 @@ function renderProfileGroup(group) {
 
     const sourcePills = sources.map(function(s) { return '<span class="source-pill">' + s + '</span>'; }).join(' ');
 
-    const categoriesHtml = ['context', 'materials', 'methods', 'interaction', 'time'].map(function(cat) {
+    const categoriesHtml = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'].map(function(cat) {
         const items = merged[cat];
         if (!items || !items.length) return '';
         const itemsHtml = items.map(function(item) {
@@ -567,6 +657,129 @@ function renderProfileGroup(group) {
 }
 
 
+function readStudentMatrixScores(studentIndex) {
+    var scores = {};
+    var activities = window.UiePlannerData.accessMatrixActivities;
+    activities.forEach(function(act) {
+        var checked = document.querySelector('input[name="student-matrix-' + studentIndex + '-' + act.id + '"]:checked');
+        scores[act.id] = checked ? Number(checked.value) : 0;
+    });
+    return scores;
+}
+
+function computeRadarProfile(scores) {
+    var activities = window.UiePlannerData.accessMatrixActivities;
+    var dims = { context: [], materials: [], methods: [], interaction: [], evaluacion: [], tech: [] };
+
+    activities.forEach(function(act) {
+        var score = scores[act.id] || 0;
+        if (!score) return;
+        var radarValue = 5 - score;
+        act.dims.forEach(function(dim) {
+            dims[dim].push(radarValue);
+        });
+    });
+
+    return barrierDimensions.reduce(function(profile, dim) {
+        var values = dims[dim.key] || [1];
+        profile[dim.key] = values.length ? Math.max.apply(null, values) : 1;
+        return profile;
+    }, {});
+}
+
+function computeConditionSuggestions(scores) {
+    var activities = window.UiePlannerData.accessMatrixActivities;
+    var weights = {};
+
+    activities.forEach(function(act) {
+        var score = scores[act.id] || 0;
+        if (score <= 2 && score >= 1) {
+            var weight = 3 - score;
+            act.conds.forEach(function(cond) {
+                weights[cond] = (weights[cond] || 0) + weight;
+            });
+        }
+    });
+
+    var entries = Object.keys(weights).map(function(k) { return { key: k, weight: weights[k] }; });
+    entries.sort(function(a, b) { return b.weight - a.weight; });
+
+    var threshold = 2;
+    var suggested = entries.filter(function(e) { return e.weight >= threshold; }).map(function(e) { return e.key; });
+
+    return suggested;
+}
+
+function applyStudentMatrix(studentIndex) {
+    var scores = readStudentMatrixScores(studentIndex);
+    var scored = Object.values(scores).filter(function(v) { return v > 0; });
+    if (!scored.length) return;
+
+    var profile = computeRadarProfile(scores);
+    var suggested = computeConditionSuggestions(scores);
+
+    matrixData[studentIndex] = { scores: scores, profile: profile, applied: true };
+
+    var card = document.querySelector('.support-student-card[data-student-index="' + studentIndex + '"]');
+    if (card) {
+        card.querySelectorAll('.condition-check').forEach(function(box) {
+            box.checked = suggested.indexOf(box.value) !== -1;
+        });
+        updateConditionSummaries(studentIndex);
+    }
+
+    updateStudentMatrixBadge(studentIndex);
+    renderSelectedSupportRecommendations();
+}
+
+function clearStudentMatrix(studentIndex) {
+    delete matrixData[studentIndex];
+
+    var card = document.querySelector('.support-student-card[data-student-index="' + studentIndex + '"]');
+    if (card) {
+        card.querySelectorAll('input[type="radio"][name^="student-matrix"]').forEach(function(radio) {
+            radio.checked = false;
+        });
+    }
+
+    updateStudentMatrixBadge(studentIndex);
+    updateStudentStatusBadge(studentIndex);
+    renderSelectedSupportRecommendations();
+}
+
+function updateStudentMatrixBadge(studentIndex) {
+    var badge = document.getElementById('student-matrix-badge-' + studentIndex);
+    if (!badge) return;
+    var scores = readStudentMatrixScores(studentIndex);
+    var scored = Object.values(scores).filter(function(v) { return v > 0; }).length;
+    badge.textContent = scored ? scored + '/11' : '';
+    updateStudentStatusBadge(studentIndex);
+}
+
+function updateStudentStatusBadge(studentIndex) {
+    var status = document.getElementById('student-status-' + studentIndex);
+    if (!status) return;
+
+    var card = document.querySelector('.support-student-card[data-student-index="' + studentIndex + '"]');
+    var hasConditions = card ? card.querySelectorAll('.condition-check:checked').length > 0 : false;
+    var hasMatrix = !!matrixData[studentIndex] && matrixData[studentIndex].applied;
+    var hasMatrixScores = Object.values(readStudentMatrixScores(studentIndex)).filter(function(v) { return v > 0; }).length > 0;
+
+    if (hasMatrix) {
+        status.textContent = 'Con matriz de acceso aplicada';
+        status.className = 'student-card-status status-matrix';
+    } else if (hasConditions) {
+        status.textContent = 'Con condiciones seleccionadas';
+        status.className = 'student-card-status status-conditions';
+    } else if (hasMatrixScores) {
+        status.textContent = 'Matriz sin aplicar';
+        status.className = 'student-card-status status-pending';
+    } else {
+        status.textContent = 'Sin apoyos definidos';
+        status.className = 'student-card-status';
+    }
+}
+
 window.UiePlannerSupports = {
     renderSupports,
     renderSelectedSupportRecommendations,
@@ -582,7 +795,13 @@ window.UiePlannerSupports = {
     renderProfileGroup,
     categoryLabels,
     shortConditionNames,
-    formatStudentLabel
+    formatStudentLabel,
+    applyStudentMatrix,
+    clearStudentMatrix,
+    updateStudentMatrixBadge,
+    updateStudentStatusBadge,
+    getStudentMatrixProfile,
+    getStudentMatrixScores
 };
 
 })();

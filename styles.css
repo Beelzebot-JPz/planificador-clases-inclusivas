@@ -2227,6 +2227,349 @@ a.ref-card:focus-visible {
     }
 }
 
+.access-matrix-panel {
+    margin-top: 20px;
+}
+
+.access-matrix-toggle summary {
+    align-items: center;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    font-size: 0.95rem;
+    font-weight: 600;
+    gap: 10px;
+    justify-content: space-between;
+    list-style: none;
+    padding: 12px 16px;
+    user-select: none;
+}
+
+.access-matrix-toggle summary::-webkit-details-marker {
+    display: none;
+}
+
+.access-matrix-toggle summary::before {
+    content: '▸';
+    display: inline-block;
+    font-size: 0.75rem;
+    transition: transform 0.2s;
+    min-width: 14px;
+}
+
+.access-matrix-toggle[open] summary::before {
+    content: '▾';
+}
+
+.access-matrix-toggle summary:hover {
+    background: var(--border-light);
+}
+
+.access-matrix-toggle[open] summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.matrix-badge {
+    background: var(--accent);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 20px;
+    padding: 4px 8px;
+    text-align: center;
+}
+
+.matrix-badge:empty {
+    display: none;
+}
+
+.access-matrix-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow-x: auto;
+    padding: 16px;
+}
+
+.access-matrix-table {
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    width: 100%;
+}
+
+.access-matrix-table th {
+    background: var(--bg-elevated);
+    border-bottom: 2px solid var(--border);
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 8px 6px;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.access-matrix-table th.matrix-col-score {
+    text-align: center;
+    width: 52px;
+}
+
+.access-matrix-table td {
+    border-bottom: 1px solid var(--border-light);
+    padding: 10px 6px;
+    vertical-align: middle;
+}
+
+.access-matrix-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.access-matrix-table .matrix-activity-label {
+    font-weight: 500;
+}
+
+.matrix-radio-group {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.matrix-radio-group input[type="radio"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 18px;
+    width: 18px;
+}
+
+.matrix-radio-group label {
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin: 0;
+    min-width: 14px;
+    text-align: center;
+}
+
+.matrix-legend {
+    color: var(--text-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    gap: 10px;
+    margin-top: 12px;
+    padding-top: 10px;
+}
+
+.matrix-legend span {
+    align-items: center;
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+}
+
+.matrix-actions {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+}
+
+.access-matrix-toggle[open] .matrix-actions {
+    padding-bottom: 16px;
+}
+
+@keyframes matrix-highlight {
+    from { background-color: var(--accent-light); }
+    to { background-color: transparent; }
+}
+
+.matrix-highlight {
+    animation: matrix-highlight 1.5s ease-out;
+}
+
+.student-card-status {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 500;
+    margin: 4px 0 8px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: var(--bg-elevated);
+    display: inline-block;
+}
+
+.student-card-status.status-conditions {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.student-card-status.status-matrix {
+    background: #ede9fe;
+    color: #6d28d9;
+}
+
+.student-card-status.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.student-matrix-toggle {
+    margin: 6px 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.student-matrix-toggle summary {
+    align-items: center;
+    background: var(--bg-elevated);
+    border-radius: 8px;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    font-size: 0.85rem;
+    font-weight: 600;
+    gap: 8px;
+    justify-content: space-between;
+    list-style: none;
+    padding: 8px 12px;
+    user-select: none;
+}
+
+.student-matrix-toggle summary::-webkit-details-marker {
+    display: none;
+}
+
+.student-matrix-toggle summary::before {
+    content: '▸';
+    display: inline-block;
+    font-size: 0.7rem;
+    transition: transform 0.2s;
+    min-width: 12px;
+}
+
+.student-matrix-toggle[open] summary {
+    border-radius: 8px 8px 0 0;
+}
+
+.student-matrix-toggle[open] summary::before {
+    content: '▾';
+}
+
+.student-matrix-badge {
+    background: var(--accent);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 600;
+    line-height: 1;
+    min-width: 16px;
+    padding: 3px 6px;
+    text-align: center;
+}
+
+.student-matrix-badge:empty {
+    display: none;
+}
+
+.student-matrix-wrap {
+    padding: 8px;
+    overflow-x: auto;
+}
+
+.student-matrix-table {
+    border-collapse: collapse;
+    font-size: 0.72rem;
+    width: 100%;
+}
+
+.student-matrix-table th {
+    background: var(--bg-elevated);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 4px 3px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.student-matrix-table th.matrix-col-score {
+    text-align: center;
+    width: 38px;
+}
+
+.student-matrix-table td {
+    border-bottom: 1px solid var(--border-light);
+    padding: 6px 3px;
+    vertical-align: middle;
+}
+
+.student-matrix-table .matrix-activity-label {
+    font-size: 0.72rem;
+    font-weight: 500;
+}
+
+.student-matrix-table .matrix-radio-group input[type="radio"] {
+    accent-color: var(--accent);
+    cursor: pointer;
+    height: 14px;
+    width: 14px;
+}
+
+.student-matrix-table .matrix-radio-group span {
+    font-size: 0.62rem;
+    font-weight: 600;
+    min-width: 10px;
+}
+
+.student-matrix-legend {
+    color: var(--text-secondary);
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.62rem;
+    gap: 6px;
+    margin-top: 6px;
+    padding-top: 4px;
+    border-top: 1px solid var(--border-light);
+}
+
+.student-matrix-legend span {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+    white-space: nowrap;
+}
+
+.student-matrix-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 8px 10px;
+}
+
+.btn-sm {
+    font-size: 0.78rem;
+    padding: 5px 12px;
+}
+
+.access-matrix-panel,
+#access-matrix-panel,
+#access-matrix-toggle,
+.matrix-actions,
+.access-matrix-table-wrap,
+.matrix-legend {
+    display: none;
+}
+
 @media print {
     @page {
         margin: 18mm;
