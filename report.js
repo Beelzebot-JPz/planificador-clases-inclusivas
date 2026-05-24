@@ -327,10 +327,19 @@ function imageToBase64(url, callback) {
         canvas.height = img.height * scale;
         var ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        callback(canvas.toDataURL('image/png'));
+        try {
+            callback(canvas.toDataURL('image/png'));
+        } catch (e) {
+            callback(null);
+        }
     };
     img.onerror = function() {
-        callback(null);
+        var altUrl = url.indexOf(' ') !== -1 ? url.replace(/ /g, '%20') : url.replace(/%20/g, ' ');
+        if (altUrl !== url) {
+            imageToBase64(altUrl, callback);
+        } else {
+            callback(null);
+        }
     };
     img.src = url;
 }
