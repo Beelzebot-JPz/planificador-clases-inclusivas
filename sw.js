@@ -1,7 +1,5 @@
-const CACHE_NAME = 'uie-planificador-v3';
+const CACHE_NAME = 'uie-planificador-v4';
 const ASSETS = [
-    '/',
-    '/index.html',
     '/styles.css',
     '/data.js',
     '/tabs.js',
@@ -41,6 +39,19 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+    var url = new URL(event.request.url);
+    if (url.pathname === '/' || url.pathname.endsWith('index.html')) {
+        event.respondWith(
+            fetch(event.request).then(function(response) {
+                var clone = response.clone();
+                caches.open(CACHE_NAME).then(function(cache) { cache.put(event.request, clone); });
+                return response;
+            }).catch(function() {
+                return caches.match(event.request);
+            })
+        );
+        return;
+    }
     event.respondWith(
         caches.match(event.request).then(function(cached) {
             return cached || fetch(event.request);
