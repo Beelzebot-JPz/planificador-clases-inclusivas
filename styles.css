@@ -1801,6 +1801,10 @@ body.theme-dark .theme-icon-dark {
     font-size: 13px;
 }
 
+.cart-item-warning {
+    border-color: color-mix(in oklch, var(--accent) 30%, var(--border));
+}
+
 .cart-actions {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));

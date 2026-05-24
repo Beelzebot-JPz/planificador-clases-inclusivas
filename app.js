@@ -24,9 +24,8 @@ function initApp() {
 }
 
 function bindGlobalActions() {
-    const reset = document.getElementById('btn-reset-checklist');
-    const search = document.getElementById('vocab-search');
-    const shareDua = document.getElementById('btn-share-dua');
+    var reset = document.getElementById('btn-reset-checklist');
+    var search = document.getElementById('vocab-search');
 
     if (reset) {
         reset.addEventListener('click', function() {
@@ -37,19 +36,7 @@ function bindGlobalActions() {
     }
 
     if (search) {
-        search.addEventListener('input', () => filterLanguageContent(search.value));
-    }
-
-    if (shareDua) {
-        shareDua.addEventListener('click', function() {
-            var title = document.getElementById('cart-title');
-            var intro = document.getElementById('report-intro');
-            if (title) title.textContent = 'Compartir plan de apoyo docente';
-            if (intro) intro.textContent = 'Descarga el PDF del plan o abre un correo con un mensaje base editable. Por seguridad del navegador, el PDF debe adjuntarse manualmente al correo.';
-            renderPlanSummary();
-            var dialog = document.getElementById('report-dialog');
-            if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
-        });
+        search.addEventListener('input', function() { filterLanguageContent(search.value); });
     }
 
     initReports();

@@ -4,13 +4,14 @@ const { getCheckedDuaItems, getDuaStageSummary } = window.UiePlannerDua;
 const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, groupStudentsByProfile, getMergedRecommendations, categoryLabels, shortConditionNames, recommendationCategories } = window.UiePlannerSupports;
 
 const REPORT_TITLE = 'Plan de apoyo docente para la clase';
+var reportSource = 'dua';
 
 function initReports() {
-    const emailButton = document.getElementById('btn-email-recommendations');
-    const printButton = document.getElementById('btn-print-recommendations');
-    const emptyDuaButton = document.getElementById('btn-empty-dua');
-    const emptySupportsButton = document.getElementById('btn-empty-supports');
-    const emptyCloseButton = document.getElementById('btn-empty-close');
+    var emailButton = document.getElementById('btn-email-recommendations');
+    var printButton = document.getElementById('btn-print-recommendations');
+    var emptyDuaButton = document.getElementById('btn-empty-dua');
+    var emptySupportsButton = document.getElementById('btn-empty-supports');
+    var emptyCloseButton = document.getElementById('btn-empty-close');
 
     if (emailButton) emailButton.addEventListener('click', openRecommendationEmail);
     if (printButton) {
@@ -19,60 +20,66 @@ function initReports() {
                 renderPlanSummary();
                 return;
             }
+            var missing = getMissingContent();
+            if (missing) {
+                var proceed = confirm(missing.message + '\n\n¿Deseas continuar de todas formas?');
+                if (!proceed) return;
+            }
             printButton.disabled = true;
             printButton.textContent = 'Generando PDF...';
             ensurePdfMake(function() {
                 generatePdfMake();
                 printButton.disabled = false;
                 printButton.textContent = 'Descargar PDF';
+            }, function() {
+                printButton.disabled = false;
+                printButton.textContent = 'Descargar PDF';
             });
         });
     }
-    if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
-    if (emptySupportsButton) emptySupportsButton.addEventListener('click', () => goToReportSource('apoyos'));
+    if (emptyDuaButton) emptyDuaButton.addEventListener('click', function() { goToReportSource('planificar'); });
+    if (emptySupportsButton) emptySupportsButton.addEventListener('click', function() { goToReportSource('apoyos'); });
     if (emptyCloseButton) emptyCloseButton.addEventListener('click', closeReportDialog);
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeReportDialog();
     });
 
-    document.querySelectorAll('.btn-open-report').forEach(button => {
-        button.addEventListener('click', () => {
-            configureReportDialog();
+    document.querySelectorAll('.btn-open-report').forEach(function(button) {
+        button.addEventListener('click', function() {
+            reportSource = button.dataset.source || 'dua';
             renderPlanSummary();
-            const dialog = document.getElementById('report-dialog');
+            var dialog = document.getElementById('report-dialog');
             if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
         });
     });
 }
 
-function configureReportDialog() {
-    const title = document.getElementById('cart-title');
-    const intro = document.getElementById('report-intro');
-    if (title) title.textContent = 'Compartir plan de apoyo docente';
-    if (intro) intro.textContent = 'Descarga el PDF del plan o abre un correo con un mensaje base editable. Por seguridad del navegador, el PDF debe adjuntarse manualmente al correo.';
+function getMissingContent() {
+    var hasDua = getCheckedDuaItems().length > 0;
+    var hasSupports = getSelectedSupportStudentGroups().length > 0;
+    if (hasDua && hasSupports) return null;
+    if (!hasDua && !hasSupports) return null;
+    if (!hasDua) return { message: 'Solo se incluyen adecuaciones curriculares. No se han seleccionado decisiones DUA.', missing: 'dua' };
+    if (!hasSupports) return { message: 'Solo se incluyen decisiones DUA. No se han registrado estudiantes con adecuaciones.', missing: 'adecuaciones' };
+    return null;
 }
 
 function renderPlanSummary() {
-    const container = document.getElementById('cart-items');
+    var container = document.getElementById('cart-items');
     if (!container) return;
 
-    const checkedDua = getCheckedDuaItems();
-    const students = getSelectedSupportStudentGroups();
-    const profiles = groupStudentsByProfile(students);
-    const duaSummary = getDuaStageSummary();
-    const hasDua = checkedDua.length > 0;
-    const hasSupports = students.length > 0;
-    const conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
+    var checkedDua = getCheckedDuaItems();
+    var students = getSelectedSupportStudentGroups();
+    var profiles = groupStudentsByProfile(students);
+    var duaSummary = getDuaStageSummary();
+    var hasDua = checkedDua.length > 0;
+    var hasSupports = students.length > 0;
+    var conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
 
     if (!hasDua && !hasSupports) {
         setReportEmptyMode(true);
-        container.innerHTML = `
-            <div class="report-empty-state" role="status">
-                <strong>Aún no hay información para generar el plan.</strong>
-                <p>Selecciona decisiones DUA, registra estudiantes con apoyos acordados, o ambos. Con esos datos se podrá descargar un PDF o abrir un correo con mensaje base editable.</p>
-            </div>
-        `;
+        container.innerHTML = '<div class="report-empty-state" role="status"><strong>Aún no hay información para generar el plan.</strong><p>Selecciona decisiones DUA, registra estudiantes con apoyos acordados, o ambos. Con esos datos se podrá descargar un PDF o abrir un correo con mensaje base editable.</p></div>';
         clearPrintableRecommendations();
         return;
     }
@@ -81,38 +88,22 @@ function renderPlanSummary() {
 
     var items = '';
     if (hasDua) {
-        items += `
-            <article class="cart-item">
-                <strong>Base DUA para la clase</strong>
-                <span>${checkedDua.length} decisión(es) seleccionada(s)</span>
-                <p>${duaSummary.level.label}. ${duaSummary.level.text}</p>
-            </article>`;
+        items += '<article class="cart-item"><strong>Base DUA para la clase</strong><span>' + checkedDua.length + ' decisión(es) seleccionada(s)</span><p>' + duaSummary.level.label + '. ' + duaSummary.level.text + '</p></article>';
     }
     if (hasSupports) {
-        items += `
-            <article class="cart-item">
-                <strong>Adecuaciones acordadas</strong>
-                <span>${students.length} estudiante(s), ${conditionCount} condición(es)</span>
-                <p>${profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ')}</p>
-            </article>`;
+        items += '<article class="cart-item"><strong>Adecuaciones acordadas</strong><span>' + students.length + ' estudiante(s), ' + conditionCount + ' condición(es)</span><p>' + profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') + '</p></article>';
     }
     if (!hasDua && hasSupports) {
-        items += `
-            <article class="cart-item" style="border-color: color-mix(in oklch, var(--accent) 30%, var(--border));">
-                <strong>Base DUA sin seleccionar</strong>
-                <span>Se recomienda completar</span>
-                <p>Se sugiere revisar la base DUA antes de compartir el plan.</p>
-                <a class="btn btn-primary" href="#planificar" onclick="document.getElementById('report-dialog').close();" style="margin-top:8px;">Ir a Planificar DUA</a>
-            </article>`;
+        var duaLink = reportSource === 'adecuaciones'
+            ? '<a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a>'
+            : '<a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a>';
+        items += '<article class="cart-item cart-item-warning"><strong>Base DUA sin seleccionar</strong><span>Se recomienda completar</span><p>Se sugiere revisar la base DUA antes de compartir el plan.</p>' + duaLink + '</article>';
     }
     if (hasDua && !hasSupports) {
-        items += `
-            <article class="cart-item" style="border-color: color-mix(in oklch, var(--accent) 30%, var(--border));">
-                <strong>Adecuaciones sin registrar</strong>
-                <span>Opcional</span>
-                <p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>
-                <a class="btn btn-primary" href="#apoyos" onclick="document.getElementById('report-dialog').close();" style="margin-top:8px;">Ir a Adecuaciones</a>
-            </article>`;
+        var accLink = reportSource === 'dua'
+            ? '<a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a>'
+            : '<a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a>';
+        items += '<article class="cart-item cart-item-warning"><strong>Adecuaciones sin registrar</strong><span>Opcional</span><p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>' + accLink + '</article>';
     }
     container.innerHTML = items;
     updatePrintableRecommendations();
@@ -124,33 +115,28 @@ function openRecommendationEmail() {
         return;
     }
 
-    const checkedDua = getCheckedDuaItems();
-    const students = getSelectedSupportStudentGroups();
-    const profiles = groupStudentsByProfile(students);
-    const body = buildEmailBody(checkedDua, students, profiles);
-    const mailto = `mailto:?subject=${encodeURIComponent(REPORT_TITLE)}&body=${encodeURIComponent(body)}`;
+    var checkedDua = getCheckedDuaItems();
+    var students = getSelectedSupportStudentGroups();
+    var profiles = groupStudentsByProfile(students);
+    var body = buildEmailBody(checkedDua, students, profiles);
+    var mailto = 'mailto:?subject=' + encodeURIComponent(REPORT_TITLE) + '&body=' + encodeURIComponent(body);
     window.location.href = mailto;
 }
 
 function buildEmailBody(checkedDua, students, profiles) {
-    const lines = [
+    var lines = [
         'Hola,',
         '',
         'Comparto el plan de apoyo docente acordado para la clase.',
         '',
         'El plan considera:',
-        `- Base DUA: ${checkedDua.length ? `${checkedDua.length} decisión(es) seleccionada(s)` : 'sin decisiones DUA seleccionadas'}.`,
-        `- Adecuaciones curriculares de acceso: ${students.length ? `${students.length} estudiante(s) con apoyos acordados` : 'sin estudiantes registrados'}.`
+        '- Base DUA: ' + (checkedDua.length ? checkedDua.length + ' decisión(es) seleccionada(s)' : 'sin decisiones DUA seleccionadas') + '.',
+        '- Adecuaciones curriculares de acceso: ' + (students.length ? students.length + ' estudiante(s) con apoyos acordados' : 'sin estudiantes registrados') + '.'
     ];
     if (profiles.length) {
-        lines.push(`- Perfiles considerados: ${profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ')}.`);
+        lines.push('- Perfiles considerados: ' + profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') + '.');
     }
-    lines.push(
-        '',
-        'Adjunto el PDF con el detalle de las recomendaciones para su revisión y seguimiento.',
-        '',
-        'Quedo atento/a a comentarios o ajustes.'
-    );
+    lines.push('', 'Adjunto el PDF con el detalle de las recomendaciones para su revisión y seguimiento.', '', 'Quedo atento/a a comentarios o ajustes.');
     return lines.join('\n');
 }
 
@@ -159,20 +145,22 @@ function hasReportContent() {
 }
 
 function setReportEmptyMode(isEmpty) {
-    document.querySelector('.cart-fields')?.classList.toggle('hidden', isEmpty);
-    document.querySelector('.cart-actions')?.classList.toggle('hidden', isEmpty);
-    document.getElementById('report-empty-actions')?.classList.toggle('hidden', !isEmpty);
+    var actions = document.querySelector('.cart-actions');
+    var emptyActions = document.getElementById('report-empty-actions');
+    if (actions) actions.classList.toggle('hidden', isEmpty);
+    if (emptyActions) emptyActions.classList.toggle('hidden', !isEmpty);
 }
 
 function closeReportDialog() {
-    const dialog = document.getElementById('report-dialog');
-    if (dialog?.open) dialog.close();
+    var dialog = document.getElementById('report-dialog');
+    if (dialog && dialog.open) dialog.close();
 }
 
 function goToReportSource(sectionId) {
     closeReportDialog();
-    if (window.location.hash === `#${sectionId}`) {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.location.hash === '#' + sectionId) {
+        var el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         return;
     }
     window.location.hash = sectionId;
@@ -183,22 +171,14 @@ function clearPrintableRecommendations() {
     if (sheet) sheet.innerHTML = '';
 }
 
-function escapeHtml(value = '') {
-    return String(value).replace(/[&<>"']/g, character => ({
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
-    }[character]));
+function escapeHtml(value) {
+    return String(value || '').replace(/[&<>"']/g, function(character) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+    });
 }
 
 function formatReportDate() {
-    return new Intl.DateTimeFormat('es-CL', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    }).format(new Date());
+    return new Intl.DateTimeFormat('es-CL', { day: '2-digit', month: 'long', year: 'numeric' }).format(new Date());
 }
 
 function getReportData() {
