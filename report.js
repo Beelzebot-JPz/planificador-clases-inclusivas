@@ -1,44 +1,38 @@
 (function () {
-const { goodPracticesData } = window.UiePlannerData;
-const { getCheckedDuaItems, getDuaStageSummary } = window.UiePlannerDua;
-const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, groupStudentsByProfile, getMergedRecommendations, categoryLabels, shortConditionNames, recommendationCategories } = window.UiePlannerSupports;
+var goodPracticesData = window.UiePlannerData.goodPracticesData;
+var getCheckedDuaItems = window.UiePlannerDua.getCheckedDuaItems;
+var getDuaStageSummary = window.UiePlannerDua.getDuaStageSummary;
+var formatStudentLabel = window.UiePlannerSupports.formatStudentLabel;
+var getSelectedSupportStudentGroups = window.UiePlannerSupports.getSelectedSupportStudentGroups;
+var groupStudentsByCondition = window.UiePlannerSupports.groupStudentsByCondition;
+var groupStudentsByProfile = window.UiePlannerSupports.groupStudentsByProfile;
+var getMergedRecommendations = window.UiePlannerSupports.getMergedRecommendations;
+var categoryLabels = window.UiePlannerSupports.categoryLabels;
+var shortConditionNames = window.UiePlannerSupports.shortConditionNames;
+var recommendationCategories = window.UiePlannerSupports.recommendationCategories;
 
-const REPORT_TITLE = 'Plan de apoyo docente para la clase';
+var REPORT_TITLE = 'Plan de apoyo docente para la clase';
+var reportSource = 'dua';
 
 function initReports() {
-    var emailButton = document.getElementById('btn-email-recommendations');
-    var printButton = document.getElementById('btn-print-recommendations');
     var emptyDuaButton = document.getElementById('btn-empty-dua');
     var emptySupportsButton = document.getElementById('btn-empty-supports');
     var emptyCloseButton = document.getElementById('btn-empty-close');
+    var cartActions = document.getElementById('cart-actions');
 
-    if (emailButton) emailButton.addEventListener('click', openRecommendationEmail);
-    if (printButton) {
-        printButton.addEventListener('click', function() {
-            if (!hasReportContent()) {
-                renderPlanSummary();
-                return;
-            }
-            var missing = getMissingContent();
-            if (missing) {
-                var proceed = confirm('⚠ ' + missing.message + '\n\nPara un plan completo, se recomienda agregar ' + (missing.missing === 'dua' ? 'decisiones DUA' : 'adecuaciones curriculares') + '.\n\n¿Deseas descargar el PDF de todas formas?');
-                if (!proceed) return;
-            }
-            printButton.disabled = true;
-            printButton.textContent = 'Generando PDF...';
-            ensurePdfMake(function() {
-                generatePdfMake();
-                printButton.disabled = false;
-                printButton.textContent = 'Descargar PDF';
-            }, function() {
-                printButton.disabled = false;
-                printButton.textContent = 'Descargar PDF';
-            });
-        });
-    }
     if (emptyDuaButton) emptyDuaButton.addEventListener('click', function() { goToReportSource('planificar'); });
     if (emptySupportsButton) emptySupportsButton.addEventListener('click', function() { goToReportSource('apoyos'); });
     if (emptyCloseButton) emptyCloseButton.addEventListener('click', closeReportDialog);
+
+    if (cartActions) {
+        cartActions.addEventListener('click', function(e) {
+            var btn = e.target.closest('.btn');
+            if (!btn || btn.disabled) return;
+            var action = btn.dataset.action;
+            if (!action) return;
+            handleCartAction(action, btn);
+        });
+    }
 
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeReportDialog();
@@ -46,6 +40,7 @@ function initReports() {
 
     document.querySelectorAll('.btn-open-report').forEach(function(button) {
         button.addEventListener('click', function() {
+            reportSource = button.dataset.source || 'dua';
             renderPlanSummary();
             var dialog = document.getElementById('report-dialog');
             if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
@@ -53,18 +48,57 @@ function initReports() {
     });
 }
 
-function getMissingContent() {
-    var hasDua = getCheckedDuaItems().length > 0;
-    var hasSupports = getSelectedSupportStudentGroups().length > 0;
-    if (hasDua && hasSupports) return null;
-    if (!hasDua && !hasSupports) return null;
-    if (!hasDua) return { message: 'Solo se incluyen adecuaciones curriculares. No se han seleccionado decisiones DUA.', missing: 'dua' };
-    if (!hasSupports) return { message: 'Solo se incluyen decisiones DUA. No se han registrado estudiantes con adecuaciones.', missing: 'adecuaciones' };
-    return null;
+function handleCartAction(action, btn) {
+    var originalText = btn.textContent;
+    switch (action) {
+        case 'download-dua':
+            btn.disabled = true;
+            btn.textContent = 'Generando PDF...';
+            ensurePdfMake(function() {
+                generateDuaPdf(function() {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                });
+            }, function() {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+            break;
+        case 'download-acc':
+            btn.disabled = true;
+            btn.textContent = 'Generando PDF...';
+            ensurePdfMake(function() {
+                generateAccPdf(function() {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                });
+            }, function() {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+            break;
+        case 'download-full':
+            btn.disabled = true;
+            btn.textContent = 'Generando PDF...';
+            ensurePdfMake(function() {
+                generatePdfMake(function() {
+                    btn.disabled = false;
+                    btn.textContent = originalText;
+                });
+            }, function() {
+                btn.disabled = false;
+                btn.textContent = originalText;
+            });
+            break;
+        case 'email':
+            openRecommendationEmail();
+            break;
+    }
 }
 
 function renderPlanSummary() {
     var container = document.getElementById('cart-items');
+    var actionsContainer = document.getElementById('cart-actions');
     if (!container) return;
 
     var checkedDua = getCheckedDuaItems();
@@ -73,11 +107,13 @@ function renderPlanSummary() {
     var duaSummary = getDuaStageSummary();
     var hasDua = checkedDua.length > 0;
     var hasSupports = students.length > 0;
+    var both = hasDua && hasSupports;
     var conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
 
     if (!hasDua && !hasSupports) {
         setReportEmptyMode(true);
         container.innerHTML = '<div class="report-empty-state" role="status"><strong>Aún no hay información para generar el plan.</strong><p>Selecciona decisiones DUA, registra estudiantes con apoyos acordados, o ambos. Con esos datos se podrá descargar un PDF o abrir un correo con mensaje base editable.</p></div>';
+        if (actionsContainer) actionsContainer.innerHTML = '';
         clearPrintableRecommendations();
         return;
     }
@@ -98,15 +134,29 @@ function renderPlanSummary() {
         items += '<article class="cart-item cart-item-warning"><strong>Adecuaciones sin registrar</strong><span>Opcional</span><p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p><a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a></article>';
     }
     container.innerHTML = items;
+
+    if (actionsContainer) {
+        var buttons = '';
+        if (both) {
+            buttons += '<button class="btn btn-primary" data-action="download-full" type="button">Descargar plan completo</button>';
+            if (reportSource === 'dua') {
+                buttons += '<button class="btn btn-secondary" data-action="download-dua" type="button">Descargar solo base DUA</button>';
+            } else {
+                buttons += '<button class="btn btn-secondary" data-action="download-acc" type="button">Descargar solo adecuaciones</button>';
+            }
+        } else if (hasDua) {
+            buttons += '<button class="btn btn-primary" data-action="download-dua" type="button">Descargar base DUA</button>';
+        } else if (hasSupports) {
+            buttons += '<button class="btn btn-primary" data-action="download-acc" type="button">Descargar adecuaciones</button>';
+        }
+        buttons += '<button class="btn btn-secondary" data-action="email" type="button">Abrir correo</button>';
+        actionsContainer.innerHTML = buttons;
+    }
+
     updatePrintableRecommendations();
 }
 
 function openRecommendationEmail() {
-    if (!hasReportContent()) {
-        renderPlanSummary();
-        return;
-    }
-
     var checkedDua = getCheckedDuaItems();
     var students = getSelectedSupportStudentGroups();
     var profiles = groupStudentsByProfile(students);
@@ -132,12 +182,8 @@ function buildEmailBody(checkedDua, students, profiles) {
     return lines.join('\n');
 }
 
-function hasReportContent() {
-    return getCheckedDuaItems().length > 0 || getSelectedSupportStudentGroups().length > 0;
-}
-
 function setReportEmptyMode(isEmpty) {
-    var actions = document.querySelector('.cart-actions');
+    var actions = document.getElementById('cart-actions');
     var emptyActions = document.getElementById('report-empty-actions');
     if (actions) actions.classList.toggle('hidden', isEmpty);
     if (emptyActions) emptyActions.classList.toggle('hidden', !isEmpty);
@@ -159,7 +205,7 @@ function goToReportSource(sectionId) {
 }
 
 function clearPrintableRecommendations() {
-    const sheet = document.getElementById('recommendations-print');
+    var sheet = document.getElementById('recommendations-print');
     if (sheet) sheet.innerHTML = '';
 }
 
@@ -174,10 +220,10 @@ function formatReportDate() {
 }
 
 function getReportData() {
-    const checkedDua = getCheckedDuaItems();
-    const students = getSelectedSupportStudentGroups();
-    const profiles = groupStudentsByProfile(students);
-    const duaSummary = getDuaStageSummary();
+    var checkedDua = getCheckedDuaItems();
+    var students = getSelectedSupportStudentGroups();
+    var profiles = groupStudentsByProfile(students);
+    var duaSummary = getDuaStageSummary();
     return { checkedDua: checkedDua, students: students, profiles: profiles, duaSummary: duaSummary };
 }
 
@@ -205,14 +251,7 @@ function renderProfileSection(grouped, index, firstSupportNumber) {
         return '<h3>' + categoryLabels[cat] + '</h3><ul>' + itemsHtml + '</ul>';
     }).join('');
 
-    return `
-        <section class="print-report-section">
-            <h2>${index + firstSupportNumber}. ${conditionNames.join(' · ')}</h2>
-            <p><strong>Aplica a:</strong> ${studentNames}</p>
-            ${categoriesHtml}
-            <p class="print-source">Fuente: ${sources.join(', ')}</p>
-        </section>
-    `;
+    return '<section class="print-report-section"><h2>' + (index + firstSupportNumber) + '. ' + conditionNames.join(' · ') + '</h2><p><strong>Aplica a:</strong> ' + studentNames + '</p>' + categoriesHtml + '<p class="print-source">Fuente: ' + sources.join(', ') + '</p></section>';
 }
 
 function renderProfilePdfSection(grouped, index, firstSupportNumber) {
@@ -250,7 +289,7 @@ function renderProfilePdfSection(grouped, index, firstSupportNumber) {
 }
 
 function updatePrintableRecommendations() {
-    const sheet = document.getElementById('recommendations-print');
+    var sheet = document.getElementById('recommendations-print');
     if (!sheet) return;
 
     var data = getReportData();
@@ -264,55 +303,10 @@ function updatePrintableRecommendations() {
         return;
     }
 
-    const goodPracticesNumber = checkedDua.length ? 2 : 1;
-    const firstSupportNumber = goodPracticesNumber + 1;
+    var goodPracticesNumber = checkedDua.length ? 2 : 1;
+    var firstSupportNumber = goodPracticesNumber + 1;
 
-    sheet.innerHTML = `
-        <header class="print-report-header">
-            <div class="print-brand">
-                <img class="print-logo" src="Logo%20UIE/UIE.png" alt="Unidad de Inclusión Educativa">
-            </div>
-            <div class="print-report-meta">
-                <span>Plan de apoyo docente</span>
-                <span>Equipo de Inclusión Académica · Duoc UC Campus Arauco</span>
-                <span>${formatReportDate()}</span>
-            </div>
-        </header>
-        <h1>${REPORT_TITLE}</h1>
-        <p class="print-intro">Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.</p>
-        ${checkedDua.length ? `
-            <section class="print-report-section">
-                <h2>1. Base DUA para toda la clase</h2>
-                <p><strong>Decisiones seleccionadas:</strong> ${duaSummary.checked}.</p>
-                <p><strong>Lectura orientadora:</strong> ${duaSummary.level.label}. ${duaSummary.level.text}</p>
-                <p>Estas decisiones describen la base común de clase: apoyos pedagógicos generales para anticipar barreras, diversificar la participación y sostener el resultado de aprendizaje.</p>
-                ${duaSummary.stages.map(stage => `
-                    <div class="print-subsection">
-                        <h3>${stage.label}</h3>
-                        ${stage.items.length ? `<ul>${stage.items.map(item => `<li>${item.text}</li>`).join('')}</ul>` : '<p>No se seleccionaron decisiones en esta etapa.</p>'}
-                    </div>
-                `).join('')}
-            </section>
-        ` : ''}
-        <section class="print-report-section">
-            <h2>${goodPracticesNumber}. Buenas prácticas generales para adecuaciones</h2>
-            <ul>${goodPracticesData.map(item => `<li><strong>${item.title}:</strong> ${item.text}</li>`).join('')}</ul>
-        </section>
-        ${profiles.map((grouped, index) => renderProfileSection(grouped, index, firstSupportNumber)).join('')}
-        <section class="print-report-section">
-            <h2>Seguimiento y mejora</h2>
-            <ul>
-                <li>¿Qué barrera apareció o persistió durante la clase?</li>
-                <li>¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?</li>
-                <li>¿La retroalimentación fue clara, oportuna y centrada en el proceso?</li>
-                <li>¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?</li>
-                <li>¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?</li>
-            </ul>
-        </section>
-        <footer class="print-report-footer">
-            Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
-        </footer>
-    `;
+    sheet.innerHTML = '<header class="print-report-header"><div class="print-brand"><img class="print-logo" src="Logo%20UIE/UIE.png" alt="Unidad de Inclusión Educativa"></div><div class="print-report-meta"><span>Plan de apoyo docente</span><span>Equipo de Inclusión Académica · Duoc UC Campus Arauco</span><span>' + formatReportDate() + '</span></div></header><h1>' + REPORT_TITLE + '</h1><p class="print-intro">Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.</p>' + (checkedDua.length ? '<section class="print-report-section"><h2>1. Base DUA para toda la clase</h2><p><strong>Decisiones seleccionadas:</strong> ' + duaSummary.checked + '.</p><p><strong>Lectura orientadora:</strong> ' + duaSummary.level.label + '. ' + duaSummary.level.text + '</p><p>Estas decisiones describen la base común de clase: apoyos pedagógicos generales para anticipar barreras, diversificar la participación y sostener el resultado de aprendizaje.</p>' + duaSummary.stages.map(function(stage) { return '<div class="print-subsection"><h3>' + stage.label + '</h3>' + (stage.items.length ? '<ul>' + stage.items.map(function(item) { return '<li>' + item.text + '</li>'; }).join('') + '</ul>' : '<p>No se seleccionaron decisiones en esta etapa.</p>') + '</div>'; }).join('') + '</section>' : '') + '<section class="print-report-section"><h2>' + goodPracticesNumber + '. Buenas prácticas generales para adecuaciones</h2><ul>' + goodPracticesData.map(function(item) { return '<li><strong>' + item.title + ':</strong> ' + item.text + '</li>'; }).join('') + '</ul></section>' + profiles.map(function(grouped, index) { return renderProfileSection(grouped, index, firstSupportNumber); }).join('') + '<section class="print-report-section"><h2>Seguimiento y mejora</h2><ul><li>¿Qué barrera apareció o persistió durante la clase?</li><li>¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?</li><li>¿La retroalimentación fue clara, oportuna y centrada en el proceso?</li><li>¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?</li><li>¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?</li></ul></section><footer class="print-report-footer">Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.</footer>';
 }
 
 function imageToBase64(url, callback) {
@@ -348,7 +342,6 @@ function ensurePdfMake(callback, onError) {
     var script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
     script.onerror = function() {
-        restorePrintButton();
         if (onError) onError();
         else alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
     };
@@ -366,15 +359,27 @@ function ensurePdfMake(callback, onError) {
     document.head.appendChild(fonts);
 }
 
-function restorePrintButton() {
-    var btn = document.getElementById('btn-print-recommendations');
-    if (btn) {
-        btn.disabled = false;
-        btn.textContent = 'Descargar PDF';
+function buildPdfHeader(logoBase64) {
+    var columns = [];
+    if (logoBase64) {
+        columns.push({ image: logoBase64, width: 130, margin: [0, 0, 14, 0] });
     }
+    columns.push({
+        stack: [
+            { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
+            { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+            { text: formatReportDate(), style: 'headerMeta' }
+        ],
+        alignment: 'right'
+    });
+    return [
+        { columns: columns, columnGap: 8 },
+        { canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] },
+        { text: '' }
+    ];
 }
 
-function generatePdfMake() {
+function generatePdfMake(callback) {
     var data = getReportData();
     var checkedDua = data.checkedDua;
     var students = data.students;
@@ -382,28 +387,8 @@ function generatePdfMake() {
     var duaSummary = data.duaSummary;
 
     imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
-        var content = [];
+        var content = buildPdfHeader(logoBase64);
         var goodPracticesNumber = checkedDua.length ? 2 : 1;
-
-        var headerColumns = [];
-        if (logoBase64) {
-            headerColumns.push({
-                image: logoBase64,
-                width: 130,
-                margin: [0, 0, 14, 0]
-            });
-        }
-        headerColumns.push({
-            stack: [
-                { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
-                { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
-                { text: formatReportDate(), style: 'headerMeta' }
-            ],
-            alignment: 'right'
-        });
-        content.push({ columns: headerColumns, columnGap: 8 });
-        content.push({ canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] });
-        content.push({ text: '' });
 
         content.push({ text: REPORT_TITLE, style: 'mainTitle' });
         content.push({ text: 'Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.', style: 'introText' });
@@ -425,11 +410,7 @@ function generatePdfMake() {
         }
 
         content.push({ text: goodPracticesNumber + '. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
-        content.push({
-            ul: goodPracticesData.map(function(item) {
-                return { text: [{ text: item.title + ': ', bold: true }, item.text] };
-            })
-        });
+        content.push({ ul: goodPracticesData.map(function(item) { return { text: [{ text: item.title + ': ', bold: true }, item.text] }; }) });
         content.push({ text: '' });
 
         var firstSupportNumber = goodPracticesNumber + 1;
@@ -440,15 +421,13 @@ function generatePdfMake() {
 
         var followUpNum = firstSupportNumber + profiles.length;
         content.push({ text: followUpNum + '. Seguimiento y mejora', style: 'sectionTitle' });
-        content.push({
-            ul: [
-                '¿Qué barrera apareció o persistió durante la clase?',
-                '¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?',
-                '¿La retroalimentación fue clara, oportuna y centrada en el proceso?',
-                '¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?',
-                '¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?'
-            ]
-        });
+        content.push({ ul: [
+            '¿Qué barrera apareció o persistió durante la clase?',
+            '¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?',
+            '¿La retroalimentación fue clara, oportuna y centrada en el proceso?',
+            '¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?',
+            '¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?'
+        ] });
         content.push({ text: '' });
 
         content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
@@ -476,43 +455,22 @@ function generatePdfMake() {
             pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
         } catch(e) {
             console.error('Error generando PDF:', e);
-            restorePrintButton();
             alert('No se pudo generar el PDF. Intenta recargar la página e intentar de nuevo.');
         }
+        if (callback) callback();
     });
 }
 
-function generateDuaPdf() {
+function generateDuaPdf(callback) {
     var duaSummary = getDuaStageSummary();
     var checkedDua = getCheckedDuaItems();
-
     if (!checkedDua.length) {
-        restorePrintButton();
+        if (callback) callback();
         return;
     }
 
     imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
-        var content = [];
-
-        var headerColumns = [];
-        if (logoBase64) {
-            headerColumns.push({
-                image: logoBase64,
-                width: 130,
-                margin: [0, 0, 14, 0]
-            });
-        }
-        headerColumns.push({
-            stack: [
-                { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
-                { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
-                { text: formatReportDate(), style: 'headerMeta' }
-            ],
-            alignment: 'right'
-        });
-        content.push({ columns: headerColumns, columnGap: 8 });
-        content.push({ canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] });
-        content.push({ text: '' });
+        var content = buildPdfHeader(logoBase64);
 
         content.push({ text: 'Base DUA para la clase', style: 'mainTitle' });
         content.push({ text: [{ text: 'Decisiones seleccionadas: ', bold: true }, duaSummary.checked + '.'], style: 'bodyText' });
@@ -548,12 +506,77 @@ function generateDuaPdf() {
             pdfMake.createPdf(docDefinition).download('base-dua-clase.pdf');
         } catch(e) {
             console.error('Error generando PDF DUA:', e);
-            var btn = document.getElementById('btn-print-dua');
-            if (btn) {
-                btn.disabled = false;
-                btn.textContent = 'Descargar selección DUA';
-            }
+            alert('No se pudo generar el PDF. Intenta recargar la página e intentar de nuevo.');
         }
+        if (callback) callback();
+    });
+}
+
+function generateAccPdf(callback) {
+    var students = getSelectedSupportStudentGroups();
+    var profiles = groupStudentsByProfile(students);
+    if (!students.length) {
+        if (callback) callback();
+        return;
+    }
+
+    var conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
+
+    imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
+        var content = buildPdfHeader(logoBase64);
+
+        content.push({ text: 'Adecuaciones curriculares de acceso', style: 'mainTitle' });
+        content.push({ text: [{ text: 'Estudiantes: ', bold: true }, students.length + ' estudiante(s), ' + conditionCount + ' condición(es)'], style: 'bodyText' });
+        content.push({ text: [{ text: 'Perfiles: ', bold: true }, profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') + '.'], style: 'bodyText' });
+        content.push({ text: '' });
+
+        content.push({ text: '1. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
+        content.push({ ul: goodPracticesData.map(function(item) { return { text: [{ text: item.title + ': ', bold: true }, item.text] }; }) });
+        content.push({ text: '' });
+
+        profiles.forEach(function(grouped, index) {
+            var sectionContent = renderProfilePdfSection(grouped, index, 2);
+            sectionContent.forEach(function(item) { content.push(item); });
+        });
+
+        var followUpNum = 2 + profiles.length;
+        content.push({ text: followUpNum + '. Seguimiento y mejora', style: 'sectionTitle' });
+        content.push({ ul: [
+            '¿Qué barrera apareció o persistió durante la clase?',
+            '¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?',
+            '¿La retroalimentación fue clara, oportuna y centrada en el proceso?',
+            '¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?',
+            '¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?'
+        ] });
+        content.push({ text: '' });
+
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+        content.push({ text: '' });
+        content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });
+
+        var docDefinition = {
+            content: content,
+            styles: {
+                headerOrg: { fontSize: 13, bold: true, color: '#b42318' },
+                headerMeta: { fontSize: 8.5, color: '#6b7280' },
+                mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+                sectionTitle: { fontSize: 14, bold: true, color: '#111827', margin: [0, 14, 0, 8] },
+                subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+                bodyText: { fontSize: 10.5, color: '#111827', margin: [0, 3, 0, 3] },
+                sourceText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 3, 0, 3] },
+                footerText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 6, 0, 0], italics: true }
+            },
+            defaultStyle: { fontSize: 10.5, color: '#111827', font: 'Roboto' },
+            pageMargins: [40, 40, 40, 40]
+        };
+
+        try {
+            pdfMake.createPdf(docDefinition).download('adecuaciones-curriculares.pdf');
+        } catch(e) {
+            console.error('Error generando PDF adecuaciones:', e);
+            alert('No se pudo generar el PDF. Intenta recargar la página e intentar de nuevo.');
+        }
+        if (callback) callback();
     });
 }
 
@@ -563,6 +586,7 @@ window.UiePlannerReport = {
     updatePrintableRecommendations,
     ensurePdfMake,
     generateDuaPdf,
+    generateAccPdf,
     generatePdfMake
 };
 })();

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uie-planificador-v11';
+const CACHE_NAME = 'uie-planificador-v12';
 const ASSETS = [
     '/',
     '/index.html',
