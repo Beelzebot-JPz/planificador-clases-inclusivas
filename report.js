@@ -22,7 +22,7 @@ function initReports() {
             }
             var missing = getMissingContent();
             if (missing) {
-                var proceed = confirm(missing.message + '\n\n¿Deseas continuar de todas formas?');
+                var proceed = confirm('⚠ ' + missing.message + '\n\nPara un plan completo, se recomienda agregar ' + (missing.missing === 'dua' ? 'decisiones DUA' : 'adecuaciones curriculares') + '.\n\n¿Deseas descargar el PDF de todas formas?');
                 if (!proceed) return;
             }
             printButton.disabled = true;
@@ -94,15 +94,15 @@ function renderPlanSummary() {
         items += '<article class="cart-item"><strong>Adecuaciones acordadas</strong><span>' + students.length + ' estudiante(s), ' + conditionCount + ' condición(es)</span><p>' + profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') + '</p></article>';
     }
     if (!hasDua && hasSupports) {
-        var duaLink = reportSource === 'adecuaciones'
+        var duaLink = reportSource !== 'dua'
             ? '<a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a>'
-            : '<a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a>';
+            : '';
         items += '<article class="cart-item cart-item-warning"><strong>Base DUA sin seleccionar</strong><span>Se recomienda completar</span><p>Se sugiere revisar la base DUA antes de compartir el plan.</p>' + duaLink + '</article>';
     }
     if (hasDua && !hasSupports) {
-        var accLink = reportSource === 'dua'
+        var accLink = reportSource !== 'adecuaciones'
             ? '<a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a>'
-            : '<a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a>';
+            : '';
         items += '<article class="cart-item cart-item-warning"><strong>Adecuaciones sin registrar</strong><span>Opcional</span><p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>' + accLink + '</article>';
     }
     container.innerHTML = items;
@@ -483,7 +483,9 @@ function generatePdfMake() {
         try {
             pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
         } catch(e) {
+            console.error('Error generando PDF:', e);
             restorePrintButton();
+            alert('No se pudo generar el PDF. Intenta recargar la página e intentar de nuevo.');
         }
     });
 }
@@ -553,6 +555,7 @@ function generateDuaPdf() {
         try {
             pdfMake.createPdf(docDefinition).download('base-dua-clase.pdf');
         } catch(e) {
+            console.error('Error generando PDF DUA:', e);
             var btn = document.getElementById('btn-print-dua');
             if (btn) {
                 btn.disabled = false;
