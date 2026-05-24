@@ -246,7 +246,6 @@ function renderSupportStudents(onStudentChange = () => {}) {
     const countInput = document.getElementById('support-student-count');
     if (!container || !countInput) return;
     if (countInput.dataset.boundStudents !== 'true') {
-        countInput.addEventListener('input', () => renderSupportStudents(onStudentChange));
         countInput.addEventListener('change', () => renderSupportStudents(onStudentChange));
         countInput.dataset.boundStudents = 'true';
     }

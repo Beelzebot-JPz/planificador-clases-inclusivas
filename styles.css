@@ -1476,22 +1476,19 @@ body.theme-dark .theme-icon-dark {
 }
 
 #support-student-count {
-    max-width: 140px;
+    max-width: 220px;
     text-align: center;
     font-size: 18px;
     font-weight: 700;
-    padding: 12px 8px;
-    -moz-appearance: textfield;
+    padding: 12px 10px;
     min-height: 48px;
+    cursor: pointer;
+    background: var(--bg-card);
 }
 
-#support-student-count::-webkit-inner-spin-button,
-#support-student-count::-webkit-outer-spin-button {
-    -webkit-appearance: inner-spin-button;
-    opacity: 1;
-    height: 48px;
-    width: 32px;
-    cursor: pointer;
+#support-student-count:focus {
+    border-color: var(--accent);
+    outline: 3px solid color-mix(in oklch, var(--ring) 35%, transparent);
 }
 
 .condition-checklist {
