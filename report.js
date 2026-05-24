@@ -4,7 +4,6 @@ const { getCheckedDuaItems, getDuaStageSummary } = window.UiePlannerDua;
 const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, groupStudentsByProfile, getMergedRecommendations, categoryLabels, shortConditionNames, recommendationCategories } = window.UiePlannerSupports;
 
 const REPORT_TITLE = 'Plan de apoyo docente para la clase';
-var reportSource = 'dua';
 
 function initReports() {
     var emailButton = document.getElementById('btn-email-recommendations');
@@ -47,7 +46,6 @@ function initReports() {
 
     document.querySelectorAll('.btn-open-report').forEach(function(button) {
         button.addEventListener('click', function() {
-            reportSource = button.dataset.source || 'dua';
             renderPlanSummary();
             var dialog = document.getElementById('report-dialog');
             if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
@@ -94,16 +92,10 @@ function renderPlanSummary() {
         items += '<article class="cart-item"><strong>Adecuaciones acordadas</strong><span>' + students.length + ' estudiante(s), ' + conditionCount + ' condición(es)</span><p>' + profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') + '</p></article>';
     }
     if (!hasDua && hasSupports) {
-        var duaLink = reportSource !== 'dua'
-            ? '<a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a>'
-            : '';
-        items += '<article class="cart-item cart-item-warning"><strong>Base DUA sin seleccionar</strong><span>Se recomienda completar</span><p>Se sugiere revisar la base DUA antes de compartir el plan.</p>' + duaLink + '</article>';
+        items += '<article class="cart-item cart-item-warning"><strong>Base DUA sin seleccionar</strong><span>Se recomienda completar</span><p>Se sugiere revisar la base DUA antes de compartir el plan.</p><a class="btn btn-primary" href="#planificar" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Planificar DUA</a></article>';
     }
     if (hasDua && !hasSupports) {
-        var accLink = reportSource !== 'adecuaciones'
-            ? '<a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a>'
-            : '';
-        items += '<article class="cart-item cart-item-warning"><strong>Adecuaciones sin registrar</strong><span>Opcional</span><p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>' + accLink + '</article>';
+        items += '<article class="cart-item cart-item-warning"><strong>Adecuaciones sin registrar</strong><span>Opcional</span><p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p><a class="btn btn-primary" href="#apoyos" onclick="document.getElementById(\'report-dialog\').close();" style="margin-top:8px;">Ir a Adecuaciones</a></article>';
     }
     container.innerHTML = items;
     updatePrintableRecommendations();
