@@ -1388,6 +1388,19 @@ body.theme-dark .theme-icon-dark {
     background: var(--support);
 }
 
+.condition-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: color-mix(in oklch, var(--support) 12%, var(--bg-card));
+    color: var(--support);
+    margin-left: 4px;
+    vertical-align: baseline;
+}
+
 .report-dialog {
     width: min(920px, calc(100vw - 32px));
     max-height: min(820px, calc(100vh - 32px));

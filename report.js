@@ -1,7 +1,7 @@
 (function () {
 const { goodPracticesData } = window.UiePlannerData;
 const { getCheckedDuaItems, getDuaStageSummary } = window.UiePlannerDua;
-const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, recommendationCategories } = window.UiePlannerSupports;
+const { formatStudentLabel, getSelectedSupportStudentGroups, groupStudentsByCondition, groupStudentsByProfile, getMergedRecommendations, categoryLabels, shortConditionNames, recommendationCategories } = window.UiePlannerSupports;
 
 const REPORT_TITLE = 'Plan de apoyo docente para la clase';
 
@@ -59,8 +59,8 @@ function renderPlanSummary() {
 
     const checkedDua = getCheckedDuaItems();
     const students = getSelectedSupportStudentGroups();
+    const profiles = groupStudentsByProfile(students);
     const duaSummary = getDuaStageSummary();
-    const groupedConditions = groupStudentsByCondition(students);
 
     if (!checkedDua.length && !students.length) {
         setReportEmptyMode(true);
@@ -75,6 +75,7 @@ function renderPlanSummary() {
     }
 
     setReportEmptyMode(false);
+    const conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
     container.innerHTML = `
         <article class="cart-item">
             <strong>Base DUA para la clase</strong>
@@ -83,8 +84,8 @@ function renderPlanSummary() {
         </article>
         <article class="cart-item">
             <strong>Adecuaciones acordadas</strong>
-            <span>${students.length ? `${students.length} estudiante(s), ${groupedConditions.length} condición(es)` : 'Sin estudiantes registrados'}</span>
-            <p>${students.length ? groupedConditions.map(grouped => grouped.condition.name).join(', ') : 'Agrega estudiantes solo cuando existan apoyos específicos que registrar.'}</p>
+            <span>${students.length ? `${students.length} estudiante(s), ${conditionCount} condición(es)` : 'Sin estudiantes registrados'}</span>
+            <p>${students.length ? profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') : 'Agrega estudiantes solo cuando existan apoyos específicos que registrar.'}</p>
         </article>
     `;
     updatePrintableRecommendations();
@@ -96,15 +97,15 @@ function openRecommendationEmail() {
         return;
     }
 
-    const body = buildEmailCoverMessage();
+    const checkedDua = getCheckedDuaItems();
+    const students = getSelectedSupportStudentGroups();
+    const profiles = groupStudentsByProfile(students);
+    const body = buildEmailBody(checkedDua, students, profiles);
     const mailto = `mailto:?subject=${encodeURIComponent(REPORT_TITLE)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
 }
 
-function buildEmailCoverMessage() {
-    const checkedDua = getCheckedDuaItems();
-    const students = getSelectedSupportStudentGroups();
-    const groupedConditions = groupStudentsByCondition(students);
+function buildEmailBody(checkedDua, students, profiles) {
     const lines = [
         'Hola,',
         '',
@@ -114,8 +115,8 @@ function buildEmailCoverMessage() {
         `- Base DUA: ${checkedDua.length ? `${checkedDua.length} decisión(es) seleccionada(s)` : 'sin decisiones DUA seleccionadas'}.`,
         `- Adecuaciones curriculares de acceso: ${students.length ? `${students.length} estudiante(s) con apoyos acordados` : 'sin estudiantes registrados'}.`
     ];
-    if (groupedConditions.length) {
-        lines.push(`- Condiciones consideradas: ${groupedConditions.map(grouped => grouped.condition.name).join(', ')}.`);
+    if (profiles.length) {
+        lines.push(`- Perfiles considerados: ${profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ')}.`);
     }
     lines.push(
         '',
@@ -176,9 +177,77 @@ function formatReportDate() {
 function getReportData() {
     const checkedDua = getCheckedDuaItems();
     const students = getSelectedSupportStudentGroups();
-    const groupedConditions = groupStudentsByCondition(students);
+    const profiles = groupStudentsByProfile(students);
     const duaSummary = getDuaStageSummary();
-    return { checkedDua: checkedDua, students: students, groupedConditions: groupedConditions, duaSummary: duaSummary };
+    return { checkedDua: checkedDua, students: students, profiles: profiles, duaSummary: duaSummary };
+}
+
+function renderProfileSection(grouped, index, firstSupportNumber) {
+    var conditionKeys = grouped.conditions.map(function(c) { return c.key; });
+    var conditionNames = grouped.conditions.map(function(c) { return c.name; });
+    var studentNames = grouped.students.map(function(s) { return escapeHtml(formatStudentLabel(s)); }).join(', ');
+    var hasMultiple = conditionKeys.length > 1;
+    var merged = getMergedRecommendations(conditionKeys);
+    var sources = [];
+    grouped.conditions.forEach(function(c) {
+        if (sources.indexOf(c.source) === -1) sources.push(c.source);
+    });
+
+    var categoriesHtml = ['context', 'materials', 'methods', 'interaction', 'time'].map(function(cat) {
+        var items = merged[cat];
+        if (!items || !items.length) return '';
+        var itemsHtml = items.map(function(item) {
+            var tag = '';
+            if (!item.isMerged && hasMultiple && item.shortNames.length > 0) {
+                tag = ' (' + item.shortNames.join(', ') + ')';
+            }
+            return '<li>' + item.text + tag + '</li>';
+        }).join('');
+        return '<h3>' + categoryLabels[cat] + '</h3><ul>' + itemsHtml + '</ul>';
+    }).join('');
+
+    return `
+        <section class="print-report-section">
+            <h2>${index + firstSupportNumber}. ${conditionNames.join(' · ')}</h2>
+            <p><strong>Aplica a:</strong> ${studentNames}</p>
+            ${categoriesHtml}
+            <p class="print-source">Fuente: ${sources.join(', ')}</p>
+        </section>
+    `;
+}
+
+function renderProfilePdfSection(grouped, index, firstSupportNumber) {
+    var conditionKeys = grouped.conditions.map(function(c) { return c.key; });
+    var conditionNames = grouped.conditions.map(function(c) { return c.name; });
+    var studentNames = grouped.students.map(function(s) { return formatStudentLabel(s); }).join(', ');
+    var hasMultiple = conditionKeys.length > 1;
+    var merged = getMergedRecommendations(conditionKeys);
+    var sources = [];
+    grouped.conditions.forEach(function(c) {
+        if (sources.indexOf(c.source) === -1) sources.push(c.source);
+    });
+
+    var content = [];
+    content.push({ text: (index + firstSupportNumber) + '. ' + conditionNames.join(' · '), style: 'sectionTitle' });
+    content.push({ text: [{ text: 'Aplica a: ', bold: true }, studentNames], style: 'bodyText' });
+    content.push({ text: '' });
+
+    ['context', 'materials', 'methods', 'interaction', 'time'].forEach(function(cat) {
+        var items = merged[cat];
+        if (!items || !items.length) return;
+        content.push({ text: categoryLabels[cat], style: 'subSectionTitle' });
+        content.push({ ul: items.map(function(item) {
+            if (!item.isMerged && hasMultiple && item.shortNames.length > 0) {
+                return item.text + ' (' + item.shortNames.join(', ') + ')';
+            }
+            return item.text;
+        }) });
+        content.push({ text: '' });
+    });
+
+    content.push({ text: 'Fuente: ' + sources.join(', '), style: 'sourceText' });
+    content.push({ text: '' });
+    return content;
 }
 
 function updatePrintableRecommendations() {
@@ -188,7 +257,7 @@ function updatePrintableRecommendations() {
     var data = getReportData();
     var checkedDua = data.checkedDua;
     var students = data.students;
-    var groupedConditions = data.groupedConditions;
+    var profiles = data.profiles;
     var duaSummary = data.duaSummary;
 
     if (!checkedDua.length && !students.length) {
@@ -230,17 +299,7 @@ function updatePrintableRecommendations() {
             <h2>${goodPracticesNumber}. Buenas prácticas generales para adecuaciones</h2>
             <ul>${goodPracticesData.map(item => `<li><strong>${item.title}:</strong> ${item.text}</li>`).join('')}</ul>
         </section>
-        ${groupedConditions.map((grouped, index) => `
-            <section class="print-report-section">
-                <h2>${index + firstSupportNumber}. ${grouped.condition.name}</h2>
-                <p><strong>Aplica a:</strong> ${grouped.students.map(student => escapeHtml(formatStudentLabel(student))).join(', ')}</p>
-                ${recommendationCategories(grouped.condition).map(group => `
-                    <h3>${group.title}</h3>
-                    <ul>${group.items.map(item => `<li>${item}</li>`).join('')}</ul>
-                `).join('')}
-                <p class="print-source">Fuente: ${grouped.condition.source}</p>
-            </section>
-        `).join('')}
+        ${profiles.map((grouped, index) => renderProfileSection(grouped, index, firstSupportNumber)).join('')}
         <section class="print-report-section">
             <h2>Seguimiento y mejora</h2>
             <ul>
@@ -310,14 +369,13 @@ function generatePdfMake() {
     var data = getReportData();
     var checkedDua = data.checkedDua;
     var students = data.students;
-    var groupedConditions = data.groupedConditions;
+    var profiles = data.profiles;
     var duaSummary = data.duaSummary;
 
     imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
         var content = [];
         var goodPracticesNumber = checkedDua.length ? 2 : 1;
 
-        // Header with logo
         var headerColumns = [];
         if (logoBase64) {
             headerColumns.push({
@@ -338,12 +396,10 @@ function generatePdfMake() {
         content.push({ canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] });
         content.push({ text: '' });
 
-        // Title
         content.push({ text: REPORT_TITLE, style: 'mainTitle' });
         content.push({ text: 'Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.', style: 'introText' });
         content.push({ text: '' });
 
-        // DUA Section
         if (checkedDua.length) {
             content.push({ text: '1. Base DUA para toda la clase', style: 'sectionTitle' });
             content.push({ text: [{ text: 'Decisiones seleccionadas: ', bold: true }, duaSummary.checked + '.'], style: 'bodyText' });
@@ -359,7 +415,6 @@ function generatePdfMake() {
             });
         }
 
-        // Good Practices
         content.push({ text: goodPracticesNumber + '. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
         content.push({
             ul: goodPracticesData.map(function(item) {
@@ -368,25 +423,13 @@ function generatePdfMake() {
         });
         content.push({ text: '' });
 
-        // Conditions grouped
         var firstSupportNumber = goodPracticesNumber + 1;
-        groupedConditions.forEach(function(grouped, index) {
-            content.push({ text: (index + firstSupportNumber) + '. ' + grouped.condition.name, style: 'sectionTitle' });
-            content.push({ text: [{ text: 'Aplica a: ', bold: true }, grouped.students.map(function(s) { return formatStudentLabel(s); }).join(', ')], style: 'bodyText' });
-            content.push({ text: '' });
-
-            recommendationCategories(grouped.condition).forEach(function(group) {
-                content.push({ text: group.title, style: 'subSectionTitle' });
-                content.push({ ul: group.items });
-                content.push({ text: '' });
-            });
-
-            content.push({ text: 'Fuente: ' + grouped.condition.source, style: 'sourceText' });
-            content.push({ text: '' });
+        profiles.forEach(function(grouped, index) {
+            var sectionContent = renderProfilePdfSection(grouped, index, firstSupportNumber);
+            sectionContent.forEach(function(item) { content.push(item); });
         });
 
-        // Follow-up
-        var followUpNum = firstSupportNumber + groupedConditions.length;
+        var followUpNum = firstSupportNumber + profiles.length;
         content.push({ text: followUpNum + '. Seguimiento y mejora', style: 'sectionTitle' });
         content.push({
             ul: [
@@ -399,7 +442,6 @@ function generatePdfMake() {
         });
         content.push({ text: '' });
 
-        // Footer
         content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
         content.push({ text: '' });
         content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });

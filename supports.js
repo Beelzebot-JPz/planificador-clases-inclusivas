@@ -23,6 +23,71 @@ const barrierProfiles = {
 
 const radarColors = ['#2563eb', '#16a34a', '#d97706', '#dc2626'];
 
+const shortConditionNames = {
+    fisica: 'Física',
+    auditiva: 'Auditiva',
+    visual: 'Visual',
+    sordoceguera: 'Sordoceguera',
+    visceral: 'Visceral',
+    intelectual: 'Intelectual',
+    psiquica: 'Psíquica',
+    autismo: 'Autismo'
+};
+
+const categoryLabels = {
+    context: 'Contexto de aula',
+    materials: 'Materiales',
+    methods: 'Metodología',
+    interaction: 'Interacción y evaluación',
+    time: 'Tiempos y flexibilidad'
+};
+
+// MERGE GUIDE: When adding new recommendations in data.js, check if they overlap
+// with existing merge groups below. If they do, add the text to the relevant group's
+// `texts` array and adjust `mergedText` to reflect the broader reason.
+// If no overlap is found, no action is needed: the recommendation displays normally.
+const mergeGroups = [
+    {
+        category: 'time',
+        texts: [
+            'Otorga tiempo adicional o pausas cuando exista fatiga, dolor o barreras de desplazamiento.',
+            'Da tiempo adicional para procesar instrucciones escritas extensas o mediadas por interpretación.',
+            'Otorga más tiempo para lectura, navegación, evaluación o producción escrita.',
+            'Flexibiliza tiempos de desplazamiento, comunicación, lectura y respuesta.',
+            'Flexibiliza plazos, pausas y asistencia según controles, tratamientos o episodios de salud.',
+            'Otorga tiempo adicional y divide evaluaciones o trabajos extensos.',
+            'Flexibiliza fechas y pausas cuando existan episodios de salud mental documentados.',
+            'Flexibiliza entregas, pausas y evaluaciones cuando exista sobrecarga o desregulación.'
+        ],
+        mergedText: 'Flexibiliza tiempos, pausas y plazos según necesidad del estudiante.'
+    },
+    {
+        category: 'materials',
+        texts: [
+            'Disponibiliza materiales digitales con anticipación.',
+            'Mantén contenidos disponibles con anticipación para periodos de ausencia o fatiga.',
+            'Disponibiliza materiales antes de la clase para anticipación.'
+        ],
+        mergedText: 'Disponibiliza materiales con anticipación en el AVA.'
+    },
+    {
+        category: 'materials',
+        texts: [
+            'Entrega instrucciones y contenidos clave por escrito.',
+            'Resume instrucciones críticas por escrito.'
+        ],
+        mergedText: 'Entrega instrucciones y contenidos clave por escrito.'
+    },
+    {
+        category: 'interaction',
+        texts: [
+            'Evita interpretaciones disciplinarias de pausas o ausencias justificadas.',
+            'Usa comunicación clara, respetuosa y no punitiva frente a crisis o ausencias.'
+        ],
+        mergedText: 'Usa comunicación clara y respetuosa frente a crisis, pausas o ausencias justificadas.'
+    }
+];
+
 function renderSupports() {
     const results = document.getElementById('support-results');
     if (!results) return;
@@ -33,25 +98,30 @@ function renderSelectedSupportRecommendations() {
     const results = document.getElementById('support-results');
     if (!results) return;
     const students = getSelectedSupportStudentGroups();
-    const groupedConditions = groupStudentsByCondition(students);
+    const profiles = groupStudentsByProfile(students);
 
-    if (!groupedConditions.length) {
+    if (!profiles.length) {
         results.classList.add('hidden');
         results.innerHTML = '';
         return;
     }
 
     results.classList.remove('hidden');
+    const hasMultiple = profiles.some(function(p) { return p.conditions.length > 1; });
+    const descriptionText = hasMultiple
+        ? 'Las recomendaciones se agrupan por perfil de estudiante. Las compartidas entre varias condiciones se fusionan automáticamente y las específicas se identifican con su condición.'
+        : 'Las recomendaciones se agrupan por condición para evitar repetir información cuando más de un estudiante requiere el mismo apoyo.';
+
     results.innerHTML = `
         <div class="results-title-header">
             <div>
                 <span class="source-pill">Adecuaciones de Acceso</span>
                 <h3>Recomendaciones para el plan</h3>
-                <p>Las recomendaciones se agrupan por condición para evitar repetir información cuando más de un estudiante requiere el mismo apoyo.</p>
+                <p>${descriptionText}</p>
             </div>
         </div>
         ${renderBarrierMap(students)}
-        ${groupedConditions.map(grouped => supportRecommendationGroup(grouped)).join('')}
+        ${profiles.map(group => renderProfileGroup(group)).join('')}
     `;
 }
 
@@ -370,6 +440,132 @@ function formatStudentLabel(student) {
     return student.name || student.label;
 }
 
+function groupStudentsByProfile(students) {
+    const map = new Map();
+    students.forEach(function(student) {
+        const key = student.conditions.map(function(c) { return c.key; }).sort().join('|');
+        if (!map.has(key)) {
+            map.set(key, { conditions: student.conditions.slice(), students: [] });
+        }
+        map.get(key).students.push({ label: student.label, name: student.name });
+    });
+    return Array.from(map.values());
+}
+
+function getMergedRecommendations(conditionKeys) {
+    const categories = ['context', 'materials', 'methods', 'interaction', 'time'];
+    const result = {};
+
+    categories.forEach(function(cat) {
+        const allItems = [];
+        conditionKeys.forEach(function(key) {
+            const condition = accommodationsData[key];
+            if (condition && condition[cat]) {
+                condition[cat].forEach(function(text) {
+                    allItems.push({ text: text, conditionKey: key, shortName: shortConditionNames[key] || key });
+                });
+            }
+        });
+
+        const applicableMerges = mergeGroups.filter(function(group) {
+            if (group.category !== cat) return false;
+            const matchCount = group.texts.filter(function(t) {
+                return allItems.some(function(item) { return item.text === t; });
+            }).length;
+            return matchCount >= 2;
+        });
+
+        const mergedItems = [];
+        const usedTexts = {};
+
+        applicableMerges.forEach(function(group) {
+            group.texts.forEach(function(text) { usedTexts[text] = true; });
+            mergedItems.push({ text: group.mergedText, isMerged: true, shortNames: [] });
+        });
+
+        allItems.forEach(function(item) {
+            if (usedTexts[item.text]) return;
+            const existing = mergedItems.find(function(m) { return m.text === item.text && !m.isMerged; });
+            if (existing) {
+                if (existing.shortNames.indexOf(item.shortName) === -1) {
+                    existing.shortNames.push(item.shortName);
+                }
+                return;
+            }
+            mergedItems.push({
+                text: item.text,
+                isMerged: false,
+                shortNames: conditionKeys.length > 1 ? [item.shortName] : []
+            });
+        });
+
+        result[cat] = mergedItems;
+    });
+
+    return result;
+}
+
+function renderProfileGroup(group) {
+    const conditionKeys = group.conditions.map(function(c) { return c.key; });
+    const conditionNames = group.conditions.map(function(c) { return c.name; });
+    const sources = [];
+    group.conditions.forEach(function(c) {
+        if (sources.indexOf(c.source) === -1) sources.push(c.source);
+    });
+    const studentNames = group.students.map(function(s) { return formatStudentLabel(s); }).join(', ');
+    const hasMultiple = conditionKeys.length > 1;
+    const merged = getMergedRecommendations(conditionKeys);
+    const hasAutism = conditionKeys.indexOf('autismo') !== -1;
+
+    const sourcePills = sources.map(function(s) { return '<span class="source-pill">' + s + '</span>'; }).join(' ');
+
+    const categoriesHtml = ['context', 'materials', 'methods', 'interaction', 'time'].map(function(cat) {
+        const items = merged[cat];
+        if (!items || !items.length) return '';
+        const itemsHtml = items.map(function(item) {
+            let tag = '';
+            if (!item.isMerged && hasMultiple && item.shortNames.length > 0) {
+                tag = ' <span class="condition-tag">' + item.shortNames.join(', ') + '</span>';
+            }
+            return '<li>' + item.text + tag + '</li>';
+        }).join('');
+        return '<article class="acc-card"><h4>' + categoryLabels[cat] + '</h4><ul class="acc-list">' + itemsHtml + '</ul></article>';
+    }).join('');
+
+    let highlightHtml = '';
+    let regulationHtml = '';
+    let mythsHtml = '';
+
+    if (hasAutism) {
+        const autismData = accommodationsData.autismo;
+        if (autismData.highlights) {
+            highlightHtml = '<div class="context-panel"><h4>Apoyos destacados para esta condición</h4><div class="mini-grid">' +
+                autismData.highlights.map(function(item) {
+                    return '<article class="mini-card"><h5>' + item.title + '</h5><p>' + item.text + '</p></article>';
+                }).join('') + '</div></div>';
+        }
+        if (autismData.regulation) {
+            regulationHtml = '<div class="regulation-panel"><div class="resource-heading"><span class="source-pill">Autismo</span><h4>Desregulación emocional y conductual</h4><p>Orientación pedagógica de apoyo, no protocolo clínico. La desregulación suele responder a sobrecarga, ansiedad, cambios inesperados o estímulos desencadenantes.</p></div><div class="regulation-grid">' +
+                autismData.regulation.map(function(regGroup) {
+                    return '<article class="regulation-card"><h5>' + regGroup.title + '</h5><ul class="acc-list">' +
+                        regGroup.items.map(function(item) { return '<li>' + item + '</li>'; }).join('') + '</ul></article>';
+                }).join('') + '</div></div>';
+        }
+        mythsHtml = '<div class="myths-panel"><div class="resource-heading"><span class="source-pill">Autismo</span><h4>Mitos y trato en autismo</h4><p>Estas orientaciones ayudan a evitar prejuicios al acompañar la práctica docente.</p></div><div class="myths-grid">' +
+            autismMyths.map(function(item) { return '<article class="myth-item">' + item + '</article>'; }).join('') + '</div></div>';
+    }
+
+    return '<article class="support-recommendation-group">' +
+        '<div class="results-title-header"><div>' +
+        sourcePills + ' ' +
+        '<h3>' + conditionNames.join(' · ') + '</h3>' +
+        '<p><strong>Aplica a:</strong> ' + studentNames + '</p>' +
+        '</div></div>' +
+        '<div class="support-grid">' + categoriesHtml + '</div>' +
+        highlightHtml + regulationHtml + mythsHtml +
+        '</article>';
+}
+
 
 window.UiePlannerSupports = {
     renderSupports,
@@ -381,6 +577,11 @@ window.UiePlannerSupports = {
     recommendationCategories,
     countRecommendations,
     groupStudentsByCondition,
+    groupStudentsByProfile,
+    getMergedRecommendations,
+    renderProfileGroup,
+    categoryLabels,
+    shortConditionNames,
     formatStudentLabel
 };
 
