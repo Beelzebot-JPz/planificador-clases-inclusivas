@@ -2,10 +2,10 @@
 const { glossaryData, vocabularyData } = window.UiePlannerData;
 const { initTheme } = window.UiePlannerTheme;
 const { renderGlossary, renderReferences, renderVocabulary, filterLanguageContent } = window.UiePlannerContent;
-const { renderDua, resetDuaChecklist, getCheckedDuaItems } = window.UiePlannerDua;
+const { renderDua, resetDuaChecklist } = window.UiePlannerDua;
 const { renderGoodPractices, renderSupports, renderSupportStudents } = window.UiePlannerSupports;
 const { bindSectionNavigation } = window.UiePlannerNavigation;
-const { initReports, renderPlanSummary, ensurePdfMake, generateDuaPdf } = window.UiePlannerReport;
+const { initReports, renderPlanSummary } = window.UiePlannerReport;
 
 function initApp() {
     if (document.body.dataset.appReady === 'true') return;
@@ -26,7 +26,7 @@ function initApp() {
 function bindGlobalActions() {
     const reset = document.getElementById('btn-reset-checklist');
     const search = document.getElementById('vocab-search');
-    const printDua = document.getElementById('btn-print-dua');
+    const shareDua = document.getElementById('btn-share-dua');
 
     if (reset) {
         reset.addEventListener('click', function() {
@@ -40,24 +40,15 @@ function bindGlobalActions() {
         search.addEventListener('input', () => filterLanguageContent(search.value));
     }
 
-    if (printDua) {
-        printDua.addEventListener('click', function() {
-            var checkedDua = getCheckedDuaItems();
-            if (!checkedDua.length) {
-                renderPlanSummary();
-                return;
-            }
-            printDua.disabled = true;
-            printDua.textContent = 'Generando PDF...';
-            ensurePdfMake(function() {
-                generateDuaPdf();
-                printDua.disabled = false;
-                printDua.textContent = 'Descargar selección DUA';
-            }, function() {
-                printDua.disabled = false;
-                printDua.textContent = 'Descargar selección DUA';
-                alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
-            });
+    if (shareDua) {
+        shareDua.addEventListener('click', function() {
+            var title = document.getElementById('cart-title');
+            var intro = document.getElementById('report-intro');
+            if (title) title.textContent = 'Compartir plan de apoyo docente';
+            if (intro) intro.textContent = 'Descarga el PDF del plan o abre un correo con un mensaje base editable. Por seguridad del navegador, el PDF debe adjuntarse manualmente al correo.';
+            renderPlanSummary();
+            var dialog = document.getElementById('report-dialog');
+            if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
         });
     }
 

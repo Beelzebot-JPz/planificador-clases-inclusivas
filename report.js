@@ -560,6 +560,7 @@ window.UiePlannerReport = {
     renderPlanSummary,
     updatePrintableRecommendations,
     ensurePdfMake,
-    generateDuaPdf
+    generateDuaPdf,
+    generatePdfMake
 };
 })();
