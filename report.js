@@ -480,9 +480,85 @@ function generatePdfMake() {
     });
 }
 
+function generateDuaPdf() {
+    var duaSummary = getDuaStageSummary();
+    var checkedDua = getCheckedDuaItems();
+
+    if (!checkedDua.length) {
+        restorePrintButton();
+        return;
+    }
+
+    imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
+        var content = [];
+
+        var headerColumns = [];
+        if (logoBase64) {
+            headerColumns.push({
+                image: logoBase64,
+                width: 130,
+                margin: [0, 0, 14, 0]
+            });
+        }
+        headerColumns.push({
+            stack: [
+                { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
+                { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+                { text: formatReportDate(), style: 'headerMeta' }
+            ],
+            alignment: 'right'
+        });
+        content.push({ columns: headerColumns, columnGap: 8 });
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] });
+        content.push({ text: '' });
+
+        content.push({ text: 'Base DUA para la clase', style: 'mainTitle' });
+        content.push({ text: [{ text: 'Decisiones seleccionadas: ', bold: true }, duaSummary.checked + '.'], style: 'bodyText' });
+        content.push({ text: [{ text: 'Lectura orientadora: ', bold: true }, duaSummary.level.label + '. ' + duaSummary.level.text], style: 'bodyText' });
+        content.push({ text: '' });
+
+        duaSummary.stages.forEach(function(stage) {
+            if (!stage.items.length) return;
+            content.push({ text: stage.label, style: 'subSectionTitle' });
+            content.push({ ul: stage.items.map(function(item) { return item.text; }) });
+            content.push({ text: '' });
+        });
+
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+        content.push({ text: '' });
+        content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE.', style: 'footerText' });
+
+        var docDefinition = {
+            content: content,
+            styles: {
+                headerOrg: { fontSize: 13, bold: true, color: '#b42318' },
+                headerMeta: { fontSize: 8.5, color: '#6b7280' },
+                mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+                subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+                bodyText: { fontSize: 10.5, color: '#111827', margin: [0, 3, 0, 3] },
+                footerText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 6, 0, 0], italics: true }
+            },
+            defaultStyle: { fontSize: 10.5, color: '#111827', font: 'Roboto' },
+            pageMargins: [40, 40, 40, 40]
+        };
+
+        try {
+            pdfMake.createPdf(docDefinition).download('base-dua-clase.pdf');
+        } catch(e) {
+            var btn = document.getElementById('btn-print-dua');
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Descargar selección DUA';
+            }
+        }
+    });
+}
+
 window.UiePlannerReport = {
     initReports,
     renderPlanSummary,
-    updatePrintableRecommendations
+    updatePrintableRecommendations,
+    ensurePdfMake,
+    generateDuaPdf
 };
 })();

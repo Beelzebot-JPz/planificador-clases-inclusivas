@@ -44,12 +44,13 @@ function renderGlossary(data) {
 function renderReferences() {
     const container = document.getElementById('references-grid');
     if (!container) return;
-    container.innerHTML = referencesData.map(item => `
-        <li>
-            <strong>${item.code}</strong>
-            <span>${item.title}</span>
-        </li>
-    `).join('');
+    container.innerHTML = referencesData.map(item => {
+        const content = `<strong>${item.code}</strong><span>${item.title}</span>`;
+        if (item.url) {
+            return `<a class="ref-card" href="${item.url}" target="_blank" rel="noopener">${content}</a>`;
+        }
+        return `<div class="ref-card">${content}</div>`;
+    }).join('');
 }
 
 function normalize(value) {
