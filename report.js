@@ -101,7 +101,8 @@ function renderPlanSummary() {
             <article class="cart-item" style="border-color: color-mix(in oklch, var(--accent) 30%, var(--border));">
                 <strong>Base DUA sin seleccionar</strong>
                 <span>Se recomienda completar</span>
-                <p>Se sugiere revisar la base DUA antes de compartir el plan. Puedes agregarla desde la sección Planificar.</p>
+                <p>Se sugiere revisar la base DUA antes de compartir el plan.</p>
+                <a class="btn btn-primary" href="#planificar" onclick="document.getElementById('report-dialog').close();" style="margin-top:8px;">Ir a Planificar DUA</a>
             </article>`;
     }
     if (hasDua && !hasSupports) {
@@ -110,6 +111,7 @@ function renderPlanSummary() {
                 <strong>Adecuaciones sin registrar</strong>
                 <span>Opcional</span>
                 <p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>
+                <a class="btn btn-primary" href="#apoyos" onclick="document.getElementById('report-dialog').close();" style="margin-top:8px;">Ir a Adecuaciones</a>
             </article>`;
     }
     container.innerHTML = items;
