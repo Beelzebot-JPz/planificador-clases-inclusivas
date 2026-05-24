@@ -42,7 +42,7 @@ function bindGlobalActions() {
 
     if (printDua) {
         printDua.addEventListener('click', function() {
-            const checkedDua = getCheckedDuaItems();
+            var checkedDua = getCheckedDuaItems();
             if (!checkedDua.length) {
                 renderPlanSummary();
                 return;
@@ -53,6 +53,10 @@ function bindGlobalActions() {
                 generateDuaPdf();
                 printDua.disabled = false;
                 printDua.textContent = 'Descargar selección DUA';
+            }, function() {
+                printDua.disabled = false;
+                printDua.textContent = 'Descargar selección DUA';
+                alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
             });
         });
     }

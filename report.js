@@ -344,13 +344,14 @@ function imageToBase64(url, callback) {
     img.src = url;
 }
 
-function ensurePdfMake(callback) {
+function ensurePdfMake(callback, onError) {
     if (window.pdfMake) { callback(); return; }
     var script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
     script.onerror = function() {
         restorePrintButton();
-        alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
+        if (onError) onError();
+        else alert('No se pudo generar el PDF. Verifica tu conexión a internet.');
     };
     var fonts = document.createElement('script');
     fonts.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js';
