@@ -131,6 +131,29 @@ function renderSelectedSupportRecommendations() {
         ? 'Las recomendaciones se agrupan por perfil de estudiante. Las compartidas entre varias condiciones se fusionan automáticamente y las específicas se identifican con su condición.'
         : 'Las recomendaciones se agrupan por condición para evitar repetir información cuando más de un estudiante requiere el mismo apoyo.';
 
+    var radarHtml = '';
+    try {
+        radarHtml = renderBarrierMap(students);
+    } catch (e) {
+        console.error('renderBarrierMap falló:', e.message, e.stack);
+        radarHtml = '<p style=\"color:red\">Error en radar: ' + e.message + '</p>';
+    }
+
+    var profilesHtml = '';
+    try {
+        profilesHtml = profiles.map(function(group) {
+            try {
+                return renderProfileGroup(group);
+            } catch (e) {
+                console.error('renderProfileGroup falló para grupo con condiciones:', group.conditions.map(function(c){return c.key;}).join(','), e.message);
+                return '<p style=\"color:red\">Error en perfil: ' + e.message + '</p>';
+            }
+        }).join('');
+    } catch (e) {
+        console.error('Error general en profiles:', e.message);
+        profilesHtml = '<p style=\"color:red\">Error en recomendaciones: ' + e.message + '</p>';
+    }
+
     results.innerHTML = `
         <div class="results-title-header">
             <div>
@@ -139,8 +162,8 @@ function renderSelectedSupportRecommendations() {
                 <p>${descriptionText}</p>
             </div>
         </div>
-        ${renderBarrierMap(students)}
-        ${profiles.map(group => renderProfileGroup(group)).join('')}
+        ${radarHtml}
+        ${profilesHtml}
     `;
 }
 
@@ -460,12 +483,20 @@ function updateConditionSummaries(studentIndex) {
 }
 
 function getSelectedSupportStudentGroups() {
-    return Array.from(document.querySelectorAll('.support-student-card')).map(card => {
+    var cards = document.querySelectorAll('.support-student-card');
+    console.log('getSelectedSupportStudentGroups: cards encontradas=' + cards.length);
+    return Array.from(cards).map(card => {
         const index = card.dataset.studentIndex;
         const name = card.querySelector('.student-name')?.value.trim();
         const checked = Array.from(card.querySelectorAll('.condition-check:checked'));
+        console.log('  card ' + index + ': checkboxes checked=' + checked.length);
         const conditions = checked
-            .map(box => ({ key: box.value, ...accommodationsData[box.value] }))
+            .map(box => {
+                var key = box.value;
+                var data = accommodationsData[key];
+                if (!data) console.warn('  WARN: accommodationsData[' + key + '] no existe');
+                return { key: key, ...data };
+            })
             .filter(item => item.name);
         return {
             label: `Estudiante ${index}`,
@@ -473,7 +504,10 @@ function getSelectedSupportStudentGroups() {
             name,
             conditions
         };
-    }).filter(student => student.conditions.length);
+    }).filter(function(student) {
+        console.log('  filtro: card ' + student.cardIndex + ' tiene ' + student.conditions.length + ' condiciones');
+        return student.conditions.length;
+    });
 }
 
 function recommendationCategories(condition) {
@@ -586,7 +620,13 @@ function renderProfileGroup(group) {
     });
     const studentNames = group.students.map(function(s) { return formatStudentLabel(s); }).join(', ');
     const hasMultiple = conditionKeys.length > 1;
-    const merged = getMergedRecommendations(conditionKeys);
+    var merged;
+    try {
+        merged = getMergedRecommendations(conditionKeys);
+    } catch (e) {
+        console.error('getMergedRecommendations falló:', e.message);
+        throw e;
+    }
     const hasAutism = conditionKeys.indexOf('autismo') !== -1;
 
     const sourcePills = sources.map(function(s) { return '<span class="source-pill">' + s + '</span>'; }).join(' ');
