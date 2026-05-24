@@ -193,6 +193,26 @@ function renderBarrierMap(students) {
     });
 
     const extraCount = Math.max(0, students.length - 4);
+    const axisPoints = barrierDimensions.map((_, index) => radarPoint(center, maxRadius, index, barrierDimensions.length));
+    const rings = [1, 2, 3, 4].map(level => {
+        const points = barrierDimensions.map((_, index) => radarPoint(center, (maxRadius / 4) * level, index, barrierDimensions.length));
+        return `<polygon points="${points.map(point => `${point.x},${point.y}`).join(' ')}" class="radar-ring"></polygon>`;
+    }).join('');
+    const axes = axisPoints.map(point => `<line x1="${center}" y1="${center}" x2="${point.x}" y2="${point.y}" class="radar-axis"></line>`).join('');
+    const labels = axisPoints.map((point, index) => {
+        const labelPoint = radarPoint(center, maxRadius + 22, index, barrierDimensions.length);
+        return `<text x="${labelPoint.x}" y="${labelPoint.y}" class="radar-label">${barrierDimensions[index].label}</text>`;
+    }).join('');
+    const polygons = profiles.map(profile => {
+        const points = barrierDimensions.map((dimension, index) => {
+            const radius = (Math.max(0, Math.min(4, profile.values[dimension.key] || 0)) / 4) * maxRadius;
+            return radarPoint(center, radius, index, barrierDimensions.length);
+        });
+        return `
+            <polygon points="${points.map(point => `${point.x},${point.y}`).join(' ')}" class="radar-profile" style="--profile-color: ${profile.color};"></polygon>
+            ${points.map(point => `<circle cx="${point.x}" cy="${point.y}" r="3.5" class="radar-dot" style="--profile-color: ${profile.color};"></circle>`).join('')}
+        `;
+    }).join('');
 
     return `
         <div class="barrier-map-panel">
