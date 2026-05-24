@@ -45,11 +45,14 @@ function renderReferences() {
     const container = document.getElementById('references-grid');
     if (!container) return;
     container.innerHTML = referencesData.map(item => {
-        const content = `<strong>${item.code}</strong><span>${item.title}</span>`;
+        const sourceTag = item.source === 'Duoc UC'
+            ? '<span class="ref-source ref-source-duoc">Duoc UC</span>'
+            : '<span class="ref-source">' + item.source + '</span>';
+        const content = sourceTag + '<strong>' + item.code + '</strong><span>' + item.title + '</span>';
         if (item.url) {
-            return `<a class="ref-card" href="${item.url}" target="_blank" rel="noopener">${content}</a>`;
+            return '<a class="ref-card" href="' + item.url + '" target="_blank" rel="noopener">' + content + '</a>';
         }
-        return `<div class="ref-card">${content}</div>`;
+        return '<div class="ref-card">' + content + '</div>';
     }).join('');
 }
 

@@ -2019,6 +2019,23 @@ a.ref-card:focus-visible {
     margin-right: 8px;
 }
 
+.ref-source {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: color-mix(in oklch, var(--text-secondary) 12%, var(--bg-card));
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.ref-source-duoc {
+    background: color-mix(in oklch, var(--support) 14%, var(--bg-card));
+    color: var(--support);
+}
+
 .footer-bottom {
     border-top: 1px solid var(--border-light);
     padding-top: 14px;
