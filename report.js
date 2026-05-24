@@ -173,14 +173,23 @@ function formatReportDate() {
     }).format(new Date());
 }
 
-function updatePrintableRecommendations() {
-    const sheet = document.getElementById('recommendations-print');
-    if (!sheet) return;
-
+function getReportData() {
     const checkedDua = getCheckedDuaItems();
     const students = getSelectedSupportStudentGroups();
     const groupedConditions = groupStudentsByCondition(students);
     const duaSummary = getDuaStageSummary();
+    return { checkedDua: checkedDua, students: students, groupedConditions: groupedConditions, duaSummary: duaSummary };
+}
+
+function updatePrintableRecommendations() {
+    const sheet = document.getElementById('recommendations-print');
+    if (!sheet) return;
+
+    var data = getReportData();
+    var checkedDua = data.checkedDua;
+    var students = data.students;
+    var groupedConditions = data.groupedConditions;
+    var duaSummary = data.duaSummary;
 
     if (!checkedDua.length && !students.length) {
         clearPrintableRecommendations();
@@ -298,10 +307,11 @@ function restorePrintButton() {
 }
 
 function generatePdfMake() {
-    var checkedDua = getCheckedDuaItems();
-    var students = getSelectedSupportStudentGroups();
-    var groupedConditions = groupStudentsByCondition(students);
-    var duaSummary = getDuaStageSummary();
+    var data = getReportData();
+    var checkedDua = data.checkedDua;
+    var students = data.students;
+    var groupedConditions = data.groupedConditions;
+    var duaSummary = data.duaSummary;
 
     imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
         var content = [];

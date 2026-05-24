@@ -1,27 +1,27 @@
 (function () {
 function bindSectionNavigation() {
-    var navLinks = Array.from(document.querySelectorAll('.nav-links a[data-view]'));
-    var sections = Array.from(document.querySelectorAll('.section-card[id][data-view]'));
+    const navLinks = Array.from(document.querySelectorAll('.nav-links a[data-view]'));
+    const sections = Array.from(document.querySelectorAll('.section-card[id][data-view]'));
 
     if (!sections.length) return;
 
-    var defaultView = navLinks[0]?.dataset.view || sections[0].dataset.view;
+    const defaultView = navLinks[0]?.dataset.view || sections[0].dataset.view;
 
-    var sectionById = function(id) { return sections.find(function(section) { return section.id === id; }); };
-    var firstSectionForView = function(view) { return sections.find(function(section) { return section.dataset.view === view; }); };
+    const sectionById = function(id) { return sections.find(function(s) { return s.id === id; }); };
+    const firstSectionForView = function(view) { return sections.find(function(s) { return s.dataset.view === view; }); };
 
-    var additionalMenuId = 'apoyos-adicionales';
+    const additionalMenuId = 'apoyos-adicionales';
 
-    var shouldShowSection = function(section, view, activeId) {
+    const shouldShowSection = function(section, view, activeId) {
         if (section.dataset.view !== view) return false;
         if (view !== 'adicionales') return true;
         if (activeId === additionalMenuId) return section.id === additionalMenuId;
         return section.id === activeId;
     };
 
-    var setActiveState = function(view, activeId) {
+    const setActiveState = function(view, activeId) {
         navLinks.forEach(function(link) {
-            var isActive = link.dataset.view === view;
+            const isActive = link.dataset.view === view;
             link.classList.toggle('active', isActive);
             if (isActive) {
                 link.setAttribute('aria-current', 'page');
@@ -31,7 +31,7 @@ function bindSectionNavigation() {
         });
 
         sections.forEach(function(section) {
-            var isVisible = shouldShowSection(section, view, activeId);
+            const isVisible = shouldShowSection(section, view, activeId);
             section.classList.toggle('view-hidden', !isVisible);
             section.classList.toggle('section-active', isVisible && section.id === activeId);
             if (isVisible) {
@@ -42,13 +42,13 @@ function bindSectionNavigation() {
         });
     };
 
-    var activate = function(targetId, shouldScroll) {
+    const activate = function(targetId, shouldScroll) {
         if (shouldScroll === undefined) shouldScroll = true;
-        var target = sectionById(targetId) || firstSectionForView(defaultView);
+        const target = sectionById(targetId) || firstSectionForView(defaultView);
         if (!target) return;
 
-        var view = target.dataset.view;
-        var primaryTarget = target.id;
+        const view = target.dataset.view;
+        const primaryTarget = target.id;
         setActiveState(view, primaryTarget);
 
         if (window.location.hash !== '#' + primaryTarget) {
@@ -65,21 +65,16 @@ function bindSectionNavigation() {
     navLinks.forEach(function(link) {
         link.addEventListener('click', function(event) {
             event.preventDefault();
-            var id = link.getAttribute('href').slice(1);
-            activate(id);
+            activate(link.getAttribute('href').slice(1));
         });
     });
 
     document.addEventListener('click', function(event) {
-        var clickedElement = event.target instanceof Element ? event.target : event.target.parentElement;
-        var link = clickedElement?.closest('a[href^="#"]');
+        const link = event.target.closest('a[href^="#"]');
         if (!link || link.closest('.nav-links')) return;
-
-        var id = link.getAttribute('href').slice(1);
-        if (!sectionById(id)) return;
-
+        if (!sectionById(link.getAttribute('href').slice(1))) return;
         event.preventDefault();
-        activate(id);
+        activate(link.getAttribute('href').slice(1));
     });
 
     window.addEventListener('hashchange', function() {
@@ -92,9 +87,9 @@ function bindSectionNavigation() {
 }
 
 function bindMobileMenu() {
-    var hamburger = document.getElementById('hamburger-btn');
-    var navMenu = document.getElementById('nav-menu');
-    var overlay = document.getElementById('menu-overlay');
+    const hamburger = document.getElementById('hamburger-btn');
+    const navMenu = document.getElementById('nav-menu');
+    const overlay = document.getElementById('menu-overlay');
 
     if (!hamburger || !navMenu || !overlay) return;
 

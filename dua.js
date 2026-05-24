@@ -54,16 +54,23 @@ function bindChecklist(onChecklistChange) {
     checkboxes.forEach(box => {
         box.checked = Boolean(savedState[box.dataset.checkId]);
         box.addEventListener('change', () => {
-            const state = {};
-            checkboxes.forEach(item => {
-                state[item.dataset.checkId] = item.checked;
-            });
-            localStorage.setItem('dua-checklist-state', JSON.stringify(state));
+            saveChecklistState();
             updateProgress();
             onChecklistChange();
         });
     });
     updateProgress();
+
+    window.addEventListener('beforeunload', saveChecklistState);
+}
+
+function saveChecklistState() {
+    const checkboxes = Array.from(document.querySelectorAll('.DUA-checkbox'));
+    const state = {};
+    checkboxes.forEach(function(item) {
+        state[item.dataset.checkId] = item.checked;
+    });
+    localStorage.setItem('dua-checklist-state', JSON.stringify(state));
 }
 
 function updateProgress() {
