@@ -89,12 +89,26 @@ header {
     scroll-margin-top: 96px;
 }
 
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+details summary:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
 a {
     color: inherit;
 }
 
 button, select, input {
     font: inherit;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
 }
 
 .sr-only {
@@ -222,6 +236,64 @@ button, select, input {
 
 .theme-icon-dark {
     display: none;
+}
+
+.btn-hamburger {
+    display: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    cursor: pointer;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: border-color var(--transition), background-color var(--transition);
+}
+
+.btn-hamburger:hover,
+.btn-hamburger:focus-visible {
+    border-color: var(--accent);
+    outline: 3px solid color-mix(in oklch, var(--ring) 35%, transparent);
+    outline-offset: 2px;
+}
+
+.hamburger-line {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--text-primary);
+    transition: transform var(--transition), opacity var(--transition);
+}
+
+.btn-hamburger.open .hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.btn-hamburger.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.btn-hamburger.open .hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    background: rgba(0, 0, 0, 0.35);
+    transition: opacity var(--transition);
+}
+
+.menu-overlay.active {
+    display: block;
 }
 
 body.theme-dark .theme-icon-light {
@@ -1403,6 +1475,25 @@ body.theme-dark .theme-icon-dark {
     outline: 3px solid color-mix(in oklch, var(--ring) 35%, transparent);
 }
 
+#support-student-count {
+    max-width: 140px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 12px 8px;
+    -moz-appearance: textfield;
+    min-height: 48px;
+}
+
+#support-student-count::-webkit-inner-spin-button,
+#support-student-count::-webkit-outer-spin-button {
+    -webkit-appearance: inner-spin-button;
+    opacity: 1;
+    height: 48px;
+    width: 32px;
+    cursor: pointer;
+}
+
 .condition-checklist {
     display: grid;
     gap: 8px;
@@ -1954,19 +2045,56 @@ body.theme-dark .theme-icon-dark {
 }
 
 @media (max-width: 980px) {
-    .nav-container,
-    .nav-actions,
-    .support-layout {
-        align-items: stretch;
-        flex-direction: column;
+    .nav-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
     }
 
-    .nav-container {
-        display: grid;
+    .btn-hamburger {
+        display: inline-flex;
     }
 
     .nav-actions {
-        display: grid;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: min(320px, 84vw);
+        height: 100vh;
+        height: 100dvh;
+        z-index: 30;
+        flex-direction: column;
+        background: var(--bg-card);
+        border-left: 1px solid var(--border);
+        border-radius: 0;
+        padding: 20px;
+        gap: 2px;
+        overflow-y: auto;
+        transition: right 0.3s ease;
+        box-shadow: -4px 0 32px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-links.open {
+        right: 0;
+    }
+
+    .nav-links a {
+        padding: 14px 12px;
+        font-size: 15px;
+        border-radius: var(--radius);
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+
+    .support-layout {
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .recommendation-cart {
@@ -1979,8 +2107,12 @@ body.theme-dark .theme-icon-dark {
         grid-template-columns: 1fr;
     }
 
-    .nav-links {
-        overflow-x: auto;
+    .nav-links.open {
+        right: 0;
+    }
+
+    body.menu-open {
+        overflow: hidden;
     }
 
     .principle-grid,
