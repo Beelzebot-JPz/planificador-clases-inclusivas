@@ -61,13 +61,16 @@ function renderPlanSummary() {
     const students = getSelectedSupportStudentGroups();
     const profiles = groupStudentsByProfile(students);
     const duaSummary = getDuaStageSummary();
+    const hasDua = checkedDua.length > 0;
+    const hasSupports = students.length > 0;
+    const conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
 
-    if (!checkedDua.length && !students.length) {
+    if (!hasDua && !hasSupports) {
         setReportEmptyMode(true);
         container.innerHTML = `
             <div class="report-empty-state" role="status">
                 <strong>Aún no hay información para generar el plan.</strong>
-                <p>Selecciona al menos una decisión DUA o registra estudiantes con apoyos acordados en Adecuaciones curriculares. Con esos datos se podrá descargar un PDF formal o abrir un correo con mensaje base editable.</p>
+                <p>Selecciona decisiones DUA, registra estudiantes con apoyos acordados, o ambos. Con esos datos se podrá descargar un PDF o abrir un correo con mensaje base editable.</p>
             </div>
         `;
         clearPrintableRecommendations();
@@ -75,19 +78,41 @@ function renderPlanSummary() {
     }
 
     setReportEmptyMode(false);
-    const conditionCount = profiles.reduce(function(count, p) { return count + p.conditions.length; }, 0);
-    container.innerHTML = `
-        <article class="cart-item">
-            <strong>Base DUA para la clase</strong>
-            <span>${checkedDua.length ? `${checkedDua.length} decisión(es) seleccionada(s)` : 'Sin decisiones seleccionadas'}</span>
-            <p>${checkedDua.length ? `${duaSummary.level.label}. ${duaSummary.level.text}` : 'Puedes compartir el plan solo con adecuaciones, aunque se recomienda revisar primero la base DUA.'}</p>
-        </article>
-        <article class="cart-item">
-            <strong>Adecuaciones acordadas</strong>
-            <span>${students.length ? `${students.length} estudiante(s), ${conditionCount} condición(es)` : 'Sin estudiantes registrados'}</span>
-            <p>${students.length ? profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ') : 'Agrega estudiantes solo cuando existan apoyos específicos que registrar.'}</p>
-        </article>
-    `;
+
+    var items = '';
+    if (hasDua) {
+        items += `
+            <article class="cart-item">
+                <strong>Base DUA para la clase</strong>
+                <span>${checkedDua.length} decisión(es) seleccionada(s)</span>
+                <p>${duaSummary.level.label}. ${duaSummary.level.text}</p>
+            </article>`;
+    }
+    if (hasSupports) {
+        items += `
+            <article class="cart-item">
+                <strong>Adecuaciones acordadas</strong>
+                <span>${students.length} estudiante(s), ${conditionCount} condición(es)</span>
+                <p>${profiles.map(function(p) { return p.conditions.map(function(c) { return c.name; }).join(' · '); }).join('; ')}</p>
+            </article>`;
+    }
+    if (!hasDua && hasSupports) {
+        items += `
+            <article class="cart-item" style="border-color: color-mix(in oklch, var(--accent) 30%, var(--border));">
+                <strong>Base DUA sin seleccionar</strong>
+                <span>Se recomienda completar</span>
+                <p>Se sugiere revisar la base DUA antes de compartir el plan. Puedes agregarla desde la sección Planificar.</p>
+            </article>`;
+    }
+    if (hasDua && !hasSupports) {
+        items += `
+            <article class="cart-item" style="border-color: color-mix(in oklch, var(--accent) 30%, var(--border));">
+                <strong>Adecuaciones sin registrar</strong>
+                <span>Opcional</span>
+                <p>Puedes agregar adecuaciones curriculares de acceso si hay estudiantes que requieren apoyos específicos.</p>
+            </article>`;
+    }
+    container.innerHTML = items;
     updatePrintableRecommendations();
 }
 
