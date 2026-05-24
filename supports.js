@@ -250,41 +250,62 @@ function renderSupportStudents(onStudentChange = () => {}) {
         countInput.addEventListener('change', () => renderSupportStudents(onStudentChange));
         countInput.dataset.boundStudents = 'true';
     }
-    const previousStudents = readStudentDrafts();
     const count = Math.max(1, Math.min(8, Number(countInput.value) || 1));
     countInput.value = String(count);
-    container.innerHTML = Array.from({ length: count }, (_, index) => `
-        <article class="support-student-card" data-student-index="${index + 1}">
-            <h4>Estudiante ${index + 1}</h4>
-            <label for="student-name-${index + 1}">Nombre del estudiante opcional</label>
-            <input id="student-name-${index + 1}" class="text-control student-name" type="text" placeholder="Si queda vacío se usará Estudiante ${index + 1}">
-            <details class="condition-dropdown">
-                <summary>
-                    <span class="condition-summary-text">Seleccionar condiciones o necesidades</span>
-                    <span class="condition-summary-count">Sin selección</span>
-                </summary>
-                <div class="condition-checklist" aria-label="Condiciones o necesidades del estudiante ${index + 1}">
-                    ${Object.entries(accommodationsData).map(([key, condition]) => `
-                        <label class="condition-option">
-                            <input type="checkbox" class="condition-check" value="${key}">
-                            <span>${condition.name}</span>
-                        </label>
-                    `).join('')}
-                </div>
-            </details>
-        </article>
-    `).join('');
-    restoreStudentDrafts(previousStudents);
-    updateConditionSummaries();
-    container.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', onStudentChange);
-        input.addEventListener('change', onStudentChange);
-        input.addEventListener('input', renderSelectedSupportRecommendations);
-        input.addEventListener('change', renderSelectedSupportRecommendations);
-        input.addEventListener('change', updateConditionSummaries);
+
+    const existingCards = container.querySelectorAll('.support-student-card');
+    const existingCount = existingCards.length;
+
+    if (count > existingCount) {
+        for (var i = existingCount; i < count; i++) {
+            container.appendChild(createStudentCard(i + 1));
+        }
+    } else if (count < existingCount) {
+        for (var i = existingCount - 1; i >= count; i--) {
+            existingCards[i].remove();
+        }
+    }
+
+    container.querySelectorAll('.support-student-card:not([data-events-bound])').forEach(function(card) {
+        card.querySelectorAll('input').forEach(function(input) {
+            input.addEventListener('input', onStudentChange);
+            input.addEventListener('change', onStudentChange);
+            input.addEventListener('input', renderSelectedSupportRecommendations);
+            input.addEventListener('change', renderSelectedSupportRecommendations);
+            input.addEventListener('change', updateConditionSummaries);
+        });
+        card.setAttribute('data-events-bound', '');
     });
+
+    updateConditionSummaries();
     renderSelectedSupportRecommendations();
     onStudentChange();
+}
+
+function createStudentCard(studentIndex) {
+    var wrapper = document.createElement('article');
+    wrapper.className = 'support-student-card';
+    wrapper.setAttribute('data-student-index', String(studentIndex));
+    wrapper.innerHTML = `
+        <h4>Estudiante ${studentIndex}</h4>
+        <label for="student-name-${studentIndex}">Nombre del estudiante opcional</label>
+        <input id="student-name-${studentIndex}" class="text-control student-name" type="text" placeholder="Si queda vacío se usará Estudiante ${studentIndex}">
+        <details class="condition-dropdown">
+            <summary>
+                <span class="condition-summary-text">Seleccionar condiciones o necesidades</span>
+                <span class="condition-summary-count">Sin selección</span>
+            </summary>
+            <div class="condition-checklist" aria-label="Condiciones o necesidades del estudiante ${studentIndex}">
+                ${Object.entries(accommodationsData).map(([key, condition]) => `
+                    <label class="condition-option">
+                        <input type="checkbox" class="condition-check" value="${key}">
+                        <span>${condition.name}</span>
+                    </label>
+                `).join('')}
+            </div>
+        </details>
+    `;
+    return wrapper;
 }
 
 function updateConditionSummaries() {
@@ -298,30 +319,6 @@ function updateConditionSummaries() {
             ? `${selected.length} seleccionada(s)`
             : 'Sin selección';
         count.title = selected.join(', ');
-    });
-}
-
-function readStudentDrafts() {
-    const drafts = new Map();
-    document.querySelectorAll('.support-student-card').forEach(card => {
-        const index = card.dataset.studentIndex;
-        drafts.set(index, {
-            name: card.querySelector('.student-name')?.value || '',
-            conditions: Array.from(card.querySelectorAll('.condition-check:checked')).map(box => box.value)
-        });
-    });
-    return drafts;
-}
-
-function restoreStudentDrafts(drafts) {
-    document.querySelectorAll('.support-student-card').forEach(card => {
-        const draft = drafts.get(card.dataset.studentIndex);
-        if (!draft) return;
-        const nameInput = card.querySelector('.student-name');
-        if (nameInput) nameInput.value = draft.name;
-        card.querySelectorAll('.condition-check').forEach(box => {
-            box.checked = draft.conditions.includes(box.value);
-        });
     });
 }
 

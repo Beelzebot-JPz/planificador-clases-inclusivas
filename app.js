@@ -47,4 +47,8 @@ try {
 } catch (error) {
     console.error('No se pudo inicializar el planificador inclusivo.', error);
 }
+
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+}
 })();
