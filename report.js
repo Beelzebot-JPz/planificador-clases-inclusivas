@@ -19,9 +19,7 @@ function initReports() {
                 renderPlanSummary();
                 return;
             }
-            updatePrintableRecommendations();
-            document.body.classList.add('printing-recommendations');
-            window.print();
+            generatePdfMake();
         });
     }
     if (emptyDuaButton) emptyDuaButton.addEventListener('click', () => goToReportSource('planificar'));
@@ -35,10 +33,6 @@ function initReports() {
             const dialog = document.getElementById('report-dialog');
             if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
         });
-    });
-
-    window.addEventListener('afterprint', () => {
-        document.body.classList.remove('printing-recommendations');
     });
 }
 
@@ -242,6 +236,143 @@ function updatePrintableRecommendations() {
             Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.
         </footer>
     `;
+}
+
+function imageToBase64(url, callback) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxW = 400;
+        var scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        callback(canvas.toDataURL('image/png'));
+    };
+    img.onerror = function() {
+        callback(null);
+    };
+    img.src = url;
+}
+
+function generatePdfMake() {
+    var checkedDua = getCheckedDuaItems();
+    var students = getSelectedSupportStudentGroups();
+    var groupedConditions = groupStudentsByCondition(students);
+    var duaSummary = getDuaStageSummary();
+
+    imageToBase64('Logo UIE/UIE.png', function(logoBase64) {
+        var content = [];
+        var goodPracticesNumber = checkedDua.length ? 2 : 1;
+
+        // Header with logo
+        var headerColumns = [];
+        if (logoBase64) {
+            headerColumns.push({
+                image: logoBase64,
+                width: 130,
+                margin: [0, 0, 14, 0]
+            });
+        }
+        headerColumns.push({
+            stack: [
+                { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
+                { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+                { text: formatReportDate(), style: 'headerMeta' }
+            ],
+            alignment: 'right'
+        });
+        content.push({ columns: headerColumns, columnGap: 8 });
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] });
+        content.push({ text: '' });
+
+        // Title
+        content.push({ text: REPORT_TITLE, style: 'mainTitle' });
+        content.push({ text: 'Documento orientativo para acordar una base DUA de clase y, cuando corresponda, adecuaciones curriculares de acceso para estudiantes registrados.', style: 'introText' });
+        content.push({ text: '' });
+
+        // DUA Section
+        if (checkedDua.length) {
+            content.push({ text: '1. Base DUA para toda la clase', style: 'sectionTitle' });
+            content.push({ text: [{ text: 'Decisiones seleccionadas: ', bold: true }, duaSummary.checked + '.'], style: 'bodyText' });
+            content.push({ text: [{ text: 'Lectura orientadora: ', bold: true }, duaSummary.level.label + '. ' + duaSummary.level.text], style: 'bodyText' });
+            content.push({ text: 'Estas decisiones describen la base común de clase: apoyos pedagógicos generales para anticipar barreras, diversificar la participación y sostener el resultado de aprendizaje.', style: 'bodyText' });
+            content.push({ text: '' });
+
+            duaSummary.stages.forEach(function(stage) {
+                if (!stage.items.length) return;
+                content.push({ text: stage.label, style: 'subSectionTitle' });
+                content.push({ ul: stage.items.map(function(item) { return item.text; }) });
+                content.push({ text: '' });
+            });
+        }
+
+        // Good Practices
+        content.push({ text: goodPracticesNumber + '. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
+        content.push({
+            ul: goodPracticesData.map(function(item) {
+                return { text: [{ text: item.title + ': ', bold: true }, item.text] };
+            })
+        });
+        content.push({ text: '' });
+
+        // Conditions grouped
+        var firstSupportNumber = goodPracticesNumber + 1;
+        groupedConditions.forEach(function(grouped, index) {
+            content.push({ text: (index + firstSupportNumber) + '. ' + grouped.condition.name, style: 'sectionTitle' });
+            content.push({ text: [{ text: 'Aplica a: ', bold: true }, grouped.students.map(function(s) { return formatStudentLabel(s); }).join(', ')], style: 'bodyText' });
+            content.push({ text: '' });
+
+            recommendationCategories(grouped.condition).forEach(function(group) {
+                content.push({ text: group.title, style: 'subSectionTitle' });
+                content.push({ ul: group.items });
+                content.push({ text: '' });
+            });
+
+            content.push({ text: 'Fuente: ' + grouped.condition.source, style: 'sourceText' });
+            content.push({ text: '' });
+        });
+
+        // Follow-up
+        var followUpNum = firstSupportNumber + groupedConditions.length;
+        content.push({ text: followUpNum + '. Seguimiento y mejora', style: 'sectionTitle' });
+        content.push({
+            ul: [
+                '¿Qué barrera apareció o persistió durante la clase?',
+                '¿Qué apoyo favoreció comprensión, participación, autonomía o bienestar?',
+                '¿La retroalimentación fue clara, oportuna y centrada en el proceso?',
+                '¿Las instrucciones y recursos estuvieron disponibles en formatos accesibles?',
+                '¿Qué ajuste concreto conviene mantener, retirar o probar en la próxima clase?'
+            ]
+        });
+        content.push({ text: '' });
+
+        // Footer
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+        content.push({ text: '' });
+        content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });
+
+        var docDefinition = {
+            content: content,
+            styles: {
+                headerOrg: { fontSize: 13, bold: true, color: '#b42318' },
+                headerMeta: { fontSize: 8.5, color: '#6b7280' },
+                mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+                introText: { fontSize: 10.5, color: '#4b5563', margin: [0, 0, 0, 16], italics: true },
+                sectionTitle: { fontSize: 14, bold: true, color: '#111827', margin: [0, 14, 0, 8] },
+                subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+                bodyText: { fontSize: 10.5, color: '#111827', margin: [0, 3, 0, 3] },
+                sourceText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 3, 0, 3] },
+                footerText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 6, 0, 0], italics: true }
+            },
+            defaultStyle: { fontSize: 10.5, color: '#111827', font: 'Roboto' },
+            pageMargins: [40, 40, 40, 40]
+        };
+
+        pdfMake.createPdf(docDefinition).download('plan-apoyo-docente.pdf');
+    });
 }
 
 window.UiePlannerReport = {
