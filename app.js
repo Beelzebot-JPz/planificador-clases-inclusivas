@@ -40,11 +40,6 @@ function bindGlobalActions() {
 
     if (duaDownload) {
         duaDownload.addEventListener('click', function() {
-            var duas = window.UiePlannerDua.getCheckedDuaItems();
-            if (!duas.length) {
-                alert('Selecciona al menos una decisión DUA antes de descargar la checklist.');
-                return;
-            }
             if (typeof window.UiePlannerSupports.downloadDuaChecklist === 'function') {
                 window.UiePlannerSupports.downloadDuaChecklist();
             } else {

@@ -1349,11 +1349,7 @@ function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
 }
 
 function downloadDuaChecklist() {
-    var checkedDua = window.UiePlannerDua.getCheckedDuaItems();
-    if (!checkedDua || !checkedDua.length) {
-        alert('No hay decisiones DUA seleccionadas.');
-        return;
-    }
+    var checkedDua = window.UiePlannerDua.getCheckedDuaItems() || [];
 
     var summary = window.UiePlannerDua.getDuaStageSummary();
     var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
