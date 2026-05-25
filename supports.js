@@ -154,10 +154,8 @@ function renderConditionPills() {
         var data = accommodationsData[key];
         if (!data) return '';
         var isSelected = selectedConditionKeys.indexOf(key) !== -1;
-        var count = countConditionRecommendations(key);
         return '<button class="condition-pill' + (isSelected ? ' active' : '') + '" data-condition-key="' + key + '">' +
             '<span class="condition-pill-name">' + shortConditionNames[key] + '</span>' +
-            '<span class="condition-pill-count">' + count + '</span>' +
             '</button>';
     }).join('');
 
@@ -1283,46 +1281,122 @@ function generatePlanPDF() {
     });
 }
 
+function renderStudentRadarChart(student, label) {
+    var dims = barrierDimensions;
+    var dimCount = dims.length;
+
+    var studentIndex = student.cardIndex || student.index || 1;
+    var matrixProfile = getStudentMatrixProfile(studentIndex);
+    var values = matrixProfile || mergeConditionProfiles(student.conditions.map(function(c) { return c.key; }));
+    var color = matrixProfile ? '#7c3aed' : radarColors[((student.index || 1) - 1) % radarColors.length];
+
+    var w = 450;
+    var h = 400;
+    var cx = 170;
+    var cy = 155;
+    var maxR = 110;
+
+    var canvas = document.createElement('canvas');
+    canvas.width = w;
+    canvas.height = h;
+    var ctx = canvas.getContext('2d');
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+
+    function getPoint(r, i) {
+        var angle = -Math.PI / 2 + (Math.PI * 2 * i) / dimCount;
+        return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
+    }
+
+    for (var lvl = 1; lvl <= 4; lvl++) {
+        var r = (maxR / 4) * lvl;
+        ctx.beginPath();
+        for (var i = 0; i < dimCount; i++) {
+            var p = getPoint(r, i);
+            i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y);
+        }
+        ctx.closePath();
+        ctx.strokeStyle = '#d1d5db';
+        ctx.lineWidth = lvl === 4 ? 1.5 : 1;
+        ctx.stroke();
+    }
+
+    for (var a = 0; a < dimCount; a++) {
+        var ap = getPoint(maxR, a);
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(ap.x, ap.y);
+        ctx.strokeStyle = '#d1d5db';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+    }
+
+    ctx.beginPath();
+    for (var d = 0; d < dimCount; d++) {
+        var val = Math.max(0, Math.min(4, values[dims[d].key] || 0));
+        var vr = (val / 4) * maxR;
+        var pt = getPoint(vr, d);
+        d === 0 ? ctx.moveTo(pt.x, pt.y) : ctx.lineTo(pt.x, pt.y);
+    }
+    ctx.closePath();
+    if (color.charAt(0) === '#') {
+        var rc = parseInt(color.substr(1,2), 16);
+        var gc = parseInt(color.substr(3,2), 16);
+        var bc = parseInt(color.substr(5,2), 16);
+        ctx.fillStyle = 'rgba(' + rc + ',' + gc + ',' + bc + ',0.15)';
+    }
+    ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    for (var d2 = 0; d2 < dimCount; d2++) {
+        var val2 = Math.max(0, Math.min(4, values[dims[d2].key] || 0));
+        var vr2 = (val2 / 4) * maxR;
+        var pt2 = getPoint(vr2, d2);
+        ctx.beginPath();
+        ctx.arc(pt2.x, pt2.y, 4.5, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+    }
+
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 11px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    for (var l = 0; l < dimCount; l++) {
+        var lp = getPoint(maxR + 20, l);
+        ctx.fillText(dims[l].label, lp.x, lp.y);
+    }
+
+    ctx.fillStyle = '#111827';
+    ctx.font = 'bold 13px Arial';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'top';
+    ctx.fillText(label, 20, 10);
+
+    var scaleY = cy + maxR + 38;
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '10px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('1-2 = Apoyo bajo / moderado (centro)    3-4 = Apoyo alto / requiere coordinación (borde)', 20, scaleY);
+
+    return canvas.toDataURL('image/png');
+}
+
 function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
     var content = [];
+    var cats = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'];
+    var catNames = { context: 'Contexto aula', materials: 'Materiales de estudio', methods: 'Métodos de enseñanza', interaction: 'Interacción en aula', evaluacion: 'De las evaluaciones', tech: 'Tecnologías asistivas' };
 
     content.push({ text: 'Plan de apoyo docente', style: 'mainTitle' });
-    content.push({ text: 'Documento orientativo para acordar adecuaciones curriculares de acceso.', style: 'introText' });
+    content.push({ text: 'Documento orientativo para acordar una base DUA de clase y adecuaciones curriculares de acceso.', style: 'introText' });
     content.push({ text: '' });
 
-    students.forEach(function(student, sIdx) {
-        var label = student.name || ('Estudiante ' + student.index);
-        var subtitle = [label];
-        if (student.rut) subtitle.push('RUT: ' + student.rut);
-        if (student.career) subtitle.push('Carrera: ' + student.career);
-
-        content.push({ text: subtitle.join(' | '), style: 'sectionTitle' });
-
-        student.conditions.forEach(function(cond) {
-            content.push({ text: cond.name, style: 'subSectionTitle' });
-
-            var data = accommodationsData[cond.key];
-            if (!data) return;
-
-            var cats = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'];
-            var catNames = { context: 'Contexto aula', materials: 'Materiales de estudio', methods: 'Métodos de enseñanza', interaction: 'Interacción en aula', evaluacion: 'De las evaluaciones', tech: 'Tecnologías asistivas' };
-
-            cats.forEach(function(cat) {
-                var items = data[cat];
-                if (!items || !items.length) return;
-                content.push({ text: catNames[cat], style: 'bodyText', bold: true, margin: [0, 6, 0, 2] });
-                items.forEach(function(item) {
-                    content.push({ text: '• ' + item, style: 'bodyText', margin: [10, 1, 0, 1] });
-                });
-            });
-        });
-        content.push({ text: '' });
-    });
-
     if (includeDua) {
-        content.push({ text: '', pageBreak: 'before' });
-        content.push({ text: 'Checklist DUA', style: 'mainTitle' });
-        content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'introText' });
+        content.push({ text: '1. Base DUA para toda la clase', style: 'sectionTitle' });
+        content.push({ text: 'El Diseño Universal para el Aprendizaje (DUA) es un marco que propone anticipar barreras y diversificar la enseñanza, ofreciendo múltiples formas de motivación, representación, y acción y expresión para que todos los estudiantes participen y aprendan.', style: 'bodyText' });
         content.push({ text: '' });
 
         var duaStages = window.UiePlannerData.duaStagesData || [];
@@ -1340,6 +1414,63 @@ function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
             content.push({ text: 'No se encontraron principios DUA definidos.', style: 'bodyText' });
         }
     }
+
+    var gpNum = includeDua ? 2 : 1;
+    content.push({ text: gpNum + '. Buenas prácticas generales para adecuaciones', style: 'sectionTitle' });
+    content.push({ ul: goodPracticesData.map(function(item) { return { text: [{ text: item.title + ': ', bold: true }, item.text] }; }) });
+    content.push({ text: '' });
+
+    content.push({ text: 'Las adecuaciones curriculares de acceso son ajustes que eliminan barreras sin modificar los objetivos de aprendizaje. A continuación el detalle por estudiante.', style: 'bodyText', italics: true, margin: [0, 6, 0, 8] });
+
+    students.forEach(function(student, sIdx) {
+        var nameLabel = student.name || ('Estudiante ' + student.index);
+        var condKeys = student.conditions.map(function(c) { return c.key; });
+        var condNames = student.conditions.map(function(c) { return c.name; });
+        var hasMultiple = condKeys.length > 1;
+        var condLabel = hasMultiple ? ('Múltiples (' + condNames.join(', ') + ')') : condNames[0];
+
+        content.push({ text: nameLabel, style: 'sectionTitle' });
+
+        var infoParts = [];
+        if (student.rut) infoParts.push('RUT: ' + student.rut);
+        if (student.career) infoParts.push('Carrera: ' + student.career);
+        if (infoParts.length) {
+            content.push({ text: infoParts.join(' | '), style: 'bodyText', color: '#4b5563', margin: [0, 0, 0, 6] });
+        }
+
+        content.push({ text: condLabel, style: 'subSectionTitle' });
+
+        if (includeCharts) {
+            content.push({ text: 'Mapa de barreras', style: 'subSectionTitle' });
+            content.push({ text: 'Este gráfico muestra en 6 dimensiones la intensidad estimada de apoyo. Los valores 1 y 2 (cercanos al centro) indican apoyo bajo o moderado. Los valores 3 y 4 (hacia el borde) señalan áreas que requieren apoyo alto o coordinación. Usa esta información para priorizar las recomendaciones.', style: 'bodyText', color: '#4b5563', italics: true, fontSize: 9.5, margin: [10, 0, 0, 4] });
+            var chartImg = renderStudentRadarChart(student, nameLabel);
+            if (chartImg) {
+                content.push({ image: chartImg, width: 430, margin: [10, 6, 10, 2] });
+                var studentIndex = student.cardIndex || student.index || 1;
+                var isMatrix = !!(getStudentMatrixProfile(studentIndex));
+                var disclaimer = isMatrix
+                    ? 'Este perfil se construyó desde la matriz de acceso (CIF/OMS). Los puntajes de compatibilidad (1 incompatible → 4 compatible) se transforman en intensidad de apoyo (1 bajo → 4 requiere coordinación). Cuanto más se expande la figura hacia el borde, más apoyo se anticipa en esa dimensión.'
+                    : 'Mapa orientativo según la condición seleccionada. No diagnostica ni describe a la persona: ajusta con observación directa y conversación con el estudiante.';
+                content.push({ text: disclaimer, style: 'bodyText', color: '#6b7280', italics: true, fontSize: 9, margin: [10, 0, 0, 6] });
+            }
+        }
+
+        var merged = getMergedRecommendations(condKeys);
+
+        content.push({ text: 'Recomendaciones', style: 'subSectionTitle' });
+        content.push({ text: 'Revisa cada categoría y acuerda con el estudiante cuáles apoyos implementar. No es necesario aplicar todas: selecciona las que mejor respondan a las barreras identificadas.', style: 'bodyText', color: '#4b5563', italics: true, fontSize: 9.5, margin: [10, 0, 0, 4] });
+
+        cats.forEach(function(cat) {
+            var items = merged[cat];
+            if (!items || !items.length) return;
+            content.push({ text: catNames[cat], style: 'bodyText', bold: true, margin: [0, 6, 0, 2] });
+            items.forEach(function(item) {
+                content.push({ text: '• ' + item.text, style: 'bodyText', margin: [10, 1, 0, 1] });
+            });
+        });
+
+        content.push({ text: '' });
+    });
 
     content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
     content.push({ text: '' });
