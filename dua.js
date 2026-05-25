@@ -32,7 +32,7 @@ function renderDua(onChecklistChange = () => {}) {
                         <input type="checkbox" class="DUA-checkbox" data-check-id="${stage.id}-${itemIndex}">
                         <span class="check-box-custom"></span>
                         <span class="check-content">
-                            <span class="check-text">${item}</span>
+                            <span class="check-text">[   ] ${item}</span>
                         </span>
                     </label>
                 `).join('')}

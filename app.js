@@ -40,8 +40,17 @@ function bindGlobalActions() {
 
     if (duaDownload) {
         duaDownload.addEventListener('click', function() {
+            if (!window.UiePlannerSupports) {
+                alert('Error: El módulo de apoyos no está cargado.');
+                return;
+            }
             if (typeof window.UiePlannerSupports.downloadDuaChecklist === 'function') {
-                window.UiePlannerSupports.downloadDuaChecklist();
+                try {
+                    window.UiePlannerSupports.downloadDuaChecklist();
+                } catch (e) {
+                    console.error('Error al descargar checklist:', e);
+                    alert('Error al generar el PDF: ' + e.message);
+                }
             } else {
                 alert('El generador de PDF no está disponible.');
             }

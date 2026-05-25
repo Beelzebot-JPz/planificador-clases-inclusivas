@@ -1332,7 +1332,7 @@ function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
                 content.push({ text: stage.label + ' — ' + stage.badge, style: 'subSectionTitle' });
                 var items = stage.checklist || [];
                 items.forEach(function(item) {
-                    content.push({ text: '☐ ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
+                    content.push({ text: '[ ] ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
                 });
                 content.push({ text: '' });
             });
@@ -1443,12 +1443,12 @@ function downloadDuaChecklist() {
                 content.push({ text: stage.label + ' — ' + stage.badge + ' (' + stageChecked.items.length + ' seleccionadas)', style: 'subSectionTitle' });
                 items.forEach(function(item) {
                     var isChecked = stageChecked.items.some(function(si) { return si.text === item; });
-                    content.push({ text: (isChecked ? '☑ ' : '☐ ') + item, style: 'bodyText', margin: [10, 2, 0, 2] });
+                    content.push({ text: (isChecked ? '[x] ' : '[ ] ') + item, style: 'bodyText', margin: [10, 2, 0, 2] });
                 });
             } else {
                 content.push({ text: stage.label + ' — ' + stage.badge + ' (sin selección)', style: 'subSectionTitle' });
                 items.forEach(function(item) {
-                    content.push({ text: '☐ ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
+                    content.push({ text: '[ ] ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
                 });
             }
             content.push({ text: '' });
@@ -1529,7 +1529,7 @@ function generatePlanEmail() {
         var stages = window.UiePlannerData.duaStagesData || [];
         stages.forEach(function(stage) {
             body += stage.label + ':\n';
-            (stage.checklist || []).forEach(function(item) { body += '  ☐ ' + item + '\n'; });
+            (stage.checklist || []).forEach(function(item) { body += '  [ ] ' + item + '\n'; });
             body += '\n';
         });
     }
