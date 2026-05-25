@@ -100,22 +100,6 @@ const selectedConditionKeys = [];
 
 const conditionGridOrder = ['autismo', 'intelectual', 'sordoceguera', 'fisica', 'visual', 'auditiva', 'visceral', 'psiquica', 'vestibular', 'tactil'];
 
-function ensurePdfMake(callback) {
-    var script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
-    script.onerror = function() {
-        alert('No se pudo cargar el generador de PDF. Verifica tu conexión a internet.');
-    };
-    script.onload = function() {
-        var fonts = document.createElement('script');
-        fonts.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js';
-        fonts.onerror = script.onerror;
-        fonts.onload = callback;
-        document.head.appendChild(fonts);
-    };
-    document.head.appendChild(script);
-}
-
 function getConditionImpact(key) {
     var profile = barrierProfiles[key];
     if (!profile) return 0;
@@ -1282,18 +1266,16 @@ function generatePlanPDF() {
         return;
     }
 
-    ensurePdfMake(function() {
-        try {
-            if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
-                alert('La librería de PDF no se cargó correctamente. Verifica tu conexión.');
-                return;
-            }
-            window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
-        } catch (e) {
-            console.error('Error generando PDF:', e);
-            alert('Error al generar el PDF: ' + e.message);
-        }
-    });
+    if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
+        alert('Librería PDF no disponible. Recarga la página.');
+        return;
+    }
+    try {
+        window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
+    } catch (e) {
+        console.error('Error generando PDF:', e);
+        alert('Error al generar el PDF: ' + e.message);
+    }
 }
 
 function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
@@ -1417,18 +1399,16 @@ function downloadDuaChecklist() {
         defaultStyle: { font: 'Helvetica' }
     };
 
-    ensurePdfMake(function() {
-        try {
-            if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
-                alert('La librería de PDF no se cargó correctamente. Verifica tu conexión.');
-                return;
-            }
-            window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
-        } catch (e) {
-            console.error('Error generando PDF DUA:', e);
-            alert('Error al generar el PDF: ' + e.message);
-        }
-    });
+    if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
+        alert('Librería PDF no disponible. Recarga la página.');
+        return;
+    }
+    try {
+        window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
+    } catch (e) {
+        console.error('Error generando PDF DUA:', e);
+        alert('Error al generar el PDF: ' + e.message);
+    }
 }
 
 function generatePlanEmail() {
