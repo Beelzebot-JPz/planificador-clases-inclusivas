@@ -101,7 +101,7 @@ const selectedConditionKeys = [];
 const conditionGridOrder = ['autismo', 'intelectual', 'sordoceguera', 'fisica', 'visual', 'auditiva', 'visceral', 'psiquica', 'vestibular', 'tactil'];
 
 function ensurePdfMake(callback) {
-    if (typeof pdfMake !== 'undefined' || typeof window.pdfMake !== 'undefined') { callback(); return; }
+    if (window.pdfMake) { callback(); return; }
 
     var script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
@@ -1286,8 +1286,7 @@ function generatePlanPDF() {
 
     ensurePdfMake(function() {
         try {
-            var pm = typeof pdfMake !== 'undefined' ? pdfMake : window.pdfMake;
-            pm.createPdf(docDef).download('plan-de-apoyo.pdf');
+            pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
         } catch (e) {
             console.error('Error generando PDF:', e);
             alert('Error al generar el PDF: ' + e.message);
@@ -1418,8 +1417,7 @@ function downloadDuaChecklist() {
 
     ensurePdfMake(function() {
         try {
-            var pm = typeof pdfMake !== 'undefined' ? pdfMake : window.pdfMake;
-            pm.createPdf(docDef).download('checklist-dua.pdf');
+            pdfMake.createPdf(docDef).download('checklist-dua.pdf');
         } catch (e) {
             console.error('Error generando PDF DUA:', e);
             alert('Error al generar el PDF: ' + e.message);
