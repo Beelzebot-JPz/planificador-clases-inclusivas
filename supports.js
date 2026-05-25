@@ -1257,33 +1257,38 @@ function generatePlanPDF() {
     var includeDua = document.getElementById('plan-include-dua')?.checked || false;
     var includeCharts = document.getElementById('plan-include-charts')?.checked || false;
 
-    var docDef;
-    try {
-        docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
-    } catch (e) {
-        console.error('Error construyendo documento PDF:', e);
-        alert('Error al construir el documento: ' + e.message);
-        return;
-    }
+    imageToBase64(LOGO_UIE_BASE64, function(logoBase64) {
+        var docDef;
+        try {
+            docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
+            // Agregar encabezado institucional al inicio del contenido
+            var headerContent = buildPdfHeader(logoBase64);
+            docDef.content = headerContent.concat(docDef.content);
+        } catch (e) {
+            console.error('Error construyendo documento PDF:', e);
+            alert('Error al construir el documento: ' + e.message);
+            return;
+        }
 
-    if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
-        alert('Librería PDF no disponible. Recarga la página.');
-        return;
-    }
-    try {
-        window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
-    } catch (e) {
-        console.error('Error generando PDF:', e);
-        alert('Error al generar el PDF: ' + e.message);
-    }
+        if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
+            alert('Librería PDF no disponible. Recarga la página.');
+            return;
+        }
+        try {
+            window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
+        } catch (e) {
+            console.error('Error generando PDF:', e);
+            alert('Error al generar el PDF: ' + e.message);
+        }
+    });
 }
 
 function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
-    var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
     var content = [];
 
-    content.push({ text: 'Plan de apoyo docente', style: 'title' });
-    content.push({ text: 'Generado el ' + today, style: 'subtitle', margin: [0, 4, 0, 20] });
+    content.push({ text: 'Plan de apoyo docente', style: 'mainTitle' });
+    content.push({ text: 'Documento orientativo para acordar adecuaciones curriculares de acceso.', style: 'introText' });
+    content.push({ text: '' });
 
     students.forEach(function(student, sIdx) {
         var label = student.name || ('Estudiante ' + student.index);
@@ -1291,10 +1296,10 @@ function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
         if (student.rut) subtitle.push('RUT: ' + student.rut);
         if (student.career) subtitle.push('Carrera: ' + student.career);
 
-        content.push({ text: subtitle.join(' | '), style: 'studentTitle', margin: [0, 10, 0, 6] });
+        content.push({ text: subtitle.join(' | '), style: 'sectionTitle' });
 
         student.conditions.forEach(function(cond) {
-            content.push({ text: cond.name, style: 'conditionName', margin: [0, 6, 0, 4] });
+            content.push({ text: cond.name, style: 'subSectionTitle' });
 
             var data = accommodationsData[cond.key];
             if (!data) return;
@@ -1305,110 +1310,179 @@ function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
             cats.forEach(function(cat) {
                 var items = data[cat];
                 if (!items || !items.length) return;
-                content.push({ text: catNames[cat], style: 'catHeader', margin: [0, 6, 0, 2] });
+                content.push({ text: catNames[cat], style: 'bodyText', bold: true, margin: [0, 6, 0, 2] });
                 items.forEach(function(item) {
-                    content.push({ text: '• ' + item, style: 'recItem', margin: [10, 1, 0, 1] });
+                    content.push({ text: '• ' + item, style: 'bodyText', margin: [10, 1, 0, 1] });
                 });
             });
         });
+        content.push({ text: '' });
     });
 
     if (includeDua) {
         content.push({ text: '', pageBreak: 'before' });
-        content.push({ text: 'Checklist DUA', style: 'title' });
-        content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'subtitle', margin: [0, 4, 0, 14] });
+        content.push({ text: 'Checklist DUA', style: 'mainTitle' });
+        content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'introText' });
+        content.push({ text: '' });
 
         var duaStages = window.UiePlannerData.duaStagesData || [];
 
         if (duaStages.length) {
             duaStages.forEach(function(stage) {
-                content.push({ text: stage.label + ' — ' + stage.badge, style: 'catHeader', margin: [0, 8, 0, 4] });
+                content.push({ text: stage.label + ' — ' + stage.badge, style: 'subSectionTitle' });
                 var items = stage.checklist || [];
                 items.forEach(function(item) {
-                    content.push({ text: '☐ ' + item, style: 'recItem', margin: [10, 2, 0, 2] });
+                    content.push({ text: '☐ ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
                 });
+                content.push({ text: '' });
             });
         } else {
-            content.push({ text: 'No se encontraron principios DUA definidos.', style: 'recItem', margin: [10, 4, 0, 4] });
+            content.push({ text: 'No se encontraron principios DUA definidos.', style: 'bodyText' });
         }
     }
 
-    content.push({ text: '', margin: [0, 16, 0, 0] });
-    content.push({ text: 'Leyenda: Estas recomendaciones son orientativas según la condición indicada. Deben ajustarse con observación directa, conversación con el estudiante y evidencia del aula. No constituyen un diagnóstico.', style: 'legend' });
+    content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+    content.push({ text: '' });
+    content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });
 
     return {
-        pageSize: 'A4',
-        pageMargins: [40, 40, 40, 40],
         content: content,
         styles: {
-            title: { fontSize: 18, bold: true, color: '#111827' },
-            subtitle: { fontSize: 11, color: '#6B7280' },
-            studentTitle: { fontSize: 14, bold: true, color: '#236A4B', margin: [0, 4, 0, 2] },
-            conditionName: { fontSize: 12, bold: true, color: '#374151' },
-            catHeader: { fontSize: 10, bold: true, color: '#6B7280', italics: true },
-            recItem: { fontSize: 10, color: '#374151', lineHeight: 1.4 },
-            legend: { fontSize: 8, color: '#9CA3AF', italics: true, margin: [0, 20, 0, 0] }
+            headerOrg: { fontSize: 13, bold: true, color: '#b42318' },
+            headerMeta: { fontSize: 8.5, color: '#6b7280' },
+            mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+            sectionTitle: { fontSize: 14, bold: true, color: '#111827', margin: [0, 14, 0, 8] },
+            subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+            introText: { fontSize: 10.5, color: '#4b5563', margin: [0, 0, 0, 16], italics: true },
+            bodyText: { fontSize: 10.5, color: '#111827', margin: [0, 3, 0, 3] },
+            footerText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 6, 0, 0], italics: true }
         },
-        defaultStyle: { font: 'Helvetica' }
+        defaultStyle: { fontSize: 10.5, color: '#111827' },
+        pageMargins: [40, 40, 40, 40]
     };
 }
 
-function downloadDuaChecklist() {
-    var checkedDua = window.UiePlannerDua.getCheckedDuaItems() || [];
+function formatReportDate() {
+    var d = new Date();
+    var days = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+    var months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    return days[d.getDay()] + ' ' + d.getDate() + ' de ' + months[d.getMonth()] + ' de ' + d.getFullYear();
+}
 
-    var summary = window.UiePlannerDua.getDuaStageSummary();
-    var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
-    var content = [];
-
-    content.push({ text: 'Checklist DUA para la clase', style: 'title' });
-    content.push({ text: 'Generado el ' + today, style: 'subtitle', margin: [0, 4, 0, 14] });
-    content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'subtitle', margin: [0, 0, 0, 14] });
-
-    var stages = window.UiePlannerData.duaStagesData || [];
-    stages.forEach(function(stage) {
-        var stageChecked = summary.stages.find(function(s) { return s.label === stage.label; });
-        var items = stage.checklist || [];
-        if (stageChecked && stageChecked.items.length) {
-            content.push({ text: stage.label + ' — ' + stage.badge + ' (' + stageChecked.items.length + ' seleccionadas)', style: 'catHeader', margin: [0, 8, 0, 4] });
-            items.forEach(function(item) {
-                var isChecked = stageChecked.items.some(function(si) { return si.text === item; });
-                content.push({ text: (isChecked ? '☑ ' : '☐ ') + item, style: 'recItem', margin: [10, 2, 0, 2] });
-            });
-        } else {
-            content.push({ text: stage.label + ' — ' + stage.badge + ' (sin selección)', style: 'catHeader', margin: [0, 8, 0, 4] });
-            items.forEach(function(item) {
-                content.push({ text: '☐ ' + item, style: 'recItem', margin: [10, 2, 0, 2] });
-            });
+function imageToBase64(url, callback) {
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function() {
+        var canvas = document.createElement('canvas');
+        var maxW = 400;
+        var scale = Math.min(1, maxW / img.width);
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        try {
+            callback(canvas.toDataURL('image/png'));
+        } catch (e) {
+            callback(null);
         }
-    });
-
-    content.push({ text: '', margin: [0, 14, 0, 0] });
-    content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE.', style: 'legend' });
-
-    var docDef = {
-        pageSize: 'A4',
-        pageMargins: [40, 40, 40, 40],
-        content: content,
-        styles: {
-            title: { fontSize: 18, bold: true, color: '#111827' },
-            subtitle: { fontSize: 11, color: '#6B7280' },
-            catHeader: { fontSize: 11, bold: true, color: '#236A4B', margin: [0, 4, 0, 2] },
-            recItem: { fontSize: 10, color: '#374151', lineHeight: 1.4 },
-            legend: { fontSize: 8, color: '#9CA3AF', italics: true }
-        },
-        defaultStyle: { font: 'Helvetica' }
     };
+    img.onerror = function() {
+        var altUrl = url.indexOf(' ') !== -1 ? url.replace(/ /g, '%20') : url.replace(/%20/g, ' ');
+        if (altUrl !== url) {
+            imageToBase64(altUrl, callback);
+        } else {
+            callback(null);
+        }
+    };
+    img.src = url;
+}
 
-    if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
-        alert('Librería PDF no disponible. Recarga la página.');
+function buildPdfHeader(logoBase64) {
+    var columns = [];
+    if (logoBase64) {
+        columns.push({ image: logoBase64, width: 130, margin: [0, 0, 14, 0] });
+    }
+    columns.push({
+        stack: [
+            { text: 'Unidad de Inclusión Educativa', style: 'headerOrg' },
+            { text: 'Equipo de Inclusión Académica · Duoc UC Campus Arauco', style: 'headerMeta' },
+            { text: formatReportDate(), style: 'headerMeta' }
+        ],
+        alignment: 'right'
+    });
+    return [
+        { columns: columns, columnGap: 8 },
+        { canvas: [{ type: 'line', x1: 0, y1: 8, x2: 515, y2: 8, lineWidth: 2, lineColor: '#b42318' }] },
+        { text: '' }
+    ];
+}
+
+function downloadDuaChecklist() {
+    if (!window.UiePlannerDua) {
+        alert('Error: El módulo DUA no está cargado.');
         return;
     }
-    try {
-        window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
-    } catch (e) {
-        console.error('Error generando PDF DUA:', e);
-        alert('Error al generar el PDF: ' + e.message);
-    }
+    var checkedDua = window.UiePlannerDua.getCheckedDuaItems() || [];
+    var summary = window.UiePlannerDua.getDuaStageSummary();
+    
+    imageToBase64(LOGO_UIE_BASE64, function(logoBase64) {
+        var content = buildPdfHeader(logoBase64);
+        
+        content.push({ text: 'Checklist DUA para la clase', style: 'mainTitle' });
+        content.push({ text: [{ text: 'Decisiones seleccionadas: ', bold: true }, summary.checked + '.'], style: 'bodyText' });
+        if (summary.checked > 0) {
+            content.push({ text: [{ text: 'Lectura orientadora: ', bold: true }, summary.level.label + '. ' + summary.level.text], style: 'bodyText' });
+        }
+        content.push({ text: '' });
+
+        var stages = window.UiePlannerData.duaStagesData || [];
+        stages.forEach(function(stage) {
+            var stageChecked = summary.stages.find(function(s) { return s.label === stage.label; });
+            var items = stage.checklist || [];
+            if (stageChecked && stageChecked.items.length) {
+                content.push({ text: stage.label + ' — ' + stage.badge + ' (' + stageChecked.items.length + ' seleccionadas)', style: 'subSectionTitle' });
+                items.forEach(function(item) {
+                    var isChecked = stageChecked.items.some(function(si) { return si.text === item; });
+                    content.push({ text: (isChecked ? '☑ ' : '☐ ') + item, style: 'bodyText', margin: [10, 2, 0, 2] });
+                });
+            } else {
+                content.push({ text: stage.label + ' — ' + stage.badge + ' (sin selección)', style: 'subSectionTitle' });
+                items.forEach(function(item) {
+                    content.push({ text: '☐ ' + item, style: 'bodyText', margin: [10, 2, 0, 2] });
+                });
+            }
+            content.push({ text: '' });
+        });
+
+        content.push({ canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, lineColor: '#d1d5db' }] });
+        content.push({ text: '' });
+        content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE. Orientaciones alineadas con documentación institucional y fuentes disponibles en Apoyos adicionales / Referencias.', style: 'footerText' });
+
+        var docDef = {
+            content: content,
+            styles: {
+                headerOrg: { fontSize: 13, bold: true, color: '#b42318' },
+                headerMeta: { fontSize: 8.5, color: '#6b7280' },
+                mainTitle: { fontSize: 20, bold: true, color: '#111827', margin: [0, 0, 0, 8] },
+                subSectionTitle: { fontSize: 11, bold: true, color: '#b42318', margin: [0, 10, 0, 4] },
+                bodyText: { fontSize: 10.5, color: '#111827', margin: [0, 3, 0, 3] },
+                footerText: { fontSize: 8.5, color: '#9ca3af', margin: [0, 6, 0, 0], italics: true }
+            },
+            defaultStyle: { fontSize: 10.5, color: '#111827' },
+            pageMargins: [40, 40, 40, 40]
+        };
+
+        if (!window.pdfMake || typeof window.pdfMake.createPdf !== 'function') {
+            alert('Librería PDF no disponible. Recarga la página.');
+            return;
+        }
+        try {
+            window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
+        } catch (e) {
+            console.error('Error generando PDF DUA:', e);
+            alert('Error al generar el PDF: ' + e.message);
+        }
+    });
 }
 
 function generatePlanEmail() {

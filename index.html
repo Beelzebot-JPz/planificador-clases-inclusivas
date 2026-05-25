@@ -17,8 +17,8 @@
     <nav class="navbar" aria-label="Navegación principal">
         <div class="nav-container">
             <a class="nav-brand" href="#inicio" aria-label="Ir al inicio">
-                <img class="brand-logo brand-logo-light" src="Logo UIE/UIE.png" alt="Unidad de Inclusión Educativa">
-                <img class="brand-logo brand-logo-dark" src="Logo UIE/UIE_blanco.png" alt="" aria-hidden="true">
+                <img class="brand-logo brand-logo-light" id="brand-logo-light" src="" alt="Unidad de Inclusión Educativa">
+                <img class="brand-logo brand-logo-dark" id="brand-logo-dark" src="" alt="" aria-hidden="true">
             </a>
 
             <div class="nav-actions">
@@ -593,6 +593,28 @@
         <section class="print-sheet" id="recommendations-print" aria-label="Resumen imprimible de recomendaciones"></section>
     </main>
 
+    <dialog class="report-dialog" id="report-dialog" aria-labelledby="cart-title">
+        <form method="dialog" class="report-modal">
+            <div class="report-header">
+                <div class="resource-heading">
+                    <span class="source-pill">Apoyo docente</span>
+                    <h3 id="cart-title">Compartir plan de apoyo docente</h3>
+                    <p id="report-intro">Prepara un informe formal para descargar como PDF y compartir por correo.</p>
+                </div>
+                <button class="dialog-close" type="submit" aria-label="Cerrar resumen">×</button>
+            </div>
+            <div class="report-body">
+                <div id="cart-items" class="cart-items"></div>
+            </div>
+            <div class="cart-actions" id="cart-actions"></div>
+            <div class="report-empty-actions hidden" id="report-empty-actions" aria-label="Crear plan de apoyo docente">
+                <button class="btn btn-primary" id="btn-empty-dua" type="button">Ir a DUA</button>
+                <button class="btn btn-secondary" id="btn-empty-supports" type="button">Ir a adecuaciones</button>
+                <button class="btn btn-secondary" id="btn-empty-close" type="button">Cerrar</button>
+            </div>
+        </form>
+    </dialog>
+
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-main">
@@ -662,6 +684,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js"></script>
+    <script src="logos.js"></script>
     <script src="data.js"></script>
     <script src="tabs.js"></script>
     <script src="theme.js"></script>
@@ -671,5 +694,13 @@
     <script src="report.js"></script>
     <script src="navigation.js"></script>
     <script src="app.js"></script>
+    <script>
+        (function() {
+            var light = document.getElementById('brand-logo-light');
+            var dark = document.getElementById('brand-logo-dark');
+            if (light && typeof LOGO_UIE_BASE64 !== 'undefined') light.src = LOGO_UIE_BASE64;
+            if (dark && typeof LOGO_UIE_BLANCO_BASE64 !== 'undefined') dark.src = LOGO_UIE_BLANCO_BASE64;
+        })();
+    </script>
 </body>
 </html>
