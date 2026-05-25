@@ -3,15 +3,14 @@ const { glossaryData, vocabularyData } = window.UiePlannerData;
 const { initTheme } = window.UiePlannerTheme;
 const { renderGlossary, renderReferences, renderVocabulary, filterLanguageContent } = window.UiePlannerContent;
 const { renderDua, resetDuaChecklist } = window.UiePlannerDua;
-const { renderGoodPractices, renderSupports, renderSupportStudents } = window.UiePlannerSupports;
+const { renderGoodPractices, renderSupports, initConditionPills } = window.UiePlannerSupports;
 const { bindSectionNavigation } = window.UiePlannerNavigation;
-const { initReports, renderPlanSummary } = window.UiePlannerReport;
 
 function initApp() {
     if (document.body.dataset.appReady === 'true') return;
     document.body.dataset.appReady = 'true';
     initTheme();
-    renderDua(renderPlanSummary);
+    renderDua();
     renderSupports();
     renderGoodPractices();
     renderVocabulary(vocabularyData);
@@ -19,18 +18,18 @@ function initApp() {
     renderReferences();
     bindGlobalActions();
     bindSectionNavigation();
-    renderSupportStudents(renderPlanSummary);
-    renderPlanSummary();
+    initConditionPills();
 }
 
 function bindGlobalActions() {
     var reset = document.getElementById('btn-reset-checklist');
     var search = document.getElementById('vocab-search');
+    var duaDownload = document.getElementById('btn-download-dua');
 
     if (reset) {
         reset.addEventListener('click', function() {
             if (confirm('¿Limpiar todas las decisiones DUA seleccionadas?')) {
-                resetDuaChecklist(renderPlanSummary);
+                resetDuaChecklist();
             }
         });
     }
@@ -39,7 +38,20 @@ function bindGlobalActions() {
         search.addEventListener('input', function() { filterLanguageContent(search.value); });
     }
 
-    initReports();
+    if (duaDownload) {
+        duaDownload.addEventListener('click', function() {
+            var duas = window.UiePlannerDua.getCheckedDuaItems();
+            if (!duas.length) {
+                alert('Selecciona al menos una decisión DUA antes de descargar la checklist.');
+                return;
+            }
+            if (typeof window.UiePlannerSupports.downloadDuaChecklist === 'function') {
+                window.UiePlannerSupports.downloadDuaChecklist();
+            } else {
+                alert('El generador de PDF no está disponible.');
+            }
+        });
+    }
 }
 
 try {

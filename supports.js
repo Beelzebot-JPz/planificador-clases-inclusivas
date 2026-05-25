@@ -23,7 +23,7 @@ const barrierProfiles = {
     autismo:      { context: 3, materials: 2, methods: 3, interaction: 4, evaluacion: 3, tech: 2 }
 };
 
-const radarColors = ['#2563eb', '#16a34a', '#d97706', '#dc2626'];
+const radarColors = ['#2563eb', '#dc2626', '#d97706', '#9333ea'];
 
 const shortConditionNames = {
     fisica: 'Física',
@@ -96,6 +96,122 @@ const mergeGroups = [
 
 const matrixData = {};
 
+const selectedConditionKeys = [];
+
+const conditionGridOrder = ['autismo', 'intelectual', 'sordoceguera', 'fisica', 'visual', 'auditiva', 'visceral', 'psiquica', 'vestibular', 'tactil'];
+
+function getConditionImpact(key) {
+    var profile = barrierProfiles[key];
+    if (!profile) return 0;
+    return profile.context + profile.materials + profile.methods + profile.interaction + profile.evaluacion + profile.tech;
+}
+
+function countConditionRecommendations(key) {
+    var data = accommodationsData[key];
+    if (!data) return 0;
+    return (data.context || []).length + (data.materials || []).length + (data.methods || []).length +
+           (data.interaction || []).length + (data.evaluacion || []).length + (data.tech || []).length;
+}
+
+function getSelectedConditionKeys() {
+    return selectedConditionKeys.slice();
+}
+
+function toggleCondition(key) {
+    var idx = selectedConditionKeys.indexOf(key);
+    if (idx === -1) {
+        selectedConditionKeys.push(key);
+    } else {
+        selectedConditionKeys.splice(idx, 1);
+    }
+    renderConditionPills();
+    renderConditionDetail();
+    renderSelectedSupportRecommendations();
+}
+
+function initConditionPills(onStudentChange) {
+    if (!selectedConditionKeys.length) {
+        selectedConditionKeys.push('autismo');
+    }
+
+    renderConditionPills();
+    renderConditionDetail();
+
+    var genBtn = document.getElementById('btn-generate-plan');
+    if (genBtn && genBtn.dataset.bound !== 'true') {
+        genBtn.addEventListener('click', function() {
+            openPlanModal(onStudentChange);
+        });
+        genBtn.setAttribute('data-bound', 'true');
+    }
+}
+
+function renderConditionPills() {
+    var container = document.getElementById('condition-pills');
+    if (!container) return;
+
+    container.innerHTML = conditionGridOrder.map(function(key) {
+        var data = accommodationsData[key];
+        if (!data) return '';
+        var isSelected = selectedConditionKeys.indexOf(key) !== -1;
+        var count = countConditionRecommendations(key);
+        return '<button class="condition-pill' + (isSelected ? ' active' : '') + '" data-condition-key="' + key + '">' +
+            '<span class="condition-pill-name">' + shortConditionNames[key] + '</span>' +
+            '<span class="condition-pill-count">' + count + '</span>' +
+            '</button>';
+    }).join('');
+
+    container.querySelectorAll('.condition-pill').forEach(function(pill) {
+        pill.addEventListener('click', function() {
+            toggleCondition(pill.getAttribute('data-condition-key'));
+        });
+    });
+}
+
+function renderConditionDetail() {
+    var detail = document.getElementById('condition-detail');
+    if (!detail) return;
+
+    if (!selectedConditionKeys.length) {
+        detail.innerHTML = '<p class="condition-detail-hint">Selecciona una condición para ver sus recomendaciones de apoyo.</p>';
+        return;
+    }
+
+    var students = getSelectedSupportStudentGroups();
+    var profiles = groupStudentsByProfile(students);
+
+    if (!profiles.length) {
+        detail.innerHTML = '<p class="condition-detail-hint">No se encontraron recomendaciones para las condiciones seleccionadas.</p>';
+        return;
+    }
+
+    var radarHtml = '';
+    try {
+        radarHtml = renderBarrierMap(students);
+    } catch (e) {
+        console.error('radar falló:', e.message);
+    }
+
+    var profilesHtml = profiles.map(function(group) {
+        try { return renderProfileGroup(group); } catch (e) { return ''; }
+    }).join('');
+
+    var conditionNames = selectedConditionKeys.map(function(k) {
+        var d = accommodationsData[k];
+        return d ? d.name : shortConditionNames[k] || k;
+    }).join(' + ');
+
+    detail.innerHTML =
+        '<div class="results-title-header">' +
+            '<div>' +
+                '<h3>' + (selectedConditionKeys.length > 1 ? 'Múltiple: ' + conditionNames : conditionNames) + '</h3>' +
+                '<p>Las recomendaciones están agrupadas por categoría. Ajusta según observación directa y conversación con el estudiante.</p>' +
+            '</div>' +
+        '</div>' +
+        radarHtml +
+        profilesHtml;
+}
+
 function getStudentMatrixProfile(studentIndex) {
     const entry = matrixData[studentIndex];
     return entry && entry.applied ? entry.profile : null;
@@ -133,7 +249,13 @@ function renderSelectedSupportRecommendations() {
 
     var radarHtml = '';
     try {
-        radarHtml = renderBarrierMap(students);
+        var chartStudents = students.filter(function(s) {
+            var card = document.querySelector('.support-student-card[data-student-index="' + s.cardIndex + '"]');
+            if (!card) return true;
+            var cb = card.querySelector('.show-in-chart');
+            return cb ? cb.checked : true;
+        });
+        radarHtml = renderBarrierMap(chartStudents);
     } catch (e) {
         console.error('renderBarrierMap falló:', e.message, e.stack);
         radarHtml = '<p style=\"color:red\">Error en radar: ' + e.message + '</p>';
@@ -374,14 +496,12 @@ function supportCategory(title, items) {
 
 function renderSupportStudents(onStudentChange = () => {}) {
     const container = document.getElementById('support-students');
-    const countInput = document.getElementById('support-student-count');
-    if (!container || !countInput) return;
-    if (countInput.dataset.boundStudents !== 'true') {
-        countInput.addEventListener('change', () => renderSupportStudents(onStudentChange));
-        countInput.dataset.boundStudents = 'true';
-    }
-    const count = Math.max(1, Math.min(8, Number(countInput.value) || 1));
-    countInput.value = String(count);
+    const addBtn = document.getElementById('add-student-btn');
+    if (!container) return;
+
+    var count = Number(container.getAttribute('data-student-count')) || 1;
+    count = Math.max(1, Math.min(8, count));
+    container.setAttribute('data-student-count', String(count));
 
     const existingCards = container.querySelectorAll('.support-student-card');
     const existingCount = existingCards.length;
@@ -392,6 +512,8 @@ function renderSupportStudents(onStudentChange = () => {}) {
         }
     } else if (count < existingCount) {
         for (var i = existingCount - 1; i >= count; i--) {
+            var removedIndex = existingCards[i].getAttribute('data-student-index');
+            delete matrixData[removedIndex];
             existingCards[i].remove();
         }
     }
@@ -404,7 +526,15 @@ function renderSupportStudents(onStudentChange = () => {}) {
             input.addEventListener('change', onStudentChange);
             input.addEventListener('input', renderSelectedSupportRecommendations);
             input.addEventListener('change', renderSelectedSupportRecommendations);
-            input.addEventListener('change', function() { updateConditionSummaries(studentIndex); });
+            input.addEventListener('change', function() {
+                updateConditionSummaries(studentIndex);
+                updateAddButton();
+                updateRemoveButtons();
+            });
+        });
+
+        card.querySelectorAll('.show-in-chart').forEach(function(cb) {
+            cb.addEventListener('change', renderSelectedSupportRecommendations);
         });
 
         card.querySelectorAll('input[type="radio"][name^="student-matrix"]').forEach(function(radio) {
@@ -416,9 +546,21 @@ function renderSupportStudents(onStudentChange = () => {}) {
         if (applyBtn) applyBtn.addEventListener('click', function() { applyStudentMatrix(studentIndex); });
         if (clearBtn) clearBtn.addEventListener('click', function() { clearStudentMatrix(studentIndex); });
 
+        var removeBtn = card.querySelector('.btn-remove-student');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() { removeLastStudent(onStudentChange); });
+        }
+
         card.setAttribute('data-events-bound', '');
     });
 
+    if (addBtn && addBtn.dataset.bound !== 'true') {
+        addBtn.addEventListener('click', function() { addStudentCard(onStudentChange); });
+        addBtn.setAttribute('data-bound', 'true');
+    }
+
+    updateRemoveButtons();
+    updateAddButton();
     updateConditionSummaries();
     renderSelectedSupportRecommendations();
     onStudentChange();
@@ -446,6 +588,21 @@ function createStudentCard(studentIndex) {
         '<label for="student-name-' + studentIndex + '">Nombre del estudiante (opcional)</label>' +
         '<input id="student-name-' + studentIndex + '" class="text-control student-name" type="text" placeholder="Si queda vacío se usará Estudiante ' + studentIndex + '">' +
         '<div class="student-card-status" id="student-status-' + studentIndex + '">Sin apoyos definidos</div>' +
+        '<label class="radar-visibility-toggle">' +
+            '<input type="checkbox" class="show-in-chart" checked>' +
+            '<span>Mostrar en gráfico</span>' +
+        '</label>' +
+        '<details class="condition-dropdown">' +
+            '<summary>' +
+                '<span class="condition-summary-text">Seleccionar condiciones</span>' +
+                '<span class="condition-summary-count" id="condition-count-' + studentIndex + '">Sin selección</span>' +
+            '</summary>' +
+            '<div class="condition-checklist" aria-label="Condiciones del estudiante ' + studentIndex + '">' +
+                Object.keys(accommodationsData).map(function(key) {
+                    return '<label class="condition-option"><input type="checkbox" class="condition-check" value="' + key + '"><span>' + accommodationsData[key].name + '</span></label>';
+                }).join('') +
+            '</div>' +
+        '</details>' +
         '<details class="student-matrix-toggle">' +
             '<summary>' +
                 '<span>Matriz de acceso (CIF/OMS)</span>' +
@@ -468,21 +625,102 @@ function createStudentCard(studentIndex) {
                 '<button class="btn btn-secondary btn-sm" id="clear-matrix-' + studentIndex + '" type="button">Limpiar</button>' +
             '</div>' +
         '</details>' +
-        '<details class="condition-dropdown">' +
-            '<summary>' +
-                '<span class="condition-summary-text">Seleccionar condiciones</span>' +
-                '<span class="condition-summary-count" id="condition-count-' + studentIndex + '">Sin selección</span>' +
-            '</summary>' +
-            '<div class="condition-checklist" aria-label="Condiciones del estudiante ' + studentIndex + '">' +
-                Object.keys(accommodationsData).map(function(key) {
-                    return '<label class="condition-option"><input type="checkbox" class="condition-check" value="' + key + '"><span>' + accommodationsData[key].name + '</span></label>';
-                }).join('') +
-            '</div>' +
-        '</details>';
+        '<button class="btn-remove-student" type="button" title="Eliminar estudiante" style="display:none">&times;</button>';
 
     wrapper.setAttribute('data-matrix-ready', '');
 
     return wrapper;
+}
+
+function addStudentCard(onStudentChange) {
+    var container = document.getElementById('support-students');
+    if (!container) return;
+    var count = Number(container.getAttribute('data-student-count')) || 1;
+    if (count >= 8) return;
+    container.setAttribute('data-student-count', String(count + 1));
+    renderSupportStudents(onStudentChange);
+}
+
+function removeLastStudent(onStudentChange) {
+    var container = document.getElementById('support-students');
+    if (!container) return;
+    var count = Number(container.getAttribute('data-student-count')) || 1;
+    if (count <= 1) return;
+    var cards = container.querySelectorAll('.support-student-card');
+    if (cards.length > 0) {
+        cards[cards.length - 1].remove();
+        var matrixIdx = String(cards.length);
+        delete matrixData[matrixIdx];
+    }
+    container.setAttribute('data-student-count', String(count - 1));
+    updateRemoveButtons();
+    updateAddButton();
+    updateConditionSummaries();
+    renderSelectedSupportRecommendations();
+    if (typeof onStudentChange === 'function') onStudentChange();
+}
+
+function updateAddButton() {
+    var addBtn = document.getElementById('add-student-btn');
+    var container = document.getElementById('support-students');
+    if (!addBtn || !container) return;
+    var count = Number(container.getAttribute('data-student-count')) || 1;
+    if (count >= 8) {
+        addBtn.style.display = 'none';
+        return;
+    }
+    var cards = container.querySelectorAll('.support-student-card');
+    var lastCard = cards[cards.length - 1];
+    if (!lastCard) {
+        addBtn.style.display = 'none';
+        return;
+    }
+    var hasCondition = lastCard.querySelectorAll('.condition-check:checked').length > 0;
+    addBtn.style.display = hasCondition ? '' : 'none';
+}
+
+function updateRemoveButtons() {
+    var container = document.getElementById('support-students');
+    if (!container) return;
+    var cards = container.querySelectorAll('.support-student-card');
+    var count = Number(container.getAttribute('data-student-count')) || 1;
+    cards.forEach(function(card, index) {
+        var btn = card.querySelector('.btn-remove-student');
+        if (!btn) return;
+        if (count > 1 && index === cards.length - 1) {
+            btn.style.display = '';
+        } else {
+            btn.style.display = 'none';
+        }
+    });
+}
+
+function renderReferenceCatalog() {
+    var conditionKeys = Object.keys(accommodationsData);
+
+    var items = conditionKeys.map(function(key) {
+        var data = accommodationsData[key];
+        var catsHtml = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'].map(function(cat) {
+            var arr = data[cat];
+            if (!arr || !arr.length) return '';
+            var listItems = arr.slice(0, 4).map(function(r) { return '<li>' + r + '</li>'; }).join('');
+            var extra = arr.length > 4 ? '<li class="ref-more">+ ' + (arr.length - 4) + ' más</li>' : '';
+            return '<div class="ref-cat"><strong>' + (categoryLabels[cat] || cat) + '</strong><ul>' + listItems + extra + '</ul></div>';
+        }).join('');
+
+        return '<details class="ref-condition">' +
+            '<summary><span>' + data.name + '</span></summary>' +
+            '<div class="ref-body">' + catsHtml + '</div>' +
+            '</details>';
+    }).join('');
+
+    return '<div class="results-title-header">' +
+        '<div>' +
+            '<h3>Recomendaciones por condición</h3>' +
+            '<p>Catálogo de referencia para apoyar a cualquier estudiante según su condición. Selecciona condiciones en la ficha de arriba para ver solo las relevantes.</p>' +
+        '</div>' +
+    '</div>' +
+    '<div class="ref-catalog">' + items + '</div>';
 }
 
 function updateConditionSummaries(studentIndex) {
@@ -504,30 +742,47 @@ function updateConditionSummaries(studentIndex) {
 
 function getSelectedSupportStudentGroups() {
     var cards = document.querySelectorAll('.support-student-card');
-    console.log('getSelectedSupportStudentGroups: cards encontradas=' + cards.length);
-    return Array.from(cards).map(card => {
-        const index = card.dataset.studentIndex;
-        const name = card.querySelector('.student-name')?.value.trim();
-        const checked = Array.from(card.querySelectorAll('.condition-check:checked'));
-        console.log('  card ' + index + ': checkboxes checked=' + checked.length);
-        const conditions = checked
-            .map(box => {
-                var key = box.value;
+
+    if (cards.length) {
+        console.log('getSelectedSupportStudentGroups: cards encontradas=' + cards.length);
+        return Array.from(cards).map(card => {
+            const index = card.dataset.studentIndex;
+            const name = card.querySelector('.student-name')?.value.trim();
+            const checked = Array.from(card.querySelectorAll('.condition-check:checked'));
+            console.log('  card ' + index + ': checkboxes checked=' + checked.length);
+            const conditions = checked
+                .map(box => {
+                    var key = box.value;
+                    var data = accommodationsData[key];
+                    if (!data) console.warn('  WARN: accommodationsData[' + key + '] no existe');
+                    return { key: key, ...data };
+                })
+                .filter(item => item.name);
+            return {
+                label: `Estudiante ${index}`,
+                cardIndex: Number(index),
+                name,
+                conditions
+            };
+        }).filter(function(student) {
+            console.log('  filtro: card ' + student.cardIndex + ' tiene ' + student.conditions.length + ' condiciones');
+            return student.conditions.length;
+        });
+    }
+
+    if (selectedConditionKeys.length) {
+        return [{
+            label: 'Perfil seleccionado',
+            cardIndex: 1,
+            name: '',
+            conditions: selectedConditionKeys.map(function(key) {
                 var data = accommodationsData[key];
-                if (!data) console.warn('  WARN: accommodationsData[' + key + '] no existe');
-                return { key: key, ...data };
-            })
-            .filter(item => item.name);
-        return {
-            label: `Estudiante ${index}`,
-            cardIndex: Number(index),
-            name,
-            conditions
-        };
-    }).filter(function(student) {
-        console.log('  filtro: card ' + student.cardIndex + ' tiene ' + student.conditions.length + ' condiciones');
-        return student.conditions.length;
-    });
+                return data ? { key: key, ...data } : null;
+            }).filter(Boolean)
+        }];
+    }
+
+    return [];
 }
 
 function recommendationCategories(condition) {
@@ -771,6 +1026,8 @@ function applyStudentMatrix(studentIndex) {
     }
 
     updateStudentMatrixBadge(studentIndex);
+    updateAddButton();
+    updateRemoveButtons();
     renderSelectedSupportRecommendations();
 }
 
@@ -822,11 +1079,405 @@ function updateStudentStatusBadge(studentIndex) {
     }
 }
 
+function openPlanModal(onStudentChange) {
+    var overlay = document.getElementById('plan-modal-overlay');
+    if (!overlay) return;
+    overlay.style.display = '';
+    document.body.style.overflow = 'hidden';
+    renderPlanStudents();
+    bindPlanModalEvents(onStudentChange);
+}
+
+function closePlanModal() {
+    var overlay = document.getElementById('plan-modal-overlay');
+    if (!overlay) return;
+    overlay.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function getPlanMode() {
+    var active = document.querySelector('.plan-modal-tab.active');
+    return active ? active.getAttribute('data-tab') : 'basic';
+}
+
+function renderPlanStudents() {
+    var container = document.getElementById('plan-students');
+    var countSelect = document.getElementById('plan-student-count');
+    if (!container || !countSelect) return;
+
+    var count = Number(countSelect.value) || 1;
+    var mode = getPlanMode();
+
+    container.innerHTML = '';
+    for (var i = 1; i <= count; i++) {
+        container.appendChild(createPlanStudentCard(i, mode));
+    }
+}
+
+function createPlanStudentCard(index, mode) {
+    var card = document.createElement('article');
+    card.className = 'plan-student-card';
+
+    var html = '<h4>Estudiante ' + index + '</h4>';
+
+    if (mode === 'personalized') {
+        html += '<div class="plan-personal-fields">' +
+            '<label for="plan-name-' + index + '">Nombre (opcional)</label>' +
+            '<input id="plan-name-' + index + '" class="text-control plan-student-name" type="text" placeholder="Ej: Juan Pérez">' +
+            '<label for="plan-rut-' + index + '">RUT (opcional)</label>' +
+            '<input id="plan-rut-' + index + '" class="text-control plan-student-rut" type="text" placeholder="Ej: 12.345.678-9">' +
+            '<label for="plan-career-' + index + '">Carrera (opcional)</label>' +
+            '<input id="plan-career-' + index + '" class="text-control plan-student-career" type="text" placeholder="Ej: Ingeniería en Informática">' +
+            '</div>';
+    }
+
+    html += '<details class="plan-condition-list">' +
+        '<summary>Seleccionar condiciones</summary>' +
+        '<div class="plan-checklist">' +
+        Object.keys(accommodationsData).map(function(key) {
+            return '<label class="plan-check-option">' +
+                '<input type="checkbox" class="plan-condition-check" value="' + key + '">' +
+                '<span>' + accommodationsData[key].name + '</span></label>';
+        }).join('') +
+        '</div>' +
+        '</details>';
+
+    if (mode === 'personalized') {
+        var activities = window.UiePlannerData.accessMatrixActivities;
+        var matrixRows = activities.map(function(act) {
+            var cells = [4, 3, 2, 1].map(function(val) {
+                return '<td class="matrix-col-score"><label class="matrix-radio-group">' +
+                    '<input type="radio" name="plan-matrix-' + index + '-' + act.id + '" value="' + val + '">' +
+                    '<span>' + val + '</span></label></td>';
+            }).join('');
+            return '<tr><td class="matrix-activity-label">' + act.label + '</td>' + cells + '</tr>';
+        }).join('');
+
+        html += '<details class="plan-matrix-toggle">' +
+            '<summary>Matriz de acceso (CIF/OMS) — opcional</summary>' +
+            '<div class="student-matrix-wrap"><table class="student-matrix-table">' +
+            '<thead><tr><th>Actividad</th><th class="matrix-col-score">4</th><th class="matrix-col-score">3</th><th class="matrix-col-score">2</th><th class="matrix-col-score">1</th></tr></thead>' +
+            '<tbody>' + matrixRows + '</tbody></table>' +
+            '<div class="student-matrix-legend">' +
+            '<span><strong>4</strong> Compatibilidad perfecta</span>' +
+            '<span><strong>3</strong> Compatibilidad buena</span>' +
+            '<span><strong>2</strong> Compatibilidad parcial</span>' +
+            '<span><strong>1</strong> Incompatibilidad</span></div></div></details>';
+    }
+
+    card.innerHTML = html;
+    return card;
+}
+
+function bindPlanModalEvents(onStudentChange) {
+    var closeBtn = document.getElementById('plan-modal-close');
+    var overlay = document.getElementById('plan-modal-overlay');
+    var countSelect = document.getElementById('plan-student-count');
+    var tabs = document.querySelectorAll('.plan-modal-tab');
+    var genBtn = document.getElementById('btn-generate-pdf');
+
+    if (closeBtn && closeBtn.dataset.bound !== 'true') {
+        closeBtn.addEventListener('click', closePlanModal);
+        closeBtn.setAttribute('data-bound', 'true');
+    }
+
+    if (overlay && overlay.dataset.bound !== 'true') {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) closePlanModal();
+        });
+        overlay.setAttribute('data-bound', 'true');
+    }
+
+    if (countSelect && countSelect.dataset.boundPlan !== 'true') {
+        countSelect.addEventListener('change', renderPlanStudents);
+        countSelect.setAttribute('data-boundPlan', 'true');
+    }
+
+    tabs.forEach(function(tab) {
+        if (tab.dataset.boundPlan !== 'true') {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.plan-modal-tab').forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+                tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+                renderPlanStudents();
+            });
+            tab.setAttribute('data-boundPlan', 'true');
+        }
+    });
+
+    if (genBtn && genBtn.dataset.bound !== 'true') {
+        genBtn.addEventListener('click', generatePlanPDF);
+        genBtn.setAttribute('data-bound', 'true');
+    }
+
+    var emailBtn = document.getElementById('btn-generate-email');
+    if (emailBtn && emailBtn.dataset.bound !== 'true') {
+        emailBtn.addEventListener('click', generatePlanEmail);
+        emailBtn.setAttribute('data-bound', 'true');
+    }
+}
+
+function collectPlanStudents() {
+    var mode = getPlanMode();
+    var students = [];
+    var cards = document.querySelectorAll('.plan-student-card');
+
+    cards.forEach(function(card, i) {
+        var checked = card.querySelectorAll('.plan-condition-check:checked');
+        if (!checked.length && mode === 'basic') return;
+
+        var conditions = Array.from(checked).map(function(cb) {
+            var data = accommodationsData[cb.value];
+            return data ? { key: cb.value, name: data.name } : null;
+        }).filter(Boolean);
+
+        if (!conditions.length) return;
+
+        var student = {
+            index: i + 1,
+            name: mode === 'personalized' ? (card.querySelector('.plan-student-name')?.value?.trim() || '') : '',
+            rut: mode === 'personalized' ? (card.querySelector('.plan-student-rut')?.value?.trim() || '') : '',
+            career: mode === 'personalized' ? (card.querySelector('.plan-student-career')?.value?.trim() || '') : '',
+            conditions: conditions
+        };
+        students.push(student);
+    });
+
+    return students;
+}
+
+function generatePlanPDF() {
+    var students = collectPlanStudents();
+    if (!students.length) {
+        alert('Selecciona al menos una condición para algún estudiante.');
+        return;
+    }
+
+    var mode = getPlanMode();
+    var includeDua = document.getElementById('plan-include-dua')?.checked || false;
+    var includeCharts = document.getElementById('plan-include-charts')?.checked || false;
+
+    var docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
+
+    try {
+        if (typeof pdfMake !== 'undefined') {
+            pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
+        } else if (typeof window.pdfMake !== 'undefined') {
+            window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
+        } else {
+            alert('El generador de PDF no está disponible. Asegúrate de tener conexión a internet.');
+        }
+    } catch (e) {
+        console.error('Error generando PDF:', e);
+        alert('Error al generar el PDF: ' + e.message);
+    }
+}
+
+function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
+    var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+    var content = [];
+
+    content.push({ text: 'Plan de apoyo docente', style: 'title' });
+    content.push({ text: 'Generado el ' + today, style: 'subtitle', margin: [0, 4, 0, 20] });
+
+    students.forEach(function(student, sIdx) {
+        var label = student.name || ('Estudiante ' + student.index);
+        var subtitle = [label];
+        if (student.rut) subtitle.push('RUT: ' + student.rut);
+        if (student.career) subtitle.push('Carrera: ' + student.career);
+
+        content.push({ text: subtitle.join(' | '), style: 'studentTitle', margin: [0, 10, 0, 6] });
+
+        student.conditions.forEach(function(cond) {
+            content.push({ text: cond.name, style: 'conditionName', margin: [0, 6, 0, 4] });
+
+            var data = accommodationsData[cond.key];
+            if (!data) return;
+
+            var cats = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'];
+            var catNames = { context: 'Contexto aula', materials: 'Materiales de estudio', methods: 'Métodos de enseñanza', interaction: 'Interacción en aula', evaluacion: 'De las evaluaciones', tech: 'Tecnologías asistivas' };
+
+            cats.forEach(function(cat) {
+                var items = data[cat];
+                if (!items || !items.length) return;
+                content.push({ text: catNames[cat], style: 'catHeader', margin: [0, 6, 0, 2] });
+                items.forEach(function(item) {
+                    content.push({ text: '• ' + item, style: 'recItem', margin: [10, 1, 0, 1] });
+                });
+            });
+        });
+    });
+
+    if (includeDua) {
+        content.push({ text: '', pageBreak: 'before' });
+        content.push({ text: 'Checklist DUA', style: 'title' });
+        content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'subtitle', margin: [0, 4, 0, 14] });
+
+        var duaStages = window.UiePlannerData.duaStagesData || [];
+
+        if (duaStages.length) {
+            duaStages.forEach(function(stage) {
+                content.push({ text: stage.label + ' — ' + stage.badge, style: 'catHeader', margin: [0, 8, 0, 4] });
+                var items = stage.checklist || [];
+                items.forEach(function(item) {
+                    content.push({ text: '☐ ' + item, style: 'recItem', margin: [10, 2, 0, 2] });
+                });
+            });
+        } else {
+            content.push({ text: 'No se encontraron principios DUA definidos.', style: 'recItem', margin: [10, 4, 0, 4] });
+        }
+    }
+
+    content.push({ text: '', margin: [0, 16, 0, 0] });
+    content.push({ text: 'Leyenda: Estas recomendaciones son orientativas según la condición indicada. Deben ajustarse con observación directa, conversación con el estudiante y evidencia del aula. No constituyen un diagnóstico.', style: 'legend' });
+
+    return {
+        pageSize: 'A4',
+        pageMargins: [40, 40, 40, 40],
+        content: content,
+        styles: {
+            title: { fontSize: 18, bold: true, color: '#111827' },
+            subtitle: { fontSize: 11, color: '#6B7280' },
+            studentTitle: { fontSize: 14, bold: true, color: '#236A4B', margin: [0, 4, 0, 2] },
+            conditionName: { fontSize: 12, bold: true, color: '#374151' },
+            catHeader: { fontSize: 10, bold: true, color: '#6B7280', italics: true },
+            recItem: { fontSize: 10, color: '#374151', lineHeight: 1.4 },
+            legend: { fontSize: 8, color: '#9CA3AF', italics: true, margin: [0, 20, 0, 0] }
+        },
+        defaultStyle: { font: 'Helvetica' }
+    };
+}
+
+function downloadDuaChecklist() {
+    var checkedDua = window.UiePlannerDua.getCheckedDuaItems();
+    if (!checkedDua || !checkedDua.length) {
+        alert('No hay decisiones DUA seleccionadas.');
+        return;
+    }
+
+    var summary = window.UiePlannerDua.getDuaStageSummary();
+    var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+    var content = [];
+
+    content.push({ text: 'Checklist DUA para la clase', style: 'title' });
+    content.push({ text: 'Generado el ' + today, style: 'subtitle', margin: [0, 4, 0, 14] });
+    content.push({ text: 'Marca las acciones que te comprometes a implementar.', style: 'subtitle', margin: [0, 0, 0, 14] });
+
+    var stages = window.UiePlannerData.duaStagesData || [];
+    stages.forEach(function(stage) {
+        var stageChecked = summary.stages.find(function(s) { return s.label === stage.label; });
+        var items = stage.checklist || [];
+        if (stageChecked && stageChecked.items.length) {
+            content.push({ text: stage.label + ' — ' + stage.badge + ' (' + stageChecked.items.length + ' seleccionadas)', style: 'catHeader', margin: [0, 8, 0, 4] });
+            items.forEach(function(item) {
+                var isChecked = stageChecked.items.some(function(si) { return si.text === item; });
+                content.push({ text: (isChecked ? '☑ ' : '☐ ') + item, style: 'recItem', margin: [10, 2, 0, 2] });
+            });
+        } else {
+            content.push({ text: stage.label + ' — ' + stage.badge + ' (sin selección)', style: 'catHeader', margin: [0, 8, 0, 4] });
+            items.forEach(function(item) {
+                content.push({ text: '☐ ' + item, style: 'recItem', margin: [10, 2, 0, 2] });
+            });
+        }
+    });
+
+    content.push({ text: '', margin: [0, 14, 0, 0] });
+    content.push({ text: 'Documento generado desde el Planificador Inclusivo UIE.', style: 'legend' });
+
+    var docDef = {
+        pageSize: 'A4',
+        pageMargins: [40, 40, 40, 40],
+        content: content,
+        styles: {
+            title: { fontSize: 18, bold: true, color: '#111827' },
+            subtitle: { fontSize: 11, color: '#6B7280' },
+            catHeader: { fontSize: 11, bold: true, color: '#236A4B', margin: [0, 4, 0, 2] },
+            recItem: { fontSize: 10, color: '#374151', lineHeight: 1.4 },
+            legend: { fontSize: 8, color: '#9CA3AF', italics: true }
+        },
+        defaultStyle: { font: 'Helvetica' }
+    };
+
+    try {
+        if (typeof pdfMake !== 'undefined') {
+            pdfMake.createPdf(docDef).download('checklist-dua.pdf');
+        } else if (typeof window.pdfMake !== 'undefined') {
+            window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
+        } else {
+            alert('El generador de PDF no está disponible. Asegúrate de tener conexión a internet.');
+        }
+    } catch (e) {
+        console.error('Error generando PDF DUA:', e);
+        alert('Error al generar el PDF: ' + e.message);
+    }
+}
+
+function generatePlanEmail() {
+    var students = collectPlanStudents();
+    if (!students.length) {
+        alert('Selecciona al menos una condición para algún estudiante.');
+        return;
+    }
+
+    var mode = getPlanMode();
+    var includeDua = document.getElementById('plan-include-dua')?.checked || false;
+    var today = new Date().toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
+
+    var body = 'Plan de apoyo docente\n' +
+        'Generado: ' + today + '\n\n' +
+        'ESTUDIANTES Y CONDICIONES\n' +
+        '------------------------\n\n';
+
+    students.forEach(function(student) {
+        var label = student.name || ('Estudiante ' + student.index);
+        body += label + '\n';
+        if (student.rut) body += 'RUT: ' + student.rut + '\n';
+        if (student.career) body += 'Carrera: ' + student.career + '\n';
+        body += 'Condiciones: ' + student.conditions.map(function(c) { return c.name; }).join(', ') + '\n\n';
+
+        student.conditions.forEach(function(cond) {
+            body += cond.name + ':\n';
+            var data = accommodationsData[cond.key];
+            if (!data) return;
+            var cats = ['context', 'materials', 'methods', 'interaction', 'evaluacion', 'tech'];
+            var catNames = { context: 'Contexto aula', materials: 'Materiales', methods: 'Métodos', interaction: 'Interacción', evaluacion: 'Evaluaciones', tech: 'Tecnologías' };
+            cats.forEach(function(cat) {
+                var items = data[cat];
+                if (!items || !items.length) return;
+                body += '  ' + catNames[cat] + ':\n';
+                items.forEach(function(item) { body += '    - ' + item + '\n'; });
+            });
+            body += '\n';
+        });
+    });
+
+    if (includeDua) {
+        body += 'CHECKLIST DUA\n-------------\n\n';
+        var stages = window.UiePlannerData.duaStagesData || [];
+        stages.forEach(function(stage) {
+            body += stage.label + ':\n';
+            (stage.checklist || []).forEach(function(item) { body += '  ☐ ' + item + '\n'; });
+            body += '\n';
+        });
+    }
+
+    body += '\nLeyenda: Estas recomendaciones son orientativas. Ajusta según observación directa y conversación con el estudiante.\n';
+    body += 'Generado desde el Planificador Inclusivo UIE.';
+
+    var subject = 'Plan de apoyo docente - ' + today;
+    var mailto = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+    window.location.href = mailto;
+}
+
 window.UiePlannerSupports = {
     renderSupports,
     renderSelectedSupportRecommendations,
     renderGoodPractices,
     renderSupportStudents,
+    addStudentCard,
+    removeLastStudent,
+    updateAddButton,
+    updateRemoveButtons,
     updateConditionSummaries,
     getSelectedSupportStudentGroups,
     recommendationCategories,
@@ -835,6 +1486,12 @@ window.UiePlannerSupports = {
     groupStudentsByProfile,
     getMergedRecommendations,
     renderProfileGroup,
+    renderReferenceCatalog,
+    initConditionPills,
+    renderConditionPills,
+    renderConditionDetail,
+    toggleCondition,
+    getSelectedConditionKeys,
     categoryLabels,
     shortConditionNames,
     formatStudentLabel,
@@ -843,7 +1500,12 @@ window.UiePlannerSupports = {
     updateStudentMatrixBadge,
     updateStudentStatusBadge,
     getStudentMatrixProfile,
-    getStudentMatrixScores
+    getStudentMatrixScores,
+    openPlanModal,
+    closePlanModal,
+    generatePlanPDF,
+    generatePlanEmail,
+    downloadDuaChecklist
 };
 
 })();
