@@ -1,4 +1,4 @@
-const CACHE_NAME = 'uie-planificador-v17';
+const CACHE_NAME = 'uie-planificador-v18';
 const ASSETS = [
     '/',
     '/index.html',
@@ -14,9 +14,7 @@ const ASSETS = [
     '/app.js',
     '/Logo UIE/UIE.png',
     '/Logo UIE/UIE_blanco.png',
-    'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap',
-    'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js',
-    'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js'
+    'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Inter:wght@300;400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap'
 ];
 
 self.addEventListener('install', function(event) {
@@ -41,6 +39,10 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
+    if (event.request.url.indexOf('cdnjs.cloudflare.com') !== -1 ||
+        event.request.url.indexOf('fonts.googleapis.com') !== -1) {
+        return;
+    }
     event.respondWith(
         fetch(event.request).then(function(response) {
             var clone = response.clone();
