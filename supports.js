@@ -101,8 +101,6 @@ const selectedConditionKeys = [];
 const conditionGridOrder = ['autismo', 'intelectual', 'sordoceguera', 'fisica', 'visual', 'auditiva', 'visceral', 'psiquica', 'vestibular', 'tactil'];
 
 function ensurePdfMake(callback) {
-    if (window.pdfMake) { callback(); return; }
-
     var script = document.createElement('script');
     script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
     script.onerror = function() {
@@ -1282,7 +1280,14 @@ function generatePlanPDF() {
     var includeDua = document.getElementById('plan-include-dua')?.checked || false;
     var includeCharts = document.getElementById('plan-include-charts')?.checked || false;
 
-    var docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
+    var docDef;
+    try {
+        docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
+    } catch (e) {
+        console.error('Error construyendo documento PDF:', e);
+        alert('Error al construir el documento: ' + e.message);
+        return;
+    }
 
     ensurePdfMake(function() {
         try {
