@@ -100,6 +100,31 @@ const selectedConditionKeys = [];
 
 const conditionGridOrder = ['autismo', 'intelectual', 'sordoceguera', 'fisica', 'visual', 'auditiva', 'visceral', 'psiquica', 'vestibular', 'tactil'];
 
+function ensurePdfMake(callback) {
+    if (typeof pdfMake !== 'undefined' || typeof window.pdfMake !== 'undefined') { callback(); return; }
+
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/pdfmake.min.js';
+    script.onerror = function() {
+        alert('No se pudo cargar el generador de PDF. Verifica tu conexión a internet.');
+    };
+
+    var fonts = document.createElement('script');
+    fonts.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.12/vfs_fonts.min.js';
+    fonts.onerror = script.onerror;
+
+    var loaded = 0;
+    function onScriptLoad() {
+        loaded++;
+        if (loaded === 2) callback();
+    }
+    script.onload = onScriptLoad;
+    fonts.onload = onScriptLoad;
+
+    document.head.appendChild(script);
+    document.head.appendChild(fonts);
+}
+
 function getConditionImpact(key) {
     var profile = barrierProfiles[key];
     if (!profile) return 0;
@@ -1259,18 +1284,15 @@ function generatePlanPDF() {
 
     var docDef = buildPlanPDFDocument(students, mode, includeDua, includeCharts);
 
-    try {
-        if (typeof pdfMake !== 'undefined') {
-            pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
-        } else if (typeof window.pdfMake !== 'undefined') {
-            window.pdfMake.createPdf(docDef).download('plan-de-apoyo.pdf');
-        } else {
-            alert('El generador de PDF no está disponible. Asegúrate de tener conexión a internet.');
+    ensurePdfMake(function() {
+        try {
+            var pm = typeof pdfMake !== 'undefined' ? pdfMake : window.pdfMake;
+            pm.createPdf(docDef).download('plan-de-apoyo.pdf');
+        } catch (e) {
+            console.error('Error generando PDF:', e);
+            alert('Error al generar el PDF: ' + e.message);
         }
-    } catch (e) {
-        console.error('Error generando PDF:', e);
-        alert('Error al generar el PDF: ' + e.message);
-    }
+    });
 }
 
 function buildPlanPDFDocument(students, mode, includeDua, includeCharts) {
@@ -1394,18 +1416,15 @@ function downloadDuaChecklist() {
         defaultStyle: { font: 'Helvetica' }
     };
 
-    try {
-        if (typeof pdfMake !== 'undefined') {
-            pdfMake.createPdf(docDef).download('checklist-dua.pdf');
-        } else if (typeof window.pdfMake !== 'undefined') {
-            window.pdfMake.createPdf(docDef).download('checklist-dua.pdf');
-        } else {
-            alert('El generador de PDF no está disponible. Asegúrate de tener conexión a internet.');
+    ensurePdfMake(function() {
+        try {
+            var pm = typeof pdfMake !== 'undefined' ? pdfMake : window.pdfMake;
+            pm.createPdf(docDef).download('checklist-dua.pdf');
+        } catch (e) {
+            console.error('Error generando PDF DUA:', e);
+            alert('Error al generar el PDF: ' + e.message);
         }
-    } catch (e) {
-        console.error('Error generando PDF DUA:', e);
-        alert('Error al generar el PDF: ' + e.message);
-    }
+    });
 }
 
 function generatePlanEmail() {
