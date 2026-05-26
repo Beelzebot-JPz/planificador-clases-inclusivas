@@ -133,6 +133,7 @@ const accommodationsData = {
         name: 'Discapacidad física o movilidad reducida',
         source: 'Adecuaciones de Acceso',
         context: [
+            'Oriente al estudiante respecto de los espacios físicos de la sede y sala para facilitar desplazamientos.',
             'Asegura rutas accesibles, mesa adecuada y espacio de circulación.',
             'Coordina ubicación estratégica según movilidad, fatiga o uso de apoyos.',
             'Otorga tiempo adicional o pausas cuando exista fatiga, dolor o barreras de desplazamiento.'
@@ -141,12 +142,15 @@ const accommodationsData = {
             'Disponibiliza materiales digitales con anticipación.'
         ],
         methods: [
+            'Si la clase tiene componente práctico que requiere permanecer de pie, evalúe silla u otro elemento de apoyo.',
             'Flexibiliza formato de actividades prácticas cuando exista dificultad motora.',
             'Divide tareas extensas en etapas verificables.'
         ],
         interaction: [
+            'Familiarícese con la tecnología asistiva que use el estudiante y sea proactivo en su uso.',
             'Evita asumir ayuda sin preguntarla; acuerda apoyos con la persona.',
-            'Considera participación oral, digital o asistida.'
+            'Considera participación oral, digital o asistida.',
+            'Facilita salir de la sala si el estudiante lo requiere (medicación o baño).'
         ],
         evaluacion: [
             'Si hay dificultad en expresión oral, otorga tiempo adicional para exposiciones.',
@@ -176,7 +180,8 @@ const accommodationsData = {
         ],
         interaction: [
             'Respeta lengua de señas, lectura labial, audífonos, implantes o intérprete según corresponda.',
-            'Habla de frente y evita cubrir la boca.'
+            'Habla de frente y evita cubrir la boca.',
+            'Parafrasee consultas de compañeros para que el estudiante acceda al aporte de sus pares.'
         ],
         evaluacion: [
             'Entrega por escrito toda la información que se daría en forma oral durante la evaluación.',
@@ -200,6 +205,8 @@ const accommodationsData = {
         ],
         methods: [
             'No dependas solo del color, la ubicación visual o gestos para comunicar información.',
+            'En presentaciones, usa letra grande, fuente sin serifa, buen contraste y evita elementos distractores.',
+            'En salidas a terreno, anticipe barreras para permitir la participación del estudiante.',
             'Ofrece alternativas táctiles, auditivas o digitales cuando sea pertinente.'
         ],
         interaction: [
@@ -329,18 +336,25 @@ const accommodationsData = {
         name: 'Discapacidad intelectual',
         source: 'Adecuaciones de Acceso',
         context: [
+            'Coordina asiento reservado en la primera fila, sin distracciones.',
+            'Establece reglas claras sobre uso de celular y dispositivos durante la clase.',
             'Reduce distractores y ubica al estudiante donde pueda pedir apoyo con facilidad.',
             'Mantén rutinas claras y predecibles.'
         ],
         materials: [
             'Usa lectura fácil, glosarios, ejemplos concretos y apoyos visuales simples.',
-            'Entrega instrucciones en pasos numerados.'
+            'Entrega instrucciones en pasos numerados.',
+            'Refuerce aprendizajes con videos y material gráfico que acerque contenido teórico a la práctica.',
+            'Destaca títulos y palabras clave con tipografía diferente y colores significativos.'
         ],
         methods: [
             'Modela la tarea antes de pedir desempeño autónomo.',
             'Relaciona conceptos abstractos con situaciones reales o manipulables.'
         ],
         interaction: [
+            'Evita palabras ambiguas, juegos de palabras innecesarios o ironías.',
+            'Mantén orden en participaciones: turnos de habla y evita interrupciones entre pares.',
+            'Valore los errores para aclarar conceptos.',
             'Verifica comprensión con preguntas concretas y sin infantilizar.',
             'Refuerza avances y estrategias usadas.'
         ],
@@ -372,10 +386,12 @@ const accommodationsData = {
         ],
         interaction: [
             'Usa comunicación clara, respetuosa y no punitiva frente a crisis o ausencias.',
+            'Manténgase atento a requerimientos emocionales del estudiante y ofrezca apoyo.',
             'Acuerda señales o canales de apoyo si corresponde.'
         ],
         evaluacion: [
-            'Ofrece flexibilidad para presentaciones orales: opción sin público o solo frente al docente.',
+            'Ofrece flexibilidad para presentaciones orales: opción sin público, e ir incrementando nivel de exposición poco a poco.',
+            'Retroalimente con frecuencia y de manera personalizada.',
             'Flexibiliza fechas y plazos cuando existan episodios documentados.',
             'Otorga tiempo adicional para responder evaluaciones si es necesario.'
         ],
@@ -387,6 +403,7 @@ const accommodationsData = {
         name: 'Condición del Neurodesarrollo',
         source: 'Autismo',
         context: [
+            'Entregue información sobre reglas del aula: levantar la mano, momento para preguntas, dinámicas de participación.',
             'Anticipa estructura, reglas, tiempos de descanso y cambios de rutina.',
             'Permite audífonos con cancelación de ruido u otros apoyos sensoriales en trabajo autónomo.'
         ],
@@ -461,6 +478,18 @@ const goodPracticesData = [
     {
         title: 'Cuida continuidad y privacidad',
         text: 'Registra acuerdos útiles para próximas clases y resguarda información personal o diagnóstica.'
+    },
+    {
+        title: 'Entrega la programación completa desde el inicio',
+        text: 'Al comenzar el curso, comparte fechas de evaluaciones, condiciones y cualquier información relevante. Esto reduce ansiedad y permite anticipación.'
+    },
+    {
+        title: 'Informa sobre los apoyos institucionales',
+        text: 'Comunica al curso que existen equipos de apoyo, adaptaciones disponibles y canales para solicitar ayuda. El docente es puente entre el estudiante y los recursos.'
+    },
+    {
+        title: 'Fomenta la colaboración entre pares',
+        text: 'Promueve compartir apuntes, incluir en grupos de trabajo y construir cultura inclusiva. La inclusión también se construye entre compañeros, no solo desde el docente.'
     }
 ];
 
